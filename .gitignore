@@ -1,0 +1,40 @@
+# General
+.DS_Store
+.fleet
+.idea
+.vscode
+npm-debug.log
+yarn-error.log
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Node dependencies and build outputs (for both frontend and backend)
+node_modules
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Laravel / PHP specific
+/phpunit.cache
+/phpunit.result.cache
+Homestead.json
+Homestead.yaml
+/vendor
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+.env.backup
+.env.production
+auth.json
+composer.lock
+
+# Logs
+logs
+*.log
