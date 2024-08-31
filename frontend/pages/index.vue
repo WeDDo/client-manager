@@ -1,4 +1,6 @@
 <script setup>
+import MainMenuBar from "~/components/v1/modules/MainMenuBar.vue";
+
 const { public: { baseURL } } = useRuntimeConfig();
 
 // const { data, pending, error, refresh } = await useFetch(`${baseURL}/${homeStore.apiRouteName}?date=${budgetDate.value}`, {
@@ -29,11 +31,15 @@ onMounted(() => {
 
 <template>
   <div>
+    <MainMenuBar />
+<!--    <div>-->
+<!--      Client manager-->
+<!--    </div>-->
+<!--    <div>-->
+<!--      <Button label="Login" size="small" icon="pi pi-check" @click="login" />-->
+<!--    </div>-->
     <div>
-      Client manager
-    </div>
-    <div>
-      <Button label="Login" size="small" icon="pi pi-check" @click="login" />
+
     </div>
   </div>
 </template>

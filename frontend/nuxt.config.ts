@@ -7,7 +7,7 @@ export default defineNuxtConfig({
             baseURL: process.env.API_URL || 'http://client-manager.test/api',
         },
     },
-    modules: ['nuxt-primevue', '@pinia/nuxt'],
+    modules: ['nuxt-primevue', '@pinia/nuxt', '@vee-validate/nuxt'],
     primevue: {
         /* Options */
     }
