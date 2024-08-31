@@ -12,6 +12,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.5.4",
     "@vee-validate/nuxt": "^4.13.2",
+    "eslint-plugin-vue": "^9.27.0",
     "nuxt": "^3.13.0",
     "pinia": "^2.2.2",
     "primeflex": "^3.3.1",
@@ -21,6 +22,8 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@nuxt/eslint": "^0.5.4",
+    "eslint": "^9.9.1",
     "nuxt-primevue": "^3.0.0"
   },
   "overrides": {
