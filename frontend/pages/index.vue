@@ -15,13 +15,13 @@ async function login() {
       password: '123456789'
     },
     onResponse({ response }) {
-      console.log(response);
+      console.log(response._data);
     },
   })
 }
 
 onMounted(() => {
-  login();
+  // login();
 })
 
 
@@ -29,7 +29,12 @@ onMounted(() => {
 
 <template>
   <div>
-    Client manager
+    <div>
+      Client manager
+    </div>
+    <div>
+      <Button label="Login" size="small" icon="pi pi-check" @click="login" />
+    </div>
   </div>
 </template>
 
