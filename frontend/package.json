@@ -10,7 +10,9 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.4",
     "nuxt": "^3.13.0",
+    "pinia": "^2.2.2",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primevue": "3.53.0",
@@ -18,5 +20,8 @@
   },
   "devDependencies": {
     "nuxt-primevue": "^3.0.0"
+  },
+  "overrides": {
+    "vue": "latest"
   }
 }
