@@ -1,4 +1,6 @@
 <script setup>
+import ConfirmDeleteDialog from "~/components/v1/ConfirmDeleteDialog.vue";
+
 const { public: { baseURL } } = useRuntimeConfig();
 
 const router = useRouter();
@@ -7,7 +9,7 @@ const token = useCookie('token');
 const props = defineProps({
     header: {
         type: String,
-        default: '',
+        default: null,
     },
     rowStyle: {
         type: Function,
@@ -92,12 +94,11 @@ onMounted(() => {
         >
             <template #header>
                 <div class="flex justify-content-between">
-                    <div class="text-xl text-900 font-bold flex justify-content-center align-items-center">
+                    <div v-if="props.header" class="text-xl text-900 font-bold flex justify-content-center align-items-center">
                         {{ props.header }}
                     </div>
                     <IconField
                         icon-position="left"
-                        class="ml-3"
                     >
                         <InputIcon>
                             <i class="pi pi-search" />
@@ -167,7 +168,5 @@ onMounted(() => {
 </template>
 
 <style scoped>
- .supress {
 
- }
 </style>

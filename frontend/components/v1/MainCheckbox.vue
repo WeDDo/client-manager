@@ -11,7 +11,7 @@ const props = defineProps({
     },
     errors: {
         type: Object,
-        default: () => {},
+        default: () => ({}),
     },
     disabled: {
         type: Boolean,
@@ -31,32 +31,56 @@ const value = defineModel('value');
 </script>
 
 <template>
-    <div>
-        <Checkbox
-            v-model="value"
-            :name="name"
-            :binary="true"
-            :disabled="disabled"
-            :invalid="errors?.[`item.${name}`]"
-        />
-        <label
-            v-if="label"
-            class="ml-1 text-sm"
-            :for="name"
-        >
-            {{ label ?? null }}
-        </label>
-        <div v-if="showError" >
+    <div class="form-group">
+        <div class="checkbox-container">
+            <Checkbox
+                v-model="value"
+                :name="name"
+                :binary="true"
+                :disabled="disabled"
+                :invalid="errors?.[`item.${name}`]"
+                class="checkbox-input"
+            />
+            <label
+                v-if="label"
+                class="checkbox-label"
+                :for="name"
+            >
+                {{ label }}
+            </label>
+        </div>
+        <div v-if="showError">
             <small
                 id="email-help"
                 class="p-error"
             >
-                {{ errors?.[`item.${name}`] ?? '&nbsp;' }}
+                {{ errors?.[`item.${name}`] ?? '\u00A0' }}
             </small>
         </div>
     </div>
 </template>
 
 <style scoped>
+.form-group {
+    margin-bottom: 1rem;
+}
 
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.checkbox-label {
+    margin-left: 8px;
+    line-height: 1;
+    font-size: 14px;
+}
+
+.p-error {
+    font-size: 12px;
+    margin-top: 4px;
+}
 </style>

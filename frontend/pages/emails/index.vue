@@ -9,31 +9,15 @@ const {public: {baseURL}} = useRuntimeConfig();
 //   },
 // });
 
-async function login() {
-    await $fetch(`${baseURL}/login`, {
-        method: 'POST',
-        body: {
-            email: 'jonas@gmail.com',
-            password: '123456789'
-        },
-        onResponse({ response }) {
-            console.log(response._data);
-        },
-    })
-}
-
-onMounted(() => {
-    // login();
-})
-
-
 </script>
 
 <template>
     <div>
         <MainMenuBar />
         <div>
+            <div>
 
+            </div>
         </div>
     </div>
 </template>
