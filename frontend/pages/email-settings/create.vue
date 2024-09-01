@@ -16,9 +16,9 @@ const token = useCookie('token');
 
 let formValues = reactive({
     item: {
-        host: null,
-        port: null,
-        encryption: null,
+        host: 'imap.gmail.com',
+        port: 993,
+        encryption: 'ssl',
         validate_cert: false,
         username: null,
         password: null,

@@ -16,20 +16,31 @@ class EmailSettingService
 
     public function store(array $data): EmailSetting
     {
-        // Encrypt the password before storing it
         $data['password'] = Crypt::encryptString($data['password']);
 
-        return auth()->user()->emailSettings()->create($data);
+        $emailSetting = auth()->user()->emailSettings()->create($data);
+
+        $this->checkActiveEmailSettings($data, $emailSetting);
+
+        return $emailSetting;
     }
 
     public function update(array $data, EmailSetting $emailSetting): void
     {
-        // Encrypt the password before updating it
         if (isset($data['password'])) {
             $data['password'] = Crypt::encryptString($data['password']);
         }
 
         $emailSetting->update($data);
+
+        $this->checkActiveEmailSettings($data, $emailSetting);
+    }
+
+    public function checkActiveEmailSettings(array $data, EmailSetting $emailSetting): void
+    {
+        if (isset($data['active']) && $data['active']) {
+            auth()->user()->emailSettings()->where('id', '<>', $emailSetting->id)->update(['active' => false]);
+        }
     }
 //    public function getEmailsFromInbox()
 //    {
@@ -39,6 +50,7 @@ class EmailSettingService
     public function copy(EmailSetting $emailSetting): EmailSetting
     {
         $newEmailSetting = $emailSetting->replicate();
+        $newEmailSetting->active = false;
         $newEmailSetting->save();
         return $newEmailSetting;
     }

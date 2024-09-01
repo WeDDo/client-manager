@@ -96,20 +96,15 @@ defineExpose({onSubmit});
                         :errors="errors"
                         required
                     />
-                    <MainTextInput
+                    <MainSelectInput
                         v-model:value="encryption"
                         name="encryption"
                         label="Encryption"
                         :errors="errors"
-                        required
+                        :options="['ssl']"
+                        form-prefix=""
+                        simple-options
                     />
-<!--                    <MainTextInput-->
-<!--                        v-model:value="protocol"-->
-<!--                        name="protocol"-->
-<!--                        label="Protocol"-->
-<!--                        :errors="errors"-->
-<!--                        required-->
-<!--                    />-->
                     <MainSelectInput
                         v-model:value="protocol"
                         name="protocol"
