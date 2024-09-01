@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\DataTables\EmailSettings\EmailSettingDataTable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,13 @@ class EmailSetting extends Model
         'active',
         'user_id',
     ];
+
+    public function getAdditionalData(): array
+    {
+        return [
+            'data_table_item' => (new EmailSettingDataTable())->getItem($this->id),
+        ];
+    }
 
     public function user(): BelongsTo
     {

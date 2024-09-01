@@ -43,6 +43,9 @@ class EmailSettingDataTable extends BaseDataTable
             'protocol' => function ($rowData) {
                 return $rowData['protocol'];
             },
+            'active' => function ($rowData) {
+                return $rowData['active'];
+            },
         ];
     }
 
@@ -53,7 +56,6 @@ class EmailSettingDataTable extends BaseDataTable
             ['name' => 'host', 'header' => 'Host', 'align' => 'left'],
             ['name' => 'port', 'header' => 'Port', 'align' => 'right'],
             ['name' => 'encryption', 'header' => 'Encryption', 'align' => 'left'],
-//            ['name' => 'validate_cert', 'header' => 'Validate Cert', 'align' => 'left'],
             ['name' => 'username', 'header' => 'Username', 'align' => 'left'],
             ['name' => 'protocol', 'header' => 'Protocol', 'align' => 'left'],
         ];
@@ -61,8 +63,7 @@ class EmailSettingDataTable extends BaseDataTable
 
     public function getItems(): array
     {
-        $emailSettings = EmailSetting::all();
-
+        $emailSettings = auth()->user()->emailSettings;
         $columns = $this->getColumnItemClosures();
 
         $data = [];
@@ -75,5 +76,19 @@ class EmailSettingDataTable extends BaseDataTable
         }
 
         return $data;
+    }
+
+    public function getItem(mixed $id): array
+    {
+        $emailSetting = auth()->user()->emailSettings()->where('id', $id)->first();
+
+        $columns = $this->getColumnItemClosures();
+
+        $rowData = [];
+        foreach ($columns as $columnKey => $getColumnValue) {
+            $rowData[$columnKey] = $getColumnValue($emailSetting);
+        }
+
+        return $rowData;
     }
 }

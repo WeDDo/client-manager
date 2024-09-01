@@ -45,6 +45,7 @@ class EmailSettingController extends Controller
 
         return response()->json([
             'item' => $emailSetting,
+            'additional' => $emailSetting->getAdditionalData(),
         ]);
     }
 
@@ -54,6 +55,7 @@ class EmailSettingController extends Controller
 
         return response()->json([
             'item' => $emailSetting,
+            'additional' => $emailSetting->getAdditionalData(),
         ]);
     }
 
@@ -63,6 +65,7 @@ class EmailSettingController extends Controller
 
         return response()->json([
             'item' => $emailSetting,
+            'additional' => $emailSetting->getAdditionalData(),
         ]);
     }
 
@@ -78,6 +81,7 @@ class EmailSettingController extends Controller
 
         return response()->json([
             'item' => $emailSettingCopy,
+            'additional' => $emailSettingCopy->getAdditionalData(),
         ]);
     }
 }
