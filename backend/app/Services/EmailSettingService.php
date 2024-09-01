@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Models\EmailSetting;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Crypt;
+use Webklex\IMAP\Facades\Client;
+use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 
 class EmailSettingService
 {
@@ -55,10 +58,26 @@ class EmailSettingService
         return $newEmailSetting;
     }
 
-    public function setImapEmailConfig()
+    public function checkConnection(EmailSetting $emailSetting): void
+    {
+        $client = Client::make($this->setImapEmailConfig($emailSetting));
+        try {
+            $client->connect();
+        } catch (ConnectionFailedException $e) {
+            throw new HttpResponseException(
+                response()->json([
+                    'error' => 'connection_failed'
+                ], 400)
+            );
+        }
+    }
+
+    public function setImapEmailConfig(?EmailSetting $emailSetting = null)
     {
         $user = auth()->user();
-        $emailSetting = $user->emailSettings()->first();
+        if (!$emailSetting) {
+            $emailSetting = $user->emailSettings()->where('active', true)->first();
+        }
 
         config([
             "imap.users.$user->id" => [
@@ -67,7 +86,7 @@ class EmailSettingService
                 'encryption' => $emailSetting->encryption,
                 'validate_cert' => $emailSetting->validate_cert,
                 'username' => $emailSetting->username,
-                'password' => $emailSetting->password,
+                'password' => Crypt::decryptString($emailSetting->password),
                 'protocol' => $emailSetting->protocol,
             ]
         ]);

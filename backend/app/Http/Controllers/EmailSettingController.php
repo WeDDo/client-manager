@@ -84,4 +84,13 @@ class EmailSettingController extends Controller
             'additional' => $emailSettingCopy->getAdditionalData(),
         ]);
     }
+
+    public function checkConnection(EmailSetting $emailSetting): JsonResponse
+    {
+        $this->emailSettingService->checkConnection($emailSetting);
+
+        return response()->json([
+            'message' => 'success!',
+        ]);
+    }
 }

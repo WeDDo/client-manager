@@ -15,6 +15,7 @@ Route::get('sanctum/csrf-cookie', function () {
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::prefix('email-settings')->group(function () {
         Route::get('{emailSetting}/copy', [EmailSettingController::class, 'copy']);
+        Route::get('{emailSetting}/check-connection', [EmailSettingController::class, 'checkConnection']);
     });
     Route::apiResource('email-settings', EmailSettingController::class);
 });

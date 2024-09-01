@@ -21,7 +21,7 @@ let formValues = reactive({
   },
 });
 
-const mainFormRef = ref(null);
+const mainFormRef = ref();
 let tabs = reactive([
   { name: "Main", ref: mainFormRef, errors: {} },
 ]);

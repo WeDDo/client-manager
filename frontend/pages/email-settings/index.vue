@@ -43,7 +43,6 @@ async function handleCopy() {
             authorization: `Bearer ${token.value}`
         },
         onResponse({response}) {
-            console.log('response', response)
             if (response.ok) {
                 toast.add({ severity: 'success', summary: 'Copied successfully', life: 2000 });
                 dataTableData.value.items.push(response._data.additional?.data_table_item ?? response._data.item);
