@@ -4,6 +4,7 @@ import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js"
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 import MainPasswordInput from "~/components/v1/MainPasswordInput.vue";
+import MainSelectInput from "~/components/v1/MainSelectInput.vue";
 
 const props = defineProps({
     initialFormValues: {
@@ -102,12 +103,21 @@ defineExpose({onSubmit});
                         :errors="errors"
                         required
                     />
-                    <MainTextInput
+<!--                    <MainTextInput-->
+<!--                        v-model:value="protocol"-->
+<!--                        name="protocol"-->
+<!--                        label="Protocol"-->
+<!--                        :errors="errors"-->
+<!--                        required-->
+<!--                    />-->
+                    <MainSelectInput
                         v-model:value="protocol"
                         name="protocol"
                         label="Protocol"
                         :errors="errors"
-                        required
+                        :options="['smpt', 'imap']"
+                        form-prefix=""
+                        simple-options
                     />
                 </div>
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">

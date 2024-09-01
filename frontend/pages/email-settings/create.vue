@@ -22,7 +22,7 @@ let formValues = reactive({
         validate_cert: false,
         username: null,
         password: null,
-        protocol: null,
+        protocol: 'imap',
         active: false,
     },
 });
