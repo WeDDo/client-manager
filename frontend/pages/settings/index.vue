@@ -2,6 +2,13 @@
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
+
+// const { data, pending, error, refresh } = await useFetch(`${baseURL}/${homeStore.apiRouteName}?date=${budgetDate.value}`, {
+//   headers: {
+//     authorization: `Bearer ${token.value}`
+//   },
+// });
+
 </script>
 
 <template>
