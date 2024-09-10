@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmailMessageController;
 use App\Http\Controllers\EmailSettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,4 +19,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('{emailSetting}/check-connection', [EmailSettingController::class, 'checkConnection']);
     });
     Route::apiResource('email-settings', EmailSettingController::class);
+
+    Route::prefix('email-messages')->group(function () {
+         Route::get('get-emails-using-imap', [EmailMessageController::class, 'getEmailsUsingImap']);
+    });
+    Route::apiResource('email-messages', EmailMessageController::class);
 });

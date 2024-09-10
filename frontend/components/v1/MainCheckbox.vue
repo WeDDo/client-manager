@@ -1,5 +1,4 @@
 <script setup>
-
 const props = defineProps({
     name: {
         type: String,
@@ -24,15 +23,19 @@ const props = defineProps({
     showError: {
         type: Boolean,
         default: true,
-    }
-})
+    },
+    alignWithInputs: {
+        type: Boolean,
+        default: false,
+    },
+});
 
 const value = defineModel('value');
 </script>
 
 <template>
-    <div class="form-group">
-        <div class="checkbox-container">
+    <div class="form-group" :class="{'align-with-inputs': alignWithInputs}">
+        <div class="checkbox-container" :class="{'aligned': alignWithInputs}">
             <Checkbox
                 v-model="value"
                 :name="name"
@@ -68,9 +71,6 @@ const value = defineModel('value');
 .checkbox-container {
     display: flex;
     align-items: center;
-    height: 38px;
-    margin-top: 20px;
-    margin-bottom: 40px;
 }
 
 .checkbox-label {
@@ -82,5 +82,15 @@ const value = defineModel('value');
 .p-error {
     font-size: 12px;
     margin-top: 4px;
+}
+
+/* Add these classes when alignWithInputs is true */
+.align-with-inputs {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.aligned {
+    height: 38px;
 }
 </style>

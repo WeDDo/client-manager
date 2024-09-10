@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(EmailSetting::class);
     }
+
+    public function emailMessages(): HasMany
+    {
+        return $this->hasMany(EmailMessage::class);
+    }
 }

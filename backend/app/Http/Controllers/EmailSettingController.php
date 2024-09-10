@@ -16,26 +16,6 @@ class EmailSettingController extends Controller
 
     public function index(): JsonResponse
     {
-//        $imapConfig = $this->emailSettingService->setImapEmailConfig();
-//
-//        $client = Client::make($imapConfig);
-//        $client->connect();
-//
-//        $folder = $client->getFolder('INBOX');
-//        $messages = $folder->query()->since(now()->subDays(7))->get();
-//
-//        foreach ($messages as $message) {
-////            dd(
-////                $message->getSubject(),            // Subject
-////                $message->getHTMLBody(),           // HTML Body
-////                $message->getTextBody(),           // Plain Text Body
-////                $message->getFrom(),               // Sender
-////                $message->getTo(),                 // Recipients
-////                $message->getDate()->format('Y-m-d H:i:s'), // Date
-////                $message->getAttachments()         // Attachments
-////            );
-//        }
-
         return response()->json((new EmailSettingDataTable())->get());
     }
 

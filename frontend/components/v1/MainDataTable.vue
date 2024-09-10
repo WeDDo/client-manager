@@ -59,7 +59,7 @@ function handleDataTableClick(event) {
 
 function handleDataTableDoubleClick(event) {
     store.value.lastSelection = event.data;
-    router.push(`/${store.value.apiRouteName}/${event.data.id}`)
+    router.push(`/${store.value.frontRouteName}/${event.data.id}`)
 }
 
 function handleAfterDelete(id) {
@@ -126,7 +126,10 @@ onMounted(() => {
                             'text-right': column.align === 'right',
                             'pr-4': column.align === 'right',
                         }"
-                        :style="{ minWidth: column.min_width ? column.min_width + 'px' : '50px' }"
+                        :style="{
+                            minWidth: column.min_width ? column.min_width + 'px' : undefined,
+                            maxWidth: column.max_width ? column.max_width + 'px' : undefined
+                        }"
                     >
                         {{ column.header }}
                     </div>
@@ -138,7 +141,10 @@ onMounted(() => {
                             'pr-4': column.align === 'right',
                         }"
                         class="text-sm"
-                        :style="{ minWidth: column.min_width ? column.min_width + 'px' : '50px' }"
+                        :style="{
+                            minWidth: column.min_width ? column.min_width + 'px' : undefined,
+                            maxWidth: column.max_width ? column.max_width + 'px' : undefined
+                        }"
                     >
                         <slot
                             :name="column.name"
