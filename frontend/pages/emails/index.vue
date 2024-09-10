@@ -67,6 +67,13 @@ async function handleGetEmails() {
                 </div>
                 <div>
                     <Button
+                        label="Get emails"
+                        size="small"
+                        icon="pi pi-inbox"
+                        class="mr-2"
+                        @click="handleGetEmails"
+                    />
+                    <Button
                         label="Edit"
                         size="small"
                         icon="pi pi-pencil"
@@ -106,17 +113,6 @@ async function handleGetEmails() {
                         </div>
                     </template>
                 </MainDataTable>
-            </div>
-        </div>
-        <div>
-            <div>
-                <Button
-                    label="Save"
-                    size="small"
-                    icon="pi pi-save"
-                    class="mr-2"
-                    @click="handleGetEmails"
-                />
             </div>
         </div>
     </div>

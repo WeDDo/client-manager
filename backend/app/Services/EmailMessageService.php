@@ -28,7 +28,7 @@ class EmailMessageService
             $client->connect();
 
             $folder = $client->getFolder('INBOX');
-            $messages = $folder->query()->since(now()->subDays(7))->get();
+            $messages = $folder->query()->since(now()->subDays(30))->get();
 
             $existingEmailMessages = EmailMessage::where('user_id', auth()->user()->id)->get();
             $createdEmailMessages = collect();
