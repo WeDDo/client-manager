@@ -18,6 +18,13 @@ class EmailMessageService
         $this->emailSettingService = new EmailSettingService();
     }
 
+    public function show(EmailMessage $emailMessage): EmailMessage
+    {
+        $emailMessage->update(['is_seen' => true]);
+
+        return $emailMessage;
+    }
+
     public function getEmailsUsingIMAP(): Collection
     {
         return DB::transaction(function () {
@@ -50,19 +57,6 @@ class EmailMessageService
                     $purifier = new HTMLPurifier($purifierConfig);
                     $bodyHtml = $purifier->purify($message->getHTMLBody());
 
-//                    $referenceMessageIds = explode(' ', $message->getReferences()->get()[0]);
-//                    $referenceMessageIds = collect($referenceMessageIds)->map(function ($reference) {
-//                        return trim($reference, '<>');
-//                    });
-
-                    $inReplyTo = $message->getInReplyTo()?->get()[0] ?? null;
-                    $inReplyTo = $inReplyTo ? trim($inReplyTo, '<>') : null;
-
-                    $replyToEmailMessage = null;
-                    if ($inReplyTo) {
-                        $replyToEmailMessage = EmailMessage::where('message_id', $inReplyTo)->first();
-                    }
-
                     $fromEmails = collect($message->getFrom()?->get())->map(function ($fromEmailObject) {
                         return $fromEmailObject->mail;
                     });
@@ -82,6 +76,14 @@ class EmailMessageService
                     $replyToEmails = collect($message->getReplyTo()?->get())->map(function ($replyToEmailObject) {
                         return $replyToEmailObject->mail;
                     });
+
+                    $inReplyTo = $message->getInReplyTo()?->get()[0] ?? null;
+                    $inReplyTo = $inReplyTo ? trim($inReplyTo, '<>') : null;
+
+                    $replyToEmailMessage = null;
+                    if ($inReplyTo) {
+                        $replyToEmailMessage = EmailMessage::where('message_id', $inReplyTo)->first();
+                    }
 
                     $emailMessage = EmailMessage::create([
                         'message_id' => $messageId,

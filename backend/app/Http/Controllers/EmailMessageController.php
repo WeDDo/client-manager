@@ -21,6 +21,8 @@ class EmailMessageController extends Controller
 
     public function show(EmailMessage $emailMessage): JsonResponse
     {
+        $emailMessage = $this->emailMessageService->show($emailMessage);
+
         return response()->json([
             'item' => $emailMessage,
         ]);
