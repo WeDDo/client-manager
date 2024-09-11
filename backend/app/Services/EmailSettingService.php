@@ -67,7 +67,7 @@ class EmailSettingService
             throw new HttpResponseException(
                 response()->json([
                     'error' => 'connection_failed'
-                ], 400)
+                ], 401)
             );
         }
     }
