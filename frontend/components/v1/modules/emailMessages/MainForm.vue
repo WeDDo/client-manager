@@ -68,6 +68,7 @@ const {defineField, handleSubmit, resetForm, errors, values, setValues} = useFor
             is_flagged: false,
             is_answered: false,
             folder: '',
+            reply_to_email_message_id: null,
             user_id: null,
         }
     }
@@ -105,13 +106,6 @@ defineExpose({onSubmit});
             <div class="formgrid grid">
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
                     <MainTextInput
-                        v-model:value="messageId"
-                        name="message_id"
-                        label="Message ID"
-                        :errors="errors"
-                    />
-
-                    <MainTextInput
                         v-model:value="subject"
                         name="subject"
                         label="Subject"
@@ -131,6 +125,14 @@ defineExpose({onSubmit});
                         label="To"
                         :errors="errors"
                     />
+                </div>
+                <div class="col-12 sm:col-6 md:col-4 lg:col-3">
+                    <MainTextInput
+                        v-model:value="replyTo"
+                        name="reply_to"
+                        label="Reply To"
+                        :errors="errors"
+                    />
 
                     <MainTextInput
                         v-model:value="cc"
@@ -148,10 +150,11 @@ defineExpose({onSubmit});
                 </div>
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
                     <MainTextInput
-                        v-model:value="replyTo"
-                        name="reply_to"
-                        label="Reply To"
+                        v-model:value="messageId"
+                        name="message_id"
+                        label="Message ID"
                         :errors="errors"
+                        disabled
                     />
 
                     <MainTextInput
@@ -159,6 +162,7 @@ defineExpose({onSubmit});
                         name="date"
                         label="Date"
                         :errors="errors"
+                        disabled
                     />
 
                     <MainTextInput
@@ -166,6 +170,7 @@ defineExpose({onSubmit});
                         name="folder"
                         label="Folder"
                         :errors="errors"
+                        disabled
                     />
                 </div>
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
@@ -198,13 +203,6 @@ defineExpose({onSubmit});
                         v-model:value="bodyHtml"
                         name="body_html"
                         label="Body HTML"
-                        :errors="errors"
-                    />
-
-                    <MainEditor
-                        v-model:value="bodyText"
-                        name="body_text"
-                        label="Body Text"
                         :errors="errors"
                     />
                 </div>

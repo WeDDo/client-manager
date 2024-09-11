@@ -67,6 +67,13 @@ async function handleGetEmails() {
                 </div>
                 <div>
                     <Button
+                        label="Get emails"
+                        size="small"
+                        icon="pi pi-inbox"
+                        class="mr-2"
+                        @click="handleGetEmails"
+                    />
+                    <Button
                         label="Edit"
                         size="small"
                         icon="pi pi-pencil"
@@ -97,7 +104,12 @@ async function handleGetEmails() {
                 >
                     <template #is_seen="slotProps">
                         <div class="flex align-items-center">
-                            <i :class="`pi ${slotProps.data.is_answered ? 'pi-check-square' : 'pi-stop'}`" />
+                            <i :class="`pi ${slotProps.data.is_seen ? 'pi-check-square' : 'pi-stop'}`" />
+                        </div>
+                    </template>
+                    <template #is_flagged="slotProps">
+                        <div class="flex align-items-center">
+                            <i :class="`pi ${slotProps.data.is_flagged ? 'pi-check-square' : 'pi-stop'}`" />
                         </div>
                     </template>
                     <template #is_answered="slotProps">
@@ -106,17 +118,6 @@ async function handleGetEmails() {
                         </div>
                     </template>
                 </MainDataTable>
-            </div>
-        </div>
-        <div>
-            <div>
-                <Button
-                    label="Save"
-                    size="small"
-                    icon="pi pi-save"
-                    class="mr-2"
-                    @click="handleGetEmails"
-                />
             </div>
         </div>
     </div>

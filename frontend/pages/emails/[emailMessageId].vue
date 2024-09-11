@@ -48,7 +48,7 @@ const fetchHelper = useFetchHelper();
 
 const {
     data,
-    pending,
+    status,
     error,
     refresh
 } = await useFetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}`, {
