@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\EmailMessages\EmailMessageDataTable;
+use App\Http\Requests\EmailMessageRequest;
 use App\Models\EmailMessage;
 use App\Services\EmailMessageService;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +23,15 @@ class EmailMessageController extends Controller
     {
         return response()->json([
             'item' => $emailMessage,
+        ]);
+    }
+
+    public function update(EmailMessageRequest $request, EmailMessage $emailMessage): JsonResponse
+    {
+        $emailMessage->update($request->validated());
+
+        return response()->json([
+            'item' => $emailMessage
         ]);
     }
 

@@ -68,6 +68,7 @@ const {defineField, handleSubmit, resetForm, errors, values, setValues} = useFor
             is_flagged: false,
             is_answered: false,
             folder: '',
+            reply_to_email_message_id: null,
             user_id: null,
         }
     }

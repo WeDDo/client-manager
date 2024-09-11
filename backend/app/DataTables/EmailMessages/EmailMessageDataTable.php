@@ -34,6 +34,9 @@ class EmailMessageDataTable extends BaseDataTable
             'is_seen' => function ($rowData) {
                 return $rowData['is_seen'];
             },
+            'is_flagged' => function ($rowData) {
+                return $rowData['is_flagged'];
+            },
             'is_answered' => function ($rowData) {
                 return $rowData['is_answered'];
             },
@@ -47,13 +50,14 @@ class EmailMessageDataTable extends BaseDataTable
             ['name' => 'date', 'header' => 'Date', 'align' => 'left', 'min_width' => 150],
             ['name' => 'from', 'header' => 'From', 'align' => 'left', 'min_width' => 125],
             ['name' => 'is_seen', 'header' => 'Is seen', 'align' => 'left', 'min_width' => 125],
+            ['name' => 'is_flagged', 'header' => 'Is flagged', 'align' => 'left', 'min_width' => 125],
             ['name' => 'is_answered', 'header' => 'Is answered', 'align' => 'left', 'min_width' => 125],
         ];
     }
 
     public function getItems(): array
     {
-        $emailSettings = auth()->user()->emailMessages;
+        $emailSettings = auth()->user()->emailMessages()->orderByDesc('date')->get();
         $columns = $this->getColumnItemClosures();
 
         $data = [];

@@ -25,9 +25,19 @@ class EmailMessage extends Model
         'is_flagged',
         'is_answered',
         'folder',
-        'thread_id',
+        'reply_to_email_message_id',
         'user_id',
     ];
+
+    // todo
+    public function getAllRepliedToEmailMessages()
+    {
+
+    }
+
+    public function replyToEmailMessage(): BelongsTo
+    {
+        return $this->belongsTo(EmailMessage::class, 'reply_to_email_message_id', 'id');    }
 
     public function user(): BelongsTo
     {
