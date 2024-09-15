@@ -42,7 +42,9 @@ class EmailSettingService
     public function checkActiveEmailSettings(array $data, EmailSetting $emailSetting): void
     {
         if (isset($data['active']) && $data['active']) {
-            auth()->user()->emailSettings()->where('id', '<>', $emailSetting->id)->update(['active' => false]);
+            auth()->user()->emailSettings()
+                ->where('id', '<>', $emailSetting->id)
+                ->update(['active' => false]);
         }
     }
 //    public function getEmailsFromInbox()
@@ -72,11 +74,14 @@ class EmailSettingService
         }
     }
 
-    public function setImapEmailConfig(?EmailSetting $emailSetting = null)
+    public function setImapEmailConfig(?EmailSetting $emailSetting = null): array
     {
         $user = auth()->user();
         if (!$emailSetting) {
-            $emailSetting = $user->emailSettings()->where('active', true)->first();
+            $emailSetting = $user->emailSettings()
+                ->where('protocol', EmailSetting::$imapProtocol)
+                ->where('active', true)
+                ->first();
         }
 
         config([
@@ -92,6 +97,31 @@ class EmailSettingService
         ]);
 
         return config("imap.users.$user->id");
+    }
+
+    public function setSmptEmailConfig(?EmailSetting $emailSetting = null): array
+    {
+        $user = auth()->user();
+        if (!$emailSetting) {
+            $emailSetting = $user->emailSettings()
+                ->where('protocol', EmailSetting::$smptProtocol)
+                ->where('active', true)
+                ->first();
+        }
+
+        config([
+            "smpt.users.$user->id" => [
+                'host' => $emailSetting->host,
+                'port' => $emailSetting->port,
+                'encryption' => $emailSetting->encryption,
+                'validate_cert' => $emailSetting->validate_cert,
+                'username' => $emailSetting->username,
+                'password' => Crypt::decryptString($emailSetting->password),
+                'protocol' => $emailSetting->protocol,
+            ]
+        ]);
+
+        return config("smpt.users.$user->id");
     }
 }
 

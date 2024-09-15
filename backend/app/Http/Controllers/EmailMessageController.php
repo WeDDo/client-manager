@@ -45,4 +45,11 @@ class EmailMessageController extends Controller
             'items' => $createdEmailMessages
         ]);
     }
+
+    public function sendEmailUsingSmpt(): JsonResponse
+    {
+        return response()->json([
+
+        ]);
+    }
 }
