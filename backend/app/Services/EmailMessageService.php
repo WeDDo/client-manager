@@ -25,7 +25,7 @@ class EmailMessageService
         return $emailMessage;
     }
 
-    public function sendEmailUsingSmpt()
+    public function sendEmailUsingSmpt(): void
     {
 
     }

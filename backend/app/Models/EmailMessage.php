@@ -29,15 +29,40 @@ class EmailMessage extends Model
         'user_id',
     ];
 
-    // todo
-    public function getAllRepliedToEmailMessages()
+    public function getAdditionalData(): array
     {
-
+        return [
+//            'conversation' => $this->getEmailConversation(),
+        ];
     }
+
+    // todo
+//    public function getAllRepliedToEmailMessages()
+//    {
+//
+//    }
+
+//    public function getEmailConversation(): array
+//    {
+//        $conversation = [];
+//        $this->collectEmailThread($this, $conversation);
+//
+//        return $conversation;
+//    }
+//
+//    private function collectEmailThread(EmailMessage $emailMessage, array &$conversation): void
+//    {
+//        $conversation[] = $emailMessage;
+//
+//        if ($emailMessage->replyToMessage) {
+//            $this->collectEmailThread($emailMessage->replyToMessage, $conversation);
+//        }
+//    }
 
     public function replyToEmailMessage(): BelongsTo
     {
-        return $this->belongsTo(EmailMessage::class, 'reply_to_email_message_id', 'id');    }
+        return $this->belongsTo(EmailMessage::class, 'reply_to_email_message_id', 'id');
+    }
 
     public function user(): BelongsTo
     {

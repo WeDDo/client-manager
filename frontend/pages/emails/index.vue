@@ -17,11 +17,10 @@ const store = useEmailMessageStore();
 const mainDataTableRef = ref();
 const confirmDeleteDialogRef = ref();
 
-const selectedFolder = ref('INBOX');
 
 const fetchHelper = useFetchHelper();
 
-const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}${selectedFolder.value ? `?selected_folder=${selectedFolder.value}` : ''}`, {
+const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}${store.selectedFolder ? `?selected_folder=${store.selectedFolder}` : ''}`, {
   headers: {
     authorization: `Bearer ${token.value}`
   },
@@ -38,7 +37,7 @@ watch(data, () => {
 });
 
 async function fetchEmails() {
-    await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${selectedFolder.value}`, {
+    await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, {
         method: 'GET',
         headers: {
             authorization: `Bearer ${token.value}`
@@ -54,10 +53,10 @@ async function fetchEmails() {
     });
 }
 
-watch(selectedFolder, fetchEmails);
+watch(() => store.selectedFolder, fetchEmails);
 
 function changeFolder() {
-    selectedFolder.value = selectedFolder.value === 'INBOX' ? 'SENT' : 'INBOX';
+    store.selectedFolder = store.selectedFolder === 'INBOX' ? 'SENT' : 'INBOX';
 }
 
 async function handleGetEmails() {
@@ -88,7 +87,7 @@ async function handleGetEmails() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email messages ({{ selectedFolder }})
+                    Email messages ({{ store.selectedFolder }})
                 </div>
                 <div>
                     <Button
