@@ -41,7 +41,6 @@ let formValues = reactive({
 const mainFormRef = ref();
 let tabs = reactive([
     {name: 'Main', ref: mainFormRef, errors: {}},
-    {name: 'Attachments', ref: null, errors: {}},
 ]);
 
 const formHelper = useFormHelper(formValues, tabs);
@@ -128,9 +127,6 @@ async function handleUpdate() {
                             @handle-submit="handleUpdate()"
                             @set-errors="formHelper.setErrors"
                         />
-                    </template>
-                    <template #tab1>
-                        Attachments
                     </template>
                 </BasicTabs>
             </div>
