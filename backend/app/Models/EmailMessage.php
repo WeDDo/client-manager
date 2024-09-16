@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EmailMessage extends Model
 {
@@ -28,6 +29,13 @@ class EmailMessage extends Model
         'reply_to_email_message_id',
         'user_id',
     ];
+
+    public function getAllRelations(): array
+    {
+        return [
+            'attachments' => $this->attachments,
+        ];
+    }
 
     public function getAdditionalData(): array
     {
@@ -58,6 +66,7 @@ class EmailMessage extends Model
      */
     private function collectEmailThread(EmailMessage $emailMessage, array &$conversation): void
     {
+        $emailMessage->load('attachments');
         $conversation[] = $emailMessage;
 
         if ($emailMessage->replyToEmailMessage) {
@@ -83,5 +92,13 @@ class EmailMessage extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function attachments(): HasMany
+    {
+        $this->keyType = 'string';
+
+        return $this->hasMany(Attachment::class, 'related_id')
+            ->where('related_name', 'email_messages');
     }
 }

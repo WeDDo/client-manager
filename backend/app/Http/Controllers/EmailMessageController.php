@@ -25,6 +25,7 @@ class EmailMessageController extends Controller
 
         return response()->json([
             'item' => $emailMessage,
+            'relations' => $emailMessage->getAllRelations(),
             'additional'=> $emailMessage->getAdditionalData(),
         ]);
     }

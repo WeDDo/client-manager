@@ -218,6 +218,12 @@ defineExpose({onSubmit});
                                 <div><strong>From:</strong> {{ email.from }}</div>
                                 <div><strong>To:</strong> {{ email.to }}</div>
                                 <div><strong>Date:</strong> {{ email.date }}</div>
+                                <div>
+                                    <strong>Attachments ({{ email.attachments?.length ?? 0 }}):</strong>
+                                    <div v-for="attachment in email.attachments" :key="attachment.id">
+                                        {{attachment.filename}}
+                                    </div>
+                                </div>
                                 <div><strong>HTML Body:</strong></div>
                                 <div v-html="email.body_html"></div>
                             </div>

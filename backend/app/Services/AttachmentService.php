@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Attachment;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttachmentService
 {
@@ -40,6 +41,17 @@ class AttachmentService
             'storage_url' => Storage::url($filePath),
             'filename' => $filename ?? $fileName,
         ]);
+    }
+
+    public function downloadAttachment(Attachment $attachment): StreamedResponse
+    {
+        $filePath = str_replace(Storage::url(''), '', $attachment->storage_url);
+
+        if (!Storage::exists($filePath)) {
+            throw new \Exception('File not found.');
+        }
+
+        return Storage::download($filePath, $attachment->filename);
     }
 }
 
