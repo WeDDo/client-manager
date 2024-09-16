@@ -17,7 +17,6 @@ const store = useEmailMessageStore();
 const mainDataTableRef = ref();
 const confirmDeleteDialogRef = ref();
 
-
 const fetchHelper = useFetchHelper();
 
 const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}${store.selectedFolder ? `?selected_folder=${store.selectedFolder}` : ''}`, {
