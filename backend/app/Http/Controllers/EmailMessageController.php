@@ -25,6 +25,8 @@ class EmailMessageController extends Controller
 
         return response()->json([
             'item' => $emailMessage,
+            'relations' => $emailMessage->getAllRelations(),
+            'additional'=> $emailMessage->getAdditionalData(),
         ]);
     }
 
@@ -43,6 +45,13 @@ class EmailMessageController extends Controller
 
         return response()->json([
             'items' => $createdEmailMessages
+        ]);
+    }
+
+    public function sendEmailUsingSmpt(): JsonResponse
+    {
+        return response()->json([
+
         ]);
     }
 }

@@ -7,6 +7,8 @@ export const useEmailMessageStore = defineStore('emailMessage', {
         apiRouteName: 'email-messages',
         frontRouteName: 'emails',
         lastSelection: null,
+
+        selectedFolder: 'INBOX'
     }),
     actions: {
 

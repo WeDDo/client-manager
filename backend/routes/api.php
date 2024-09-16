@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailMessageController;
 use App\Http\Controllers\EmailSettingController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -14,6 +14,13 @@ Route::get('sanctum/csrf-cookie', function () {
 });
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::prefix('attachments')->group(function () {
+        Route::prefix('{attachment}')->group(function () {
+            Route::get('download', [AttachmentController::class, 'downloadAttachment']);
+        });
+    });
+    Route::apiResource('attachments', AttachmentController::class);
+
     Route::prefix('email-settings')->group(function () {
         Route::get('{emailSetting}/copy', [EmailSettingController::class, 'copy']);
         Route::get('{emailSetting}/check-connection', [EmailSettingController::class, 'checkConnection']);
@@ -21,7 +28,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('email-settings', EmailSettingController::class);
 
     Route::prefix('email-messages')->group(function () {
-         Route::get('get-emails-using-imap', [EmailMessageController::class, 'getEmailsUsingImap']);
+        Route::get('get-emails-using-imap', [EmailMessageController::class, 'getEmailsUsingImap']);
     });
     Route::apiResource('email-messages', EmailMessageController::class);
 });

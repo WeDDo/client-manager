@@ -57,7 +57,13 @@ class EmailMessageDataTable extends BaseDataTable
 
     public function getItems(): array
     {
-        $emailSettings = auth()->user()->emailMessages()->orderByDesc('date')->get();
+        $emailSettings = auth()->user()->emailMessages()
+            ->when(request('selected_folder'), function ($query) {
+                $query->where('folder', request('selected_folder') === 'SENT' ? 'Išsiųsti laiškai' : request('selected_folder'));
+            })
+            ->orderByDesc('date')
+            ->get();
+
         $columns = $this->getColumnItemClosures();
 
         $data = [];

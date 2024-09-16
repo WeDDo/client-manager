@@ -19,7 +19,7 @@ const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
-const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}`, {
+const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}${store.selectedFolder ? `?selected_folder=${store.selectedFolder}` : ''}`, {
   headers: {
     authorization: `Bearer ${token.value}`
   },
@@ -35,6 +35,29 @@ watch(data, () => {
     dataTableData.value = data.value;
 });
 
+async function fetchEmails() {
+    await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                dataTableData.value = response._data;
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            mainStore.actionLoading = false;
+        },
+    });
+}
+
+watch(() => store.selectedFolder, fetchEmails);
+
+function changeFolder() {
+    store.selectedFolder = store.selectedFolder === 'INBOX' ? 'SENT' : 'INBOX';
+}
+
 async function handleGetEmails() {
     mainStore.actionLoading = true;
 
@@ -45,7 +68,7 @@ async function handleGetEmails() {
         },
         onResponse({response}) {
             if (response.ok) {
-                refresh();
+                fetchEmails();
                 toast.add({ severity: 'success', summary: 'Emails created successfully', life: 2000 });
             } else {
                 fetchHelper.handleResponseError(response);
@@ -63,14 +86,22 @@ async function handleGetEmails() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email messages
+                    Email messages ({{ store.selectedFolder }})
                 </div>
                 <div>
+                    <Button
+                        label="Change Folder"
+                        size="small"
+                        icon="pi pi-envelope"
+                        class="mr-2"
+                        @click="changeFolder"
+                    />
                     <Button
                         label="Get emails"
                         size="small"
                         icon="pi pi-inbox"
                         class="mr-2"
+                        :loading="mainStore.actionLoading"
                         @click="handleGetEmails"
                     />
                     <Button

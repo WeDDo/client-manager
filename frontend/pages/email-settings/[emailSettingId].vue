@@ -96,7 +96,6 @@ async function checkConnection() {
                 toast.add({severity: 'success', summary: 'Connection established!', life: 2000});
             } else {
                 checkConnectionResult.value = 'error';
-                toast.add({severity: 'error', summary: 'Authorisation error!', life: 5000});
                 fetchHelper.handleResponseError(response);
             }
             mainStore.actionLoading = false;
