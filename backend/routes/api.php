@@ -14,8 +14,10 @@ Route::get('sanctum/csrf-cookie', function () {
 });
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::prefix('{attachment}')->group(function () {
-        Route::get('download', [AttachmentController::class, 'downloadAttachment']);
+    Route::prefix('attachments')->group(function () {
+        Route::prefix('{attachment}')->group(function () {
+            Route::get('download', [AttachmentController::class, 'downloadAttachment']);
+        });
     });
     Route::apiResource('attachments', AttachmentController::class);
 

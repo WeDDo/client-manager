@@ -3,6 +3,13 @@ import * as yup from "yup";
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
+import {useFetchHelper} from "~/composables/useFetchHelper.js";
+
+const {public: {baseURL}} = useRuntimeConfig();
+
+const token = useCookie('token');
+
+const fetchHelper = useFetchHelper();
 
 const props = defineProps({
     initialFormValues: {
@@ -94,6 +101,24 @@ const onSubmit = handleSubmit((values) => {
 });
 
 defineExpose({onSubmit});
+
+async function handleDownloadAttachment(attachment) {
+    await $fetch(`${baseURL}/attachments/${attachment.id}/download`, {
+        method: 'GET',
+        responseType: 'blob',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({ response }) {
+            if (response.ok) {
+                fetchHelper.handleDownloadBlob(response);
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            // mainStore.actionLoading = false;
+        },
+    })
+}
 </script>
 
 <template>
@@ -220,8 +245,15 @@ defineExpose({onSubmit});
                                 <div><strong>Date:</strong> {{ email.date }}</div>
                                 <div>
                                     <strong>Attachments ({{ email.attachments?.length ?? 0 }}):</strong>
-                                    <div v-for="attachment in email.attachments" :key="attachment.id">
+                                    <div
+                                        v-for="attachment in email.attachments"
+                                        :key="attachment.id"
+                                    >
                                         {{attachment.filename}}
+                                        <i
+                                            class="pi pi-download cursor-pointer"
+                                            @click="handleDownloadAttachment(attachment)"
+                                        />
                                     </div>
                                 </div>
                                 <div><strong>HTML Body:</strong></div>
