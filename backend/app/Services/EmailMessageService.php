@@ -27,7 +27,7 @@ class EmailMessageService
         return $emailMessage;
     }
 
-    public function sendEmailUsingSmpt(): void
+    public function sendEmailUsingSMTP(): void
     {
 
     }
@@ -143,7 +143,6 @@ class EmailMessageService
 
         return $createdEmailMessages;
     }
-
 }
 
 
