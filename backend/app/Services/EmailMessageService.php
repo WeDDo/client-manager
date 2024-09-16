@@ -129,17 +129,9 @@ class EmailMessageService
                 ]);
 
                 foreach ($message->getAttachments() as $attachment) {
-//                    dd($attachment->name);
-//                    dd($attachment->content);
-//                    $this->attachmentService->store([
-//                        'file' =>
-//                        'related_name' => 'email_messages',
-//                        'related_id' => $emailMessage->id,
-//                    ]);
-
                     $this->attachmentService->store([
-                        'name' => $attachment->name,        // File name
-                        'content' => $attachment->content,  // File content
+                        'name' => $attachment->name,
+                        'content' => $attachment->content,
                         'related_name' => 'email_messages',
                         'related_id' => $emailMessage->id,
                     ]);
