@@ -11,10 +11,12 @@ use Webklex\IMAP\Facades\Client;
 
 class EmailMessageService
 {
+    protected AttachmentService $attachmentService;
     protected EmailSettingService $emailSettingService;
 
     public function __construct()
     {
+        $this->attachmentService = new AttachmentService();
         $this->emailSettingService = new EmailSettingService();
     }
 
@@ -125,6 +127,23 @@ class EmailMessageService
                     'reply_to_email_message_id' => $replyToEmailMessage?->id,
                     'user_id' => auth()->id()
                 ]);
+
+                foreach ($message->getAttachments() as $attachment) {
+//                    dd($attachment->name);
+//                    dd($attachment->content);
+//                    $this->attachmentService->store([
+//                        'file' =>
+//                        'related_name' => 'email_messages',
+//                        'related_id' => $emailMessage->id,
+//                    ]);
+
+                    $this->attachmentService->store([
+                        'name' => $attachment->name,        // File name
+                        'content' => $attachment->content,  // File content
+                        'related_name' => 'email_messages',
+                        'related_id' => $emailMessage->id,
+                    ]);
+                }
 
                 $createdEmailMessages->push($emailMessage);
             }
