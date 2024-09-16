@@ -97,7 +97,6 @@ const onSubmit = handleSubmit((values) => {
 });
 
 defineExpose({onSubmit});
-
 </script>
 
 <template>
@@ -198,13 +197,35 @@ defineExpose({onSubmit});
                         align-with-inputs
                     />
                 </div>
+<!--                <div class="col-12">-->
+<!--                    <MainEditor-->
+<!--                        v-model:value="bodyHtml"-->
+<!--                        name="body_html"-->
+<!--                        label="Body HTML"-->
+<!--                        :errors="errors"-->
+<!--                    />-->
+<!--                </div>-->
                 <div class="col-12">
-                    <MainEditor
-                        v-model:value="bodyHtml"
-                        name="body_html"
-                        label="Body HTML"
-                        :errors="errors"
-                    />
+                    <Accordion multiple>
+                        <AccordionTab
+                            v-for="(email, index) in initialFormValues.additional.conversation"
+                            :key="index"
+                        >
+                            <template #header>
+                                <div>
+                                    <div>{{`${email.subject} - ${email.from}`}}</div>
+                                    <div class="text-xs">{{ email.date }}</div>
+                                </div>
+                            </template>
+                            <div>
+                                <div><strong>From:</strong> {{ email.from }}</div>
+                                <div><strong>To:</strong> {{ email.to }}</div>
+                                <div><strong>Date:</strong> {{ email.date }}</div>
+                                <div><strong>HTML Body:</strong></div>
+                                <div v-html="email.body_html"></div>
+                            </div>
+                        </AccordionTab>
+                    </Accordion>
                 </div>
             </div>
         </form>

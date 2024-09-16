@@ -102,6 +102,7 @@ async function handleGetEmails() {
                         size="small"
                         icon="pi pi-inbox"
                         class="mr-2"
+                        :loading="mainStore.actionLoading"
                         @click="handleGetEmails"
                     />
                     <Button

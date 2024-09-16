@@ -32,38 +32,54 @@ class EmailMessage extends Model
     public function getAdditionalData(): array
     {
         return [
-//            'conversation' => $this->getEmailConversation(),
+            'conversation' => $this->getEmailConversation(),
         ];
     }
 
-    // todo
-//    public function getAllRepliedToEmailMessages()
-//    {
-//
-//    }
+    /**
+     * Get all replied-to emails in the conversation.
+     *
+     * @return array
+     */
+    public function getEmailConversation(): array
+    {
+        $conversation = [];
+        $this->collectEmailThread($this, $conversation);
 
-//    public function getEmailConversation(): array
-//    {
-//        $conversation = [];
-//        $this->collectEmailThread($this, $conversation);
-//
-//        return $conversation;
-//    }
-//
-//    private function collectEmailThread(EmailMessage $emailMessage, array &$conversation): void
-//    {
-//        $conversation[] = $emailMessage;
-//
-//        if ($emailMessage->replyToMessage) {
-//            $this->collectEmailThread($emailMessage->replyToMessage, $conversation);
-//        }
-//    }
+        return $conversation;
+    }
 
+    /**
+     * Recursively collect the email thread in a conversation.
+     *
+     * @param EmailMessage $emailMessage
+     * @param array &$conversation
+     * @return void
+     */
+    private function collectEmailThread(EmailMessage $emailMessage, array &$conversation): void
+    {
+        $conversation[] = $emailMessage;
+
+        if ($emailMessage->replyToEmailMessage) {
+            $this->collectEmailThread($emailMessage->replyToEmailMessage, $conversation);
+        }
+    }
+
+    /**
+     * Get the email this message is replying to.
+     *
+     * @return BelongsTo
+     */
     public function replyToEmailMessage(): BelongsTo
     {
         return $this->belongsTo(EmailMessage::class, 'reply_to_email_message_id', 'id');
     }
 
+    /**
+     * Get the user associated with this email.
+     *
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
