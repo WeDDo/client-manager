@@ -249,11 +249,11 @@ async function handleDownloadAttachment(attachment) {
                                         v-for="attachment in email.attachments"
                                         :key="attachment.id"
                                     >
-                                        {{attachment.filename}}
                                         <i
                                             class="pi pi-download cursor-pointer"
                                             @click="handleDownloadAttachment(attachment)"
                                         />
+                                        {{attachment.filename}}
                                     </div>
                                 </div>
                                 <div><strong>HTML Body:</strong></div>
