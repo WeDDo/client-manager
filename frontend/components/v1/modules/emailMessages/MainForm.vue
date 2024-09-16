@@ -3,9 +3,6 @@ import * as yup from "yup";
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
-import MainPasswordInput from "~/components/v1/MainPasswordInput.vue";
-import MainSelectInput from "~/components/v1/MainSelectInput.vue";
-import MainEditor from "~/components/v1/MainEditor.vue";
 
 const props = defineProps({
     initialFormValues: {
