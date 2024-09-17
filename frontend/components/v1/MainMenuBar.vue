@@ -102,7 +102,7 @@ const items = ref([
         label: 'Emails',
         icon: 'pi pi-envelope',
         routeName: '/emails',
-        badge: 3
+        // badge: 3
     },
     {
         label: 'Email settings',

@@ -11,7 +11,7 @@ class EmailSetting extends Model
 {
     use HasFactory;
 
-    public static string $smptProtocol = 'smpt';
+    public static string $smtpProtocol = 'smtp';
     public static string $imapProtocol = 'imap';
 
     protected $fillable = [

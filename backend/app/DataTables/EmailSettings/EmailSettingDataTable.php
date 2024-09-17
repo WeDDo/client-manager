@@ -52,12 +52,12 @@ class EmailSettingDataTable extends BaseDataTable
     public function getActiveColumns(): array
     {
         return [
-            ['name' => 'id', 'header' => 'Id', 'align' => 'left'],
             ['name' => 'host', 'header' => 'Host', 'align' => 'left'],
             ['name' => 'port', 'header' => 'Port', 'align' => 'right'],
             ['name' => 'encryption', 'header' => 'Encryption', 'align' => 'left'],
             ['name' => 'username', 'header' => 'Username', 'align' => 'left'],
             ['name' => 'protocol', 'header' => 'Protocol', 'align' => 'left'],
+            ['name' => 'active', 'header' => 'Active', 'align' => 'left'],
         ];
     }
 

@@ -41,4 +41,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(EmailMessage::class);
     }
+
+    public function emailInboxSettings(): HasMany
+    {
+        return $this->hasMany(EmailInboxSetting::class);
+    }
 }

@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Mail\Email;
+use App\Models\EmailInboxSetting;
 use App\Models\EmailMessage;
+use App\Models\EmailSetting;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Webklex\IMAP\Facades\Client;
 
 class EmailMessageService
@@ -27,9 +31,33 @@ class EmailMessageService
         return $emailMessage;
     }
 
-    public function sendEmailUsingSMTP(): void
+    public function getAdditionalData(): array
     {
+        return [
+            'email_inbox_settings' => EmailInboxSetting::where('user_id', auth()->user()->id)->pluck('name'),
+        ];
+    }
 
+    public function sendEmailUsingSMTP(
+        array $toEmails = [],
+        array $ccEmails = [],
+        array $bccEmails = [],
+    ): void
+    {
+        $emailSetting = auth()->user()->emailSettings()
+            ->where('protocol', EmailSetting::$smtpProtocol)
+            ->where('active', true)
+            ->first();
+
+        $this->emailSettingService->setSmtpEmailConfig($emailSetting);
+
+        DB::transaction(function () use ($toEmails, $ccEmails, $bccEmails) {
+            Mail::mailer('smtp.users.'. auth()->user()->id)
+                ->to($toEmails)
+                ->cc($ccEmails)
+                ->cc($bccEmails)
+                ->send(new Email());
+        });
     }
 
     public function getEmailsUsingIMAP(): Collection
@@ -37,13 +65,26 @@ class EmailMessageService
         return DB::transaction(function () {
             $imapConfig = $this->emailSettingService->setImapEmailConfig();
 
-            $inboxMessages = $this->fetchEmailsFromFolder($imapConfig, 'INBOX', 30);
-            $sentMessages = $this->fetchEmailsFromFolder($imapConfig, 'Išsiųsti laiškai', 30);
+//            $inboxMessages = $this->fetchEmailsFromFolder($imapConfig, 'INBOX', 30);
+//            $sentMessages = $this->fetchEmailsFromFolder($imapConfig, 'Išsiųsti laiškai', 30);
+//
+//            $processedInboxEmails = $this->processEmails($inboxMessages, 'INBOX');
+//            $processedSentEmails = $this->processEmails($sentMessages, 'Išsiųsti laiškai');
+//
+//            return $processedInboxEmails->merge($processedSentEmails);
 
-            $processedInboxEmails = $this->processEmails($inboxMessages, 'INBOX');
-            $processedSentEmails = $this->processEmails($sentMessages, 'Išsiųsti laiškai');
+            // Retrieve all inbox settings for the authenticated user
+            $emailInboxSettings = EmailInboxSetting::where('user_id', auth()->id())->get();
+            $allProcessedEmails = collect();
 
-            return $processedInboxEmails->merge($processedSentEmails);
+            // Iterate through each inbox setting and fetch emails
+            foreach ($emailInboxSettings as $inboxSetting) {
+                $inboxMessages = $this->fetchEmailsFromFolder($imapConfig, $inboxSetting->name, 30);
+                $processedInboxEmails = $this->processEmails($inboxMessages, $inboxSetting->name);
+                $allProcessedEmails = $allProcessedEmails->merge($processedInboxEmails);
+            }
+
+            return $allProcessedEmails;
         });
     }
 

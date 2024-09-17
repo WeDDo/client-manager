@@ -44,6 +44,7 @@ class EmailSettingService
         if (isset($data['active']) && $data['active']) {
             auth()->user()->emailSettings()
                 ->where('id', '<>', $emailSetting->id)
+                ->where('protocol', $emailSetting->protocol)
                 ->update(['active' => false]);
         }
     }
@@ -99,29 +100,32 @@ class EmailSettingService
         return config("imap.users.$user->id");
     }
 
-    public function setSmptEmailConfig(?EmailSetting $emailSetting = null): array
+    public function setSmtpEmailConfig(?EmailSetting $emailSetting = null): array
     {
         $user = auth()->user();
         if (!$emailSetting) {
             $emailSetting = $user->emailSettings()
-                ->where('protocol', EmailSetting::$smptProtocol)
+                ->where('protocol', EmailSetting::$smtpProtocol)
                 ->where('active', true)
                 ->first();
         }
 
-        config([
-            "smpt.users.$user->id" => [
-                'host' => $emailSetting->host,
-                'port' => $emailSetting->port,
-                'encryption' => $emailSetting->encryption,
-                'validate_cert' => $emailSetting->validate_cert,
-                'username' => $emailSetting->username,
-                'password' => Crypt::decryptString($emailSetting->password),
-                'protocol' => $emailSetting->protocol,
-            ]
-        ]);
+        $config = [
+            'transport' => 'smtp',
+            'host' => $emailSetting->host,
+            'port' => $emailSetting->port,
+            'encryption' => $emailSetting->encryption,
+            'username' => $emailSetting->username,
+            'password' => Crypt::decryptString($emailSetting->password),
+            'auth_mode' => 'LOGIN',
+            'authentication' => 'LOGIN',
+            'timeout' => null,
+            'validate_cert' => $emailSetting->validate_cert ?? true,
+        ];
 
-        return config("smpt.users.$user->id");
+        config(["mail.mailers.smtp.users.$user->id" => $config]);
+
+        return config("mail.mailers.smtp.users.$user->id");
     }
 }
 

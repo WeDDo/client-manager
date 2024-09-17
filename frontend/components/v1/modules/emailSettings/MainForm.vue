@@ -110,7 +110,7 @@ defineExpose({onSubmit});
                         name="protocol"
                         label="Protocol"
                         :errors="errors"
-                        :options="['smpt', 'imap']"
+                        :options="['smtp', 'imap']"
                         form-prefix=""
                         simple-options
                     />

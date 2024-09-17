@@ -1,9 +1,10 @@
 <script setup>
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
-import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
+import { useEmailMessageStore } from "~/stores/modules/emailMessage.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
+import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
 
-const {public: {baseURL}} = useRuntimeConfig();
+const { public: { baseURL } } = useRuntimeConfig();
 
 const route = useRoute();
 const router = useRouter();
@@ -14,15 +15,16 @@ const token = useCookie('token');
 
 const dataTableData = ref();
 const store = useEmailMessageStore();
+const emailInboxSettingStore = useEmailInboxSettingStore();
 const mainDataTableRef = ref();
 const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
 const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}${store.selectedFolder ? `?selected_folder=${store.selectedFolder}` : ''}`, {
-  headers: {
-    authorization: `Bearer ${token.value}`
-  },
+    headers: {
+        authorization: `Bearer ${token.value}`
+    },
 });
 
 if (!error.value) {
@@ -41,7 +43,7 @@ async function fetchEmails() {
         headers: {
             authorization: `Bearer ${token.value}`
         },
-        onResponse({response}) {
+        onResponse({ response }) {
             if (response.ok) {
                 dataTableData.value = response._data;
             } else {
@@ -55,7 +57,15 @@ async function fetchEmails() {
 watch(() => store.selectedFolder, fetchEmails);
 
 function changeFolder() {
-    store.selectedFolder = store.selectedFolder === 'INBOX' ? 'SENT' : 'INBOX';
+    const inboxSettings = dataTableData.value?.additional_data?.email_inbox_settings ?? [];
+    const currentFolderIndex = inboxSettings.indexOf(store.selectedFolder);
+
+    if (currentFolderIndex >= 0 && inboxSettings.length > 0) {
+        const nextIndex = (currentFolderIndex + 1) % inboxSettings.length;
+        store.selectedFolder = inboxSettings[nextIndex];
+    } else if (inboxSettings.length > 0) {
+        store.selectedFolder = inboxSettings[0];
+    }
 }
 
 async function handleGetEmails() {
@@ -66,7 +76,7 @@ async function handleGetEmails() {
         headers: {
             authorization: `Bearer ${token.value}`
         },
-        onResponse({response}) {
+        onResponse({ response }) {
             if (response.ok) {
                 fetchEmails();
                 toast.add({ severity: 'success', summary: 'Emails created successfully', life: 2000 });
@@ -77,7 +87,6 @@ async function handleGetEmails() {
         },
     });
 }
-
 </script>
 
 <template>
@@ -101,8 +110,17 @@ async function handleGetEmails() {
                         size="small"
                         icon="pi pi-inbox"
                         class="mr-2"
+                        :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"
                         :loading="mainStore.actionLoading"
                         @click="handleGetEmails"
+                    />
+                    <Button
+                        label="Inbox settings"
+                        size="small"
+                        icon="pi pi-sliders-h"
+                        class="mr-2"
+                        :disabled="mainStore.actionLoading"
+                        @click="() => router.push(`/${emailInboxSettingStore.frontRouteName}`)"
                     />
                     <Button
                         label="Edit"
@@ -155,5 +173,4 @@ async function handleGetEmails() {
 </template>
 
 <style scoped>
-
 </style>
