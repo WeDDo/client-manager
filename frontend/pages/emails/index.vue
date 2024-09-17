@@ -99,7 +99,7 @@ async function handleGetEmails() {
                 </div>
                 <div>
                     <Button
-                        label="Change Folder"
+                        label="Change Inbox"
                         size="small"
                         icon="pi pi-envelope"
                         class="mr-2"
