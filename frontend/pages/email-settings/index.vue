@@ -111,6 +111,11 @@ async function handleCopy() {
                     v-model:store="store"
                     :delete-text-template="deleteTextTemplate"
                 >
+                    <template #active="slotProps">
+                        <div class="flex align-items-center">
+                            <i :class="`pi ${slotProps.data.active ? 'pi-check-square' : 'pi-stop'}`" />
+                        </div>
+                    </template>
                 </MainDataTable>
             </div>
         </div>

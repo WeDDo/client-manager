@@ -44,6 +44,7 @@ class EmailSettingService
         if (isset($data['active']) && $data['active']) {
             auth()->user()->emailSettings()
                 ->where('id', '<>', $emailSetting->id)
+                ->where('protocol', $emailSetting->protocol)
                 ->update(['active' => false]);
         }
     }

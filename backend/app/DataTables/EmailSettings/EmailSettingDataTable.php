@@ -57,6 +57,7 @@ class EmailSettingDataTable extends BaseDataTable
             ['name' => 'encryption', 'header' => 'Encryption', 'align' => 'left'],
             ['name' => 'username', 'header' => 'Username', 'align' => 'left'],
             ['name' => 'protocol', 'header' => 'Protocol', 'align' => 'left'],
+            ['name' => 'active', 'header' => 'Active', 'align' => 'left'],
         ];
     }
 
