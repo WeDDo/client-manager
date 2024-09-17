@@ -4,6 +4,7 @@ namespace App\DataTables\EmailMessages;
 
 use App\DataTables\BaseDataTable;
 use App\Models\EmailSetting;
+use App\Services\EmailMessageService;
 
 class EmailMessageDataTable extends BaseDataTable
 {
@@ -13,6 +14,7 @@ class EmailMessageDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'additional_data' => (new EmailMessageService())->getAdditionalData(),
         ];
     }
 
@@ -59,8 +61,8 @@ class EmailMessageDataTable extends BaseDataTable
     {
         $emailSettings = auth()->user()->emailMessages()
             ->when(request('selected_folder'), function ($query) {
-                $query->where('folder', request('selected_folder') === 'SENT' ? 'Išsiųsti laiškai' : request('selected_folder'));
-            })
+                $query->where('folder', request('selected_folder'));
+            }) // todo fix folder
             ->orderByDesc('date')
             ->get();
 

@@ -102,12 +102,17 @@ const items = ref([
         label: 'Emails',
         icon: 'pi pi-envelope',
         routeName: '/emails',
-        badge: 3
+        // badge: 3
     },
     {
         label: 'Email settings',
         icon: 'pi pi-sliders-v',
         routeName: '/email-settings',
+    },
+    {
+        label: 'Email inbox settings',
+        icon: 'pi pi-sliders-h',
+        routeName: '/email-inbox-settings',
     },
 ]);
 

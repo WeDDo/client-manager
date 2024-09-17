@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DataTables\EmailMessages\EmailMessageDataTable;
 use App\Http\Requests\EmailMessageRequest;
+use App\Http\Requests\SendEmailRequest;
+use App\Models\EmailInboxSetting;
 use App\Models\EmailMessage;
 use App\Services\EmailMessageService;
 use Illuminate\Http\JsonResponse;
@@ -39,6 +41,11 @@ class EmailMessageController extends Controller
         ]);
     }
 
+    public function getAdditionalData(): JsonResponse
+    {
+        return response()->json($this->emailMessageService->getAdditionalData());
+    }
+
     public function getEmailsUsingImap(): JsonResponse
     {
         $createdEmailMessages = $this->emailMessageService->getEmailsUsingImap();
@@ -48,10 +55,18 @@ class EmailMessageController extends Controller
         ]);
     }
 
-    public function sendEmailUsingSmpt(): JsonResponse
+    public function sendEmailUsingSmtp(SendEmailRequest $request): JsonResponse
     {
-        return response()->json([
+        $data = $request->validated();
 
+        $this->emailMessageService->sendEmailUsingSMTP(
+            $data['to_emails'],
+            $data['cc_emails'],
+            $data['bcc_emails'],
+        );
+
+        return response()->json([
+            'message' => 'Email sent successfully!',
         ]);
     }
 }

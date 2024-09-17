@@ -52,7 +52,6 @@ class EmailSettingDataTable extends BaseDataTable
     public function getActiveColumns(): array
     {
         return [
-            ['name' => 'id', 'header' => 'Id', 'align' => 'left'],
             ['name' => 'host', 'header' => 'Host', 'align' => 'left'],
             ['name' => 'port', 'header' => 'Port', 'align' => 'right'],
             ['name' => 'encryption', 'header' => 'Encryption', 'align' => 'left'],
