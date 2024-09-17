@@ -3,11 +3,13 @@ import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {useEmailSettingStore} from "~/stores/modules/emailSetting.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
+import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
 const router = useRouter();
 const store = useEmailInboxSettingStore();
+const emailMessageStore = useEmailMessageStore();
 const mainStore = useMainStore();
 const toast = useToast();
 
@@ -90,18 +92,18 @@ async function handleCopy() {
                         :disabled="!mainDataTableRef?.selection"
                         @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
                     />
-                    <Button
-                        label="Copy"
-                        size="small"
-                        icon="pi pi-copy"
-                        class="mr-2"
-                        :disabled="!mainDataTableRef?.selection"
-                        @click="handleCopy"
-                    />
+<!--                    <Button-->
+<!--                        label="Copy"-->
+<!--                        size="small"-->
+<!--                        icon="pi pi-copy"-->
+<!--                        class="mr-2"-->
+<!--                        :disabled="!mainDataTableRef?.selection"-->
+<!--                        @click="handleCopy"-->
+<!--                    />-->
                     <Button
                         label="Back"
                         size="small"
-                        @click="() => router.push('/')"
+                        @click="() => router.push(`/${emailMessageStore.frontRouteName}`)"
                     />
                 </div>
             </div>

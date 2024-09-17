@@ -109,11 +109,6 @@ const items = ref([
         icon: 'pi pi-sliders-v',
         routeName: '/email-settings',
     },
-    {
-        label: 'Email inbox settings',
-        icon: 'pi pi-sliders-h',
-        routeName: '/email-inbox-settings',
-    },
 ]);
 
 function handleItemClick(item) {

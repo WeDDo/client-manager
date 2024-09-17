@@ -2,6 +2,7 @@
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import { useEmailMessageStore } from "~/stores/modules/emailMessage.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
+import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
@@ -14,6 +15,7 @@ const token = useCookie('token');
 
 const dataTableData = ref();
 const store = useEmailMessageStore();
+const emailInboxSettingStore = useEmailInboxSettingStore();
 const mainDataTableRef = ref();
 const confirmDeleteDialogRef = ref();
 
@@ -111,6 +113,14 @@ async function handleGetEmails() {
                         :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"
                         :loading="mainStore.actionLoading"
                         @click="handleGetEmails"
+                    />
+                    <Button
+                        label="Inbox settings"
+                        size="small"
+                        icon="pi pi-sliders-h"
+                        class="mr-2"
+                        :disabled="mainStore.actionLoading"
+                        @click="() => router.push(`/${emailInboxSettingStore.frontRouteName}`)"
                     />
                     <Button
                         label="Edit"
