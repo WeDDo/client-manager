@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\EmailSetting;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Crypt;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Webklex\IMAP\Facades\Client;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 
@@ -61,16 +62,62 @@ class EmailSettingService
         return $newEmailSetting;
     }
 
+//    public function checkConnection(EmailSetting $emailSetting): void
+//    {
+//        $client = Client::make($this->setImapEmailConfig($emailSetting));
+//        try {
+//            $client->connect();
+//        } catch (ConnectionFailedException $e) {
+//            throw new HttpResponseException(
+//                response()->json([
+//                    'error' => 'connection_failed'
+//                ], 401)
+//            );
+//        }
+//    }
     public function checkConnection(EmailSetting $emailSetting): void
+    {
+        if ($emailSetting->protocol === EmailSetting::$imapProtocol) {
+            $this->checkImapConnection($emailSetting);
+        } elseif ($emailSetting->protocol === EmailSetting::$smtpProtocol) {
+            $this->checkSmtpConnection($emailSetting);
+        } else {
+            throw new HttpResponseException(
+                response()->json(['error' => 'unsupported_protocol'], 400)
+            );
+        }
+    }
+
+    public function checkImapConnection(EmailSetting $emailSetting): void
     {
         $client = Client::make($this->setImapEmailConfig($emailSetting));
         try {
             $client->connect();
         } catch (ConnectionFailedException $e) {
             throw new HttpResponseException(
-                response()->json([
-                    'error' => 'connection_failed'
-                ], 401)
+                response()->json(['error' => 'imap_connection_failed'], 401)
+            );
+        }
+    }
+
+    public function checkSmtpConnection(EmailSetting $emailSetting): void
+    {
+        $smtpConfig = $this->setSmtpEmailConfig($emailSetting);
+
+        $transport = new EsmtpTransport(
+            $smtpConfig['host'],
+            $smtpConfig['port'],
+            false
+        );
+
+        $transport->setUsername($smtpConfig['username']);
+        $transport->setPassword($smtpConfig['password']);
+
+        try {
+            $transport->start();
+        } catch (\Exception $e) {
+            throw new HttpResponseException(
+                response()->json(['error' => 'smtp_connection_failed', 'message' => $e->getMessage()], 401)
             );
         }
     }
