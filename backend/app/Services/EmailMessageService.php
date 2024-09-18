@@ -79,25 +79,27 @@ class EmailMessageService
 
         $email = new Email([
             'text' => $replyHtml
-        ]);
+        ], $emailMessage);
+
+//        $email->buildHeaders();
 
         DB::transaction(function () use ($email, $toEmails, $ccEmails, $bccEmails, $emailMessage, $replyHtml, $subject) {
-            if ($emailMessage) {
-                $references = $this->buildReferences($emailMessage);
-
-                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($references, $emailMessage) {
-                    $message->subject($emailMessage->subject);
-                    $message->getHeaders()->addTextHeader('In-Reply-To', "<{$emailMessage->message_id}>");
-
-                    if ($references) {
-                        $message->getHeaders()->addTextHeader('References', $references);
-                    }
-                });
-            } else {
-                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($subject) {
-                    $message->subject($subject);
-                });
-            }
+//            if ($emailMessage) {
+//                $references = $this->buildReferences($emailMessage);
+//
+//                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($references, $emailMessage) {
+//                    $message->subject($emailMessage->subject);
+//                    $message->getHeaders()->addTextHeader('In-Reply-To', "<{$emailMessage->message_id}>");
+//
+//                    if ($references) {
+//                        $message->getHeaders()->addTextHeader('References', $references);
+//                    }
+//                });
+//            } else {
+//                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($subject) {
+//                    $message->subject($subject);
+//                });
+//            }
 
             Mail::mailer('smtp.users.' . auth()->user()->id)
                 ->to($toEmails)
@@ -107,13 +109,13 @@ class EmailMessageService
         });
     }
 
-    protected function buildReferences(EmailMessage $emailMessage): ?string
-    {
-        $references = [];
-        $references[] = "<$emailMessage->message_id>";
-
-        return !empty($references) ? implode(' ', array_reverse($references)) : null;
-    }
+//    protected function buildReferences(EmailMessage $emailMessage): ?string
+//    {
+//        $references = [];
+//        $references[] = "<$emailMessage->message_id>";
+//
+//        return !empty($references) ? implode(' ', array_reverse($references)) : null;
+//    }
 
     public function getEmailsUsingIMAP(): Collection
     {

@@ -165,9 +165,9 @@ class EmailSettingService
             'username' => $emailSetting->username,
             'password' => Crypt::decryptString($emailSetting->password),
             'auth_mode' => 'LOGIN',
-            'authentication' => 'LOGIN',
-            'timeout' => null,
-            'validate_cert' => $emailSetting->validate_cert ?? true,
+//            'authentication' => 'LOGIN',
+//            'timeout' => null,
+//            'validate_cert' => $emailSetting->validate_cert ?? true,
         ];
 
         config(["mail.mailers.smtp.users.$user->id" => $config]);

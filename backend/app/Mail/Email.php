@@ -2,25 +2,28 @@
 
 namespace App\Mail;
 
+use App\Models\EmailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Queue\SerializesModels;
 
-class Email extends Mailable
+class Email extends Mailable //implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     private ?array $data;
-
+    private ?EmailMessage $emailMessage;
     /**
      * Create a new message instance.
      */
-    public function __construct(?array $data = null)
+    public function __construct(?array $data = null, ?EmailMessage $emailMessage = null)
     {
         $this->data = $data;
+        $this->emailMessage = $emailMessage;
     }
 
     /**
@@ -29,7 +32,7 @@ class Email extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Email Message',
+            subject: 'Email message',
         );
     }
 
@@ -55,4 +58,13 @@ class Email extends Mailable
     {
         return [];
     }
+
+    public function headers(): Headers
+    {
+        return new Headers(
+            messageId: $this->emailMessage->message_id,
+            references: ["<{$this->emailMessage->message_id}>"],
+        );
+    }
 }
+

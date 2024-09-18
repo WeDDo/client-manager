@@ -82,7 +82,7 @@ async function handleUpdate() {
         onResponse({response}) {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
-                store.lastSelection = response.item;
+                store.lastSelection = response._data.item;
                 router.push(`/${store.frontRouteName}`);
             } else {
                 fetchHelper.handleResponseError(response);
@@ -132,6 +132,7 @@ async function handleReply() {
                 </div>
                 <div>
                     <Button
+                        v-if="formValues?.item?.folder === 'INBOX'"
                         label="Reply"
                         size="small"
                         icon="pi pi-reply"

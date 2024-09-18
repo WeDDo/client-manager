@@ -101,7 +101,7 @@ defineExpose({onSubmit});
                         name="encryption"
                         label="Encryption"
                         :errors="errors"
-                        :options="['ssl']"
+                        :options="['ssl', 'tls']"
                         form-prefix=""
                         simple-options
                     />
