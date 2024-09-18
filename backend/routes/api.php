@@ -33,7 +33,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::prefix('email-messages')->group(function () {
         Route::get('get-additional-data', [EmailMessageController::class, 'getAdditionalData']);
         Route::get('get-emails-using-imap', [EmailMessageController::class, 'getEmailsUsingImap']);
-        Route::post('send', [EmailMessageController::class, 'sendEmailUsingSmtp']);
+
+        Route::prefix('{emailMessage}')->group(function () {
+            Route::post('send', [EmailMessageController::class, 'replyToEmailUsingSmtp']);
+
+        });
     });
     Route::apiResource('email-messages', EmailMessageController::class);
 

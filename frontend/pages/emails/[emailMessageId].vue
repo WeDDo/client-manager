@@ -43,6 +43,8 @@ let tabs = reactive([
     {name: 'Main', ref: mainFormRef, errors: {}},
 ]);
 
+const replyHtml = ref('');
+
 const formHelper = useFormHelper(formValues, tabs);
 const fetchHelper = useFetchHelper();
 
@@ -89,6 +91,35 @@ async function handleUpdate() {
         },
     })
 }
+
+async function handleReply() {
+    if (!await formHelper.validateForm(formHelper.errors)) {
+        return;
+    }
+
+    mainStore.actionLoading = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}/send`, {
+        method: 'POST',
+        body: {
+            reply_html: replyHtml.value,
+            to_emails: formValues.item.from.split(',').map(email => email.trim()),
+            cc_emails: formValues.item?.cc?.split(',').map(email => email.trim()),
+            bcc_emails: formValues.item?.bcc?.split(',').map(email => email.trim()),
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                toast.add({severity: 'success', summary: 'Replied successfully', life: 2000});
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            mainStore.actionLoading = false;
+        },
+    })
+}
 </script>
 
 <template>
@@ -100,6 +131,13 @@ async function handleUpdate() {
                     Email message
                 </div>
                 <div>
+                    <Button
+                        label="Reply"
+                        size="small"
+                        icon="pi pi-reply"
+                        class="mr-2"
+                        @click="handleReply"
+                    />
                     <Button
                         label="Save"
                         size="small"
@@ -121,6 +159,7 @@ async function handleUpdate() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
+                            v-model:reply-html="replyHtml"
                             :tab="0"
                             :initial-form-values="formValues"
                             @set-form-values="formHelper.setFormValues($event)"

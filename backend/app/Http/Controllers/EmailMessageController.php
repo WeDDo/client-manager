@@ -69,4 +69,21 @@ class EmailMessageController extends Controller
             'message' => 'Email sent successfully!',
         ]);
     }
+
+    public function replyToEmailUsingSmtp(SendEmailRequest $request, EmailMessage $emailMessage): JsonResponse
+    {
+        $data = $request->validated();
+
+        $this->emailMessageService->sendEmailUsingSMTP(
+            $data['to_emails'],
+            $data['cc_emails'] ?? [],
+            $data['bcc_emails'] ?? [],
+            $data['reply_html'],
+            $emailMessage
+        );
+
+        return response()->json([
+            'message' => 'Email sent successfully!',
+        ]);
+    }
 }

@@ -38,10 +38,36 @@ class EmailMessageService
         ];
     }
 
+//    public function sendEmailUsingSMTP(
+//        array $toEmails = [],
+//        array $ccEmails = [],
+//        array $bccEmails = [],
+//    ): void
+//    {
+//        $emailSetting = auth()->user()->emailSettings()
+//            ->where('protocol', EmailSetting::$smtpProtocol)
+//            ->where('active', true)
+//            ->first();
+//
+//        $this->emailSettingService->setSmtpEmailConfig($emailSetting);
+//
+//        DB::transaction(function () use ($toEmails, $ccEmails, $bccEmails) {
+//            Mail::mailer('smtp.users.'. auth()->user()->id)
+//                ->to($toEmails)
+//                ->cc($ccEmails)
+//                ->cc($bccEmails)
+//                ->send(new Email());
+//        });
+//    }
+
+//
     public function sendEmailUsingSMTP(
-        array $toEmails = [],
-        array $ccEmails = [],
-        array $bccEmails = [],
+        array         $toEmails = [],
+        array         $ccEmails = [],
+        array         $bccEmails = [],
+        ?string       $replyHtml = null,
+        ?EmailMessage $emailMessage = null,
+        ?string       $subject = null,
     ): void
     {
         $emailSetting = auth()->user()->emailSettings()
@@ -51,13 +77,42 @@ class EmailMessageService
 
         $this->emailSettingService->setSmtpEmailConfig($emailSetting);
 
-        DB::transaction(function () use ($toEmails, $ccEmails, $bccEmails) {
-            Mail::mailer('smtp.users.'. auth()->user()->id)
+        $email = new Email([
+            'text' => $replyHtml
+        ]);
+
+        DB::transaction(function () use ($email, $toEmails, $ccEmails, $bccEmails, $emailMessage, $replyHtml, $subject) {
+            if ($emailMessage) {
+                $references = $this->buildReferences($emailMessage);
+
+                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($references, $emailMessage) {
+                    $message->subject($emailMessage->subject);
+                    $message->getHeaders()->addTextHeader('In-Reply-To', "<{$emailMessage->message_id}>");
+
+                    if ($references) {
+                        $message->getHeaders()->addTextHeader('References', $references);
+                    }
+                });
+            } else {
+                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($subject) {
+                    $message->subject($subject);
+                });
+            }
+
+            Mail::mailer('smtp.users.' . auth()->user()->id)
                 ->to($toEmails)
                 ->cc($ccEmails)
-                ->cc($bccEmails)
-                ->send(new Email());
+                ->bcc($bccEmails)
+                ->send($email);
         });
+    }
+
+    protected function buildReferences(EmailMessage $emailMessage): ?string
+    {
+        $references = [];
+        $references[] = "<$emailMessage->message_id>";
+
+        return !empty($references) ? implode(' ', array_reverse($references)) : null;
     }
 
     public function getEmailsUsingIMAP(): Collection
@@ -65,19 +120,9 @@ class EmailMessageService
         return DB::transaction(function () {
             $imapConfig = $this->emailSettingService->setImapEmailConfig();
 
-//            $inboxMessages = $this->fetchEmailsFromFolder($imapConfig, 'INBOX', 30);
-//            $sentMessages = $this->fetchEmailsFromFolder($imapConfig, 'Išsiųsti laiškai', 30);
-//
-//            $processedInboxEmails = $this->processEmails($inboxMessages, 'INBOX');
-//            $processedSentEmails = $this->processEmails($sentMessages, 'Išsiųsti laiškai');
-//
-//            return $processedInboxEmails->merge($processedSentEmails);
-
-            // Retrieve all inbox settings for the authenticated user
             $emailInboxSettings = EmailInboxSetting::where('user_id', auth()->id())->get();
             $allProcessedEmails = collect();
 
-            // Iterate through each inbox setting and fetch emails
             foreach ($emailInboxSettings as $inboxSetting) {
                 $inboxMessages = $this->fetchEmailsFromFolder($imapConfig, $inboxSetting->name, 30);
                 $processedInboxEmails = $this->processEmails($inboxMessages, $inboxSetting->name);

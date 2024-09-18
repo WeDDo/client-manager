@@ -5,6 +5,7 @@ import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import EmailConversation from "~/components/v1/modules/emailMessages/EmailConversation.vue";
+import MainEditor from "~/components/v1/MainEditor.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -102,6 +103,8 @@ const onSubmit = handleSubmit((values) => {
 });
 
 defineExpose({onSubmit});
+
+const replyHtml = defineModel('replyHtml');
 </script>
 
 <template>
@@ -202,14 +205,13 @@ defineExpose({onSubmit});
                         align-with-inputs
                     />
                 </div>
-<!--                <div class="col-12">-->
-<!--                    <MainEditor-->
-<!--                        v-model:value="bodyHtml"-->
-<!--                        name="body_html"-->
-<!--                        label="Body HTML"-->
-<!--                        :errors="errors"-->
-<!--                    />-->
-<!--                </div>-->
+                <div class="col-12">
+                    <MainEditor
+                        v-model:value="replyHtml"
+                        name="reply_html"
+                        label="Reply HTML"
+                    />
+                </div>
                 <div class="col-12">
                    <EmailConversation
                         :conversation="initialFormValues.additional.conversation"
