@@ -58,7 +58,6 @@ onMounted(() => {
 
     echo.value.private(`chat.${route.params.chatRoomId}`)
         .listen(".MessageSent", (response) => {
-            console.log('listen response ', response);
             messages.value.push(response.chatMessage);
             if(!showGoToBottom.value) {
                 scrollToBottom();
@@ -71,7 +70,6 @@ onMounted(() => {
                 clearTimeout(isSomeoneTypingTimer.value);
             }
 
-            // Hide the typing indicator after 1 second of inactivity
             isSomeoneTypingTimer.value = setTimeout(() => {
                 isSomeoneTyping.value = false;
             }, 1000);
@@ -119,7 +117,6 @@ async function getChatMessages() {
         },
         onResponse({response}) {
             if (response.ok) {
-                console.log('response', response)
                 messages.value = response._data.chat_messages;
                 scrollToBottom();
             } else {
@@ -138,7 +135,6 @@ async function sendMessage() {
         },
         onResponse({response}) {
             if (response.ok) {
-                console.log(response);
                 toast.add({severity: 'success', summary: 'Sent successfully', life: 2000});
                 messageText.value = null;
                 scrollToBottom();
@@ -155,22 +151,28 @@ const sendTypingEvent = () => {
     });
 };
 
+const previousMessageLength = ref(0);
+
 function handleUserTyping() {
-    if (typingTimeout) {
-        clearTimeout(typingTimeout);
-    }
+    const currentMessageLength = messageText.value ? messageText.value.length : 0;
 
-    sendTypingEvent();
+    if (currentMessageLength !== previousMessageLength.value) {
+        previousMessageLength.value = currentMessageLength;
 
-    // Set a timeout to avoid sending whisper too frequently
-    typingTimeout = setTimeout(() => {
-        if(isSomeoneTyping.value) {
-            echo.value.private(`chat.${route.params.chatRoomId}`).whisper('typing', {
-                chatRoomId: route.params.chatRoomId
-            });
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
         }
-    }, 1000);
 
+        sendTypingEvent();
+
+        typingTimeout = setTimeout(() => {
+            if (isSomeoneTyping.value) {
+                echo.value.private(`chat.${route.params.chatRoomId}`).whisper('typing', {
+                    chatRoomId: route.params.chatRoomId
+                });
+            }
+        }, 1000);
+    }
 }
 </script>
 
