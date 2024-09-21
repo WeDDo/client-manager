@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatMessageController;
+use App\Http\Controllers\ChatRoomController;
 use App\Http\Controllers\EmailInboxSettingController;
 use App\Http\Controllers\EmailMessageController;
 use App\Http\Controllers\EmailSettingController;
@@ -21,6 +23,26 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         });
     });
     Route::apiResource('attachments', AttachmentController::class);
+
+    Route::prefix('users')->group(function () {
+        Route::prefix('{user}')->group(function () {
+            Route::prefix('chat')->group(function () {
+                Route::get('get-chat-messages', [ChatMessageController::class, 'getChatMessages']);
+                Route::post('send-chat-message-to-user', [ChatMessageController::class, 'sendChatMessageToUser']);
+            });
+        });
+    });
+
+    Route::prefix('chat-rooms')->group(function () {
+        Route::prefix('{chatRoom}')->group(function () {
+            Route::prefix('chat')->group(function () {
+                Route::get('get-chat-messages', [ChatMessageController::class, 'getChatMessages']);
+                Route::post('send-chat-message-to-chat-room', [ChatMessageController::class, 'sendChatMessageToChatRoom']);
+            });
+        });
+    });
+    Route::apiResource('chat-rooms', ChatRoomController::class);
+
 
     Route::prefix('email-settings')->group(function () {
         Route::prefix('{emailSetting}')->group(function () {

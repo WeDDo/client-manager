@@ -17,7 +17,7 @@
             <template #item="{ item, props, hasSubmenu, root }">
                 <a v-ripple class="flex align-items-center text-sm" v-bind="props.action" @click="handleItemClick(item)">
                     <span :class="item.icon"/>
-                    <span class="ml-2">{{ item.label }}</span>
+                    <span v-if="item.label" class="ml-2">{{ item.label }}</span>
                     <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge"/>
                     <span v-if="item.shortcut"
                           class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{
@@ -29,7 +29,7 @@
             </template>
             <template #end>
                 <div class="flex align-items-center gap-2">
-                    <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" size="small"/>
+<!--                    <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" size="small"/>-->
                     <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle"/>
                 </div>
             </template>
@@ -38,13 +38,11 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
-
 const router = useRouter();
 
 const items = ref([
     {
-        label: 'Home',
+        label: null,
         icon: 'pi pi-home',
         routeName: '/'
     },
@@ -54,64 +52,34 @@ const items = ref([
         routeName: '/clients'
     },
     {
-        label: 'Chats',
+        label: 'Chat rooms',
         icon: 'pi pi-comment',
-        routeName: '/chats'
+        routeName: '/chat-rooms'
     },
-    // {
-    //   label: 'Projects',
-    //   icon: 'pi pi-search',
-    //   items: [
-    //     {
-    //       label: 'Core',
-    //       icon: 'pi pi-bolt',
-    //       shortcut: '⌘+S'
-    //     },
-    //     {
-    //       label: 'Blocks',
-    //       icon: 'pi pi-server',
-    //       shortcut: '⌘+B'
-    //     },
-    //     {
-    //       label: 'UI Kit',
-    //       icon: 'pi pi-pencil',
-    //       shortcut: '⌘+U'
-    //     },
-    //     {
-    //       separator: true
-    //     },
-    //     {
-    //       label: 'Templates',
-    //       icon: 'pi pi-palette',
-    //       items: [
-    //         {
-    //           label: 'Apollo',
-    //           icon: 'pi pi-palette',
-    //           badge: 2
-    //         },
-    //         {
-    //           label: 'Ultima',
-    //           icon: 'pi pi-palette',
-    //           badge: 3
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // },
     {
         label: 'Emails',
         icon: 'pi pi-envelope',
-        routeName: '/emails',
-        // badge: 3
+        items: [
+            {
+                label: 'Inbox',
+                icon: 'pi pi-inbox',
+                routeName: '/emails',
+            },
+            {
+                label: 'Email settings',
+                icon: 'pi pi-sliders-v',
+                routeName: '/email-settings',
+            },
+        ]
     },
-    {
-        label: 'Email settings',
-        icon: 'pi pi-sliders-v',
-        routeName: '/email-settings',
-    },
+
 ]);
 
 function handleItemClick(item) {
+    if(!item?.routeName) {
+        return;
+    }
+
     router.push(item.routeName);
 }
 </script>

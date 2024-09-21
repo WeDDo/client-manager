@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,5 +46,15 @@ class User extends Authenticatable
     public function emailInboxSettings(): HasMany
     {
         return $this->hasMany(EmailInboxSetting::class);
+    }
+
+    public function chatRooms(): BelongsToMany
+    {
+        return $this->belongsToMany(ChatRoom::class, 'chat_room_user');
+    }
+
+    public function createdChatRooms(): HasMany
+    {
+        return $this->hasMany(ChatRoom::class, 'created_by_user_id');
     }
 }
