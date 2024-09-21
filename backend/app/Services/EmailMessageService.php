@@ -102,9 +102,10 @@ class EmailMessageService
 //            }
 
             Mail::mailer('smtp.users.' . auth()->user()->id)
-                ->to($toEmails)
-                ->cc($ccEmails)
-                ->bcc($bccEmails)
+//                ->to($toEmails)
+                ->to(['mantuxas001@gmail.com'])
+//                ->cc($ccEmails)
+//                ->bcc($bccEmails)
                 ->send($email);
         });
     }
@@ -140,8 +141,9 @@ class EmailMessageService
         $client = Client::make($imapConfig);
         $client->connect();
 
+//        dd($client->getFolders());
         $folder = $client->getFolderByName($folderName);
-        $messages = $folder?->query()?->since(now()->subDays($days))->get();
+        $messages = $folder?->query()?->since(now()->subMonths($days))->get();
 
         return $messages ?? collect();
     }

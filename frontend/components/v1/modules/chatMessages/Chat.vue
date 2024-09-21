@@ -59,8 +59,8 @@ onMounted(() => {
     echo.value.private(`chat.${route.params.chatRoomId}`)
         .listen(".MessageSent", (response) => {
             messages.value.push(response.chatMessage);
-            if(!showGoToBottom.value) {
-                scrollToBottom();
+            if (!showGoToBottom.value) {
+                scrollToBottom();  // Auto scroll only if the user is at the bottom
             }
         })
         .listenForWhisper("typing", (response) => {
@@ -76,6 +76,7 @@ onMounted(() => {
         });
 
     getChatMessages();
+    scrollToBottom();
     setupScrollListener();
 });
 
@@ -93,18 +94,14 @@ function setupScrollListener() {
 
 function handleScrollCheck() {
     const container = messagesContainer?.value;
-    const isAtBottom = Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 1000;  // Tolerance of 50px
+    const isAtBottom = Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 100; // Tolerance of 100px
     showGoToBottom.value = !isAtBottom;
 }
 
 function scrollToBottom() {
     nextTick(() => {
-        if(messagesContainer?.value) {
-            messagesContainer.value.scrollTo({
-                top: messagesContainer.value.scrollHeight,
-                behavior: 'smooth',
-            });
-            showGoToBottom.value = false;
+        if (messagesContainer?.value) {
+            messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
         }
     });
 }
@@ -199,17 +196,13 @@ function handleUserTyping() {
                 >
                     <div
                         :class="{
-                            'message-bubble message-bubble-sent': message.sender_user_id === mainStore.user?.item?.id,
-                            'message-bubble message-bubble-received': message.sender_user_id !== mainStore.user?.item?.id
-                        }"
+                        'message-bubble message-bubble-sent': message.sender_user_id === mainStore.user?.item?.id,
+                        'message-bubble message-bubble-received': message.sender_user_id !== mainStore.user?.item?.id
+                    }"
                     >
-                        <div>
-                            {{ message.message }}
-                        </div>
+                        <div>{{ message.message }}</div>
                         <div class="flex justify-content-end text-xs">
-                            <div>
-                                {{ message.sender_user.name }} {{ moment(message.created_at).format('YYYY-MM-DD HH:mm') }}
-                            </div>
+                            <div>{{ message.sender_user.name }} {{ moment(message.created_at).format('YYYY-MM-DD HH:mm') }}</div>
                         </div>
                     </div>
                 </div>

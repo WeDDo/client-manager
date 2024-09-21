@@ -1,5 +1,4 @@
 <script setup>
-
 const props = defineProps({
     name: {
         type: String,
@@ -59,29 +58,17 @@ const value = defineModel('value');
                 type="text"
                 :placeholder="placeholder"
                 :class="{ 'p-invalid': errors?.[`item.${name}`], 'w-full': true }"
+                :style="{ 'padding-right': endIcon ? '2rem' : '0.5rem' }"
                 :disabled="disabled"
             />
             <i
-                v-if="props.endIcon"
-                :class="`pi ${props.endIcon}`"
+                v-if="endIcon"
+                :class="`pi ${endIcon}`"
                 :style="{
                     color: 'var(--gray-500)'
                 }"
             />
         </span>
-
-        <!--        <FloatLabel style="margin-top: 18px">-->
-        <!--            <label :for="name">-->
-        <!--                {{ label }}-->
-        <!--            </label>-->
-        <!--            <InputText-->
-        <!--                v-model="value"-->
-        <!--                :aria-describedby="`${name}-help`"-->
-        <!--                type="text"-->
-        <!--                :class="{ 'p-invalid': errors?.[`item.${name}`], 'w-full': true }"-->
-        <!--                :disabled="disabled"-->
-        <!--            />-->
-        <!--        </FloatLabel>-->
 
         <div v-if="!hideErrorText">
             <small
@@ -105,5 +92,9 @@ const value = defineModel('value');
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
+}
+
+.p-input-icon-right input {
+    width: 100%;
 }
 </style>
