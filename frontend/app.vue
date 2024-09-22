@@ -9,10 +9,20 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import 'primevue/resources/themes/aura-light-green/theme.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
+import {useAuthHelper} from "~/composables/useAuthHelper.js";
+import {useMainStore} from "~/stores/main.js";
+
+const authHelper = useAuthHelper();
+
+const mainStore = useMainStore();
+
+onMounted(() => {
+    mainStore.user = authHelper.getAuthUserFromLocalStorage();
+});
 </script>
 
 <style>

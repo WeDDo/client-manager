@@ -2,25 +2,36 @@
 
 namespace App\Mail;
 
+use App\Models\EmailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Queue\SerializesModels;
 
-class Email extends Mailable
+class Email extends Mailable// implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     private ?array $data;
+    private ?EmailMessage $emailMessage;
+    private ?string $emailSubject;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(?array $data = null)
+    public function __construct(
+        ?array        $data = null,
+        ?EmailMessage $emailMessage = null,
+        ?string       $emailSubject = null
+    )
     {
         $this->data = $data;
+        $this->emailMessage = $emailMessage;
+        $this->emailSubject = $emailSubject;
+
     }
 
     /**
@@ -29,7 +40,7 @@ class Email extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Email Message',
+            subject: $this->emailMessage?->subject ?? $this->emailSubject ?? 'Email message',
         );
     }
 
@@ -55,4 +66,37 @@ class Email extends Mailable
     {
         return [];
     }
+
+    public function headers(): Headers
+    {
+        if ($this->emailMessage) {
+            $references = $this->buildReferences($this->emailMessage);
+            $inReplyTo = $this->emailMessage->message_id;
+
+            return new Headers(
+                references: $references,
+                text: [
+                    'In-Reply-To' => $inReplyTo ? "<$inReplyTo>" : null,
+                ],
+            );
+        }
+
+        return new Headers();
+    }
+
+    protected function buildReferences(?EmailMessage $emailMessage = null): array
+    {
+        $references = [];
+        if ($emailMessage) {
+            $currentEmail = $emailMessage;
+
+            while ($currentEmail) {
+                $references[] = "$currentEmail->message_id";
+                $currentEmail = $currentEmail->replyToEmailMessage;
+            }
+        }
+
+        return array_reverse($references);
+    }
 }
+

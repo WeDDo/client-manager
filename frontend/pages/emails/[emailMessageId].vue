@@ -43,6 +43,8 @@ let tabs = reactive([
     {name: 'Main', ref: mainFormRef, errors: {}},
 ]);
 
+const replyHtml = ref('');
+
 const formHelper = useFormHelper(formValues, tabs);
 const fetchHelper = useFetchHelper();
 
@@ -80,8 +82,38 @@ async function handleUpdate() {
         onResponse({response}) {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
-                store.lastSelection = response.item;
+                store.lastSelection = response._data.item;
                 router.push(`/${store.frontRouteName}`);
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            mainStore.actionLoading = false;
+        },
+    })
+}
+
+async function handleReply() {
+    if (!await formHelper.validateForm(formHelper.errors)) {
+        return;
+    }
+
+    mainStore.actionLoading = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}/send`, {
+        method: 'POST',
+        body: {
+            reply_html: replyHtml.value,
+            to_emails: formValues.item.from.split(',').map(email => email.trim()),
+            cc_emails: formValues.item?.cc?.split(',').map(email => email.trim()),
+            bcc_emails: formValues.item?.bcc?.split(',').map(email => email.trim()),
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            replyHtml.value = null;
+            if (response.ok) {
+                toast.add({severity: 'success', summary: 'Replied successfully', life: 2000});
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -101,15 +133,27 @@ async function handleUpdate() {
                 </div>
                 <div>
                     <Button
+                        v-if="formValues?.item?.folder === 'INBOX'"
+                        label="Reply"
+                        size="small"
+                        icon="pi pi-reply"
+                        class="mr-2"
+                        :disabled="!replyHtml"
+                        :loading="mainStore.actionLoading"
+                        @click="handleReply"
+                    />
+                    <Button
                         label="Save"
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
+                        :loading="mainStore.actionLoading"
                         @click="handleUpdate"
                     />
                     <Button
                         label="Back"
                         size="small"
+                        :disabled="mainStore.actionLoading"
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>
@@ -121,6 +165,7 @@ async function handleUpdate() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
+                            v-model:reply-html="replyHtml"
                             :tab="0"
                             :initial-form-values="formValues"
                             @set-form-values="formHelper.setFormValues($event)"

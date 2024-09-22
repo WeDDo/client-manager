@@ -4,6 +4,8 @@ import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js"
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
+import EmailConversation from "~/components/v1/modules/emailMessages/EmailConversation.vue";
+import MainEditor from "~/components/v1/MainEditor.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -102,23 +104,7 @@ const onSubmit = handleSubmit((values) => {
 
 defineExpose({onSubmit});
 
-async function handleDownloadAttachment(attachment) {
-    await $fetch(`${baseURL}/attachments/${attachment.id}/download`, {
-        method: 'GET',
-        responseType: 'blob',
-        headers: {
-            authorization: `Bearer ${token.value}`
-        },
-        onResponse({ response }) {
-            if (response.ok) {
-                fetchHelper.handleDownloadBlob(response);
-            } else {
-                fetchHelper.handleResponseError(response);
-            }
-            // mainStore.actionLoading = false;
-        },
-    })
-}
+const replyHtml = defineModel('replyHtml');
 </script>
 
 <template>
@@ -219,48 +205,17 @@ async function handleDownloadAttachment(attachment) {
                         align-with-inputs
                     />
                 </div>
-<!--                <div class="col-12">-->
-<!--                    <MainEditor-->
-<!--                        v-model:value="bodyHtml"-->
-<!--                        name="body_html"-->
-<!--                        label="Body HTML"-->
-<!--                        :errors="errors"-->
-<!--                    />-->
-<!--                </div>-->
                 <div class="col-12">
-                    <Accordion multiple>
-                        <AccordionTab
-                            v-for="(email, index) in initialFormValues.additional.conversation"
-                            :key="index"
-                        >
-                            <template #header>
-                                <div>
-                                    <div>{{`${email.subject} - ${email.from}`}}</div>
-                                    <div class="text-xs">{{ email.date }}</div>
-                                </div>
-                            </template>
-                            <div>
-                                <div><strong>From:</strong> {{ email.from }}</div>
-                                <div><strong>To:</strong> {{ email.to }}</div>
-                                <div><strong>Date:</strong> {{ email.date }}</div>
-                                <div>
-                                    <strong>Attachments ({{ email.attachments?.length ?? 0 }}):</strong>
-                                    <div
-                                        v-for="attachment in email.attachments"
-                                        :key="attachment.id"
-                                    >
-                                        <i
-                                            class="pi pi-download cursor-pointer"
-                                            @click="handleDownloadAttachment(attachment)"
-                                        />
-                                        {{attachment.filename}}
-                                    </div>
-                                </div>
-                                <div><strong>HTML Body:</strong></div>
-                                <div v-html="email.body_html"></div>
-                            </div>
-                        </AccordionTab>
-                    </Accordion>
+                    <MainEditor
+                        v-model:value="replyHtml"
+                        name="reply_html"
+                        label="Reply HTML"
+                    />
+                </div>
+                <div class="col-12">
+                   <EmailConversation
+                        :conversation="initialFormValues.additional.conversation"
+                   />
                 </div>
             </div>
         </form>

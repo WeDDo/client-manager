@@ -1,5 +1,4 @@
 <script setup>
-
 const props = defineProps({
     name: {
         type: String,
@@ -7,11 +6,12 @@ const props = defineProps({
     },
     label: {
         type: String,
-        default: 'default_label',
+        default: undefined,
     },
     errors: {
         type: Object,
-        default: () => {},
+        default: () => {
+        },
     },
     disabled: {
         type: Boolean,
@@ -20,7 +20,19 @@ const props = defineProps({
     required: {
         type: Boolean,
         default: false,
-    }
+    },
+    hideErrorText: {
+        type: Boolean,
+        default: false,
+    },
+    placeholder: {
+        type: String,
+        default: undefined,
+    },
+    endIcon: {
+        type: String,
+        default: undefined,
+    },
 })
 
 const value = defineModel('value');
@@ -28,7 +40,7 @@ const value = defineModel('value');
 
 <template>
     <div>
-        <div>
+        <div v-if="label">
             <label :for="name">
                 {{ label }}
             </label>
@@ -39,28 +51,26 @@ const value = defineModel('value');
             />
         </div>
 
-        <InputText
-            v-model="value"
-            :aria-describedby="`${name}-help`"
-            type="text"
-            :class="{ 'p-invalid': errors?.[`item.${name}`], 'w-full': true }"
-            :disabled="disabled"
-        />
+        <span class="p-input-icon-right">
+            <InputText
+                v-model="value"
+                :aria-describedby="`${name}-help`"
+                type="text"
+                :placeholder="placeholder"
+                :class="{ 'p-invalid': errors?.[`item.${name}`], 'w-full': true }"
+                :style="{ 'padding-right': endIcon ? '2rem' : '0.5rem' }"
+                :disabled="disabled"
+            />
+            <i
+                v-if="endIcon"
+                :class="`pi ${endIcon}`"
+                :style="{
+                    color: 'var(--gray-500)'
+                }"
+            />
+        </span>
 
-        <!--        <FloatLabel style="margin-top: 18px">-->
-        <!--            <label :for="name">-->
-        <!--                {{ label }}-->
-        <!--            </label>-->
-        <!--            <InputText-->
-        <!--                v-model="value"-->
-        <!--                :aria-describedby="`${name}-help`"-->
-        <!--                type="text"-->
-        <!--                :class="{ 'p-invalid': errors?.[`item.${name}`], 'w-full': true }"-->
-        <!--                :disabled="disabled"-->
-        <!--            />-->
-        <!--        </FloatLabel>-->
-
-        <div>
+        <div v-if="!hideErrorText">
             <small
                 id="email-help"
                 class="p-error"
@@ -72,5 +82,19 @@ const value = defineModel('value');
 </template>
 
 <style scoped>
+.p-input-icon-right {
+    position: relative;
+}
 
+.p-input-icon-right .pi {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.p-input-icon-right input {
+    width: 100%;
+}
 </style>
