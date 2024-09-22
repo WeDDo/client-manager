@@ -38,29 +38,6 @@ class EmailMessageService
         ];
     }
 
-//    public function sendEmailUsingSMTP(
-//        array $toEmails = [],
-//        array $ccEmails = [],
-//        array $bccEmails = [],
-//    ): void
-//    {
-//        $emailSetting = auth()->user()->emailSettings()
-//            ->where('protocol', EmailSetting::$smtpProtocol)
-//            ->where('active', true)
-//            ->first();
-//
-//        $this->emailSettingService->setSmtpEmailConfig($emailSetting);
-//
-//        DB::transaction(function () use ($toEmails, $ccEmails, $bccEmails) {
-//            Mail::mailer('smtp.users.'. auth()->user()->id)
-//                ->to($toEmails)
-//                ->cc($ccEmails)
-//                ->cc($bccEmails)
-//                ->send(new Email());
-//        });
-//    }
-
-//
     public function sendEmailUsingSMTP(
         array         $toEmails = [],
         array         $ccEmails = [],
@@ -77,30 +54,11 @@ class EmailMessageService
 
         $this->emailSettingService->setSmtpEmailConfig($emailSetting);
 
-        $email = new Email([
+        $email = (new Email([
             'text' => $replyHtml
-        ], $emailMessage);
-
-//        $email->buildHeaders();
+        ], $emailMessage));
 
         DB::transaction(function () use ($email, $toEmails, $ccEmails, $bccEmails, $emailMessage, $replyHtml, $subject) {
-//            if ($emailMessage) {
-//                $references = $this->buildReferences($emailMessage);
-//
-//                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($references, $emailMessage) {
-//                    $message->subject($emailMessage->subject);
-//                    $message->getHeaders()->addTextHeader('In-Reply-To', "<{$emailMessage->message_id}>");
-//
-//                    if ($references) {
-//                        $message->getHeaders()->addTextHeader('References', $references);
-//                    }
-//                });
-//            } else {
-//                $email->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) use ($subject) {
-//                    $message->subject($subject);
-//                });
-//            }
-
             Mail::mailer('smtp.users.' . auth()->user()->id)
 //                ->to($toEmails)
                 ->to(['mantuxas001@gmail.com'])
@@ -110,29 +68,32 @@ class EmailMessageService
         });
     }
 
-//    protected function buildReferences(EmailMessage $emailMessage): ?string
-//    {
-//        $references = [];
-//        $references[] = "<$emailMessage->message_id>";
-//
-//        return !empty($references) ? implode(' ', array_reverse($references)) : null;
-//    }
-
     public function getEmailsUsingIMAP(): Collection
     {
         return DB::transaction(function () {
             $imapConfig = $this->emailSettingService->setImapEmailConfig();
 
             $emailInboxSettings = EmailInboxSetting::where('user_id', auth()->id())->get();
-            $allProcessedEmails = collect();
+            $allMessages = collect();
 
             foreach ($emailInboxSettings as $inboxSetting) {
-                $inboxMessages = $this->fetchEmailsFromFolder($imapConfig, $inboxSetting->name, 30);
-                $processedInboxEmails = $this->processEmails($inboxMessages, $inboxSetting->name);
-                $allProcessedEmails = $allProcessedEmails->merge($processedInboxEmails);
+                $inboxMessages = $this->fetchEmailsFromFolder($imapConfig, $inboxSetting->name, 7);
+                $inboxMessages = $inboxMessages->map(function ($message) use ($inboxSetting) {
+                    $message->folder_name = $inboxSetting->name;
+                    return $message;
+                });
+                $allMessages = $allMessages->merge($inboxMessages);
             }
 
-            return $allProcessedEmails;
+            $allMessages = $allMessages->toArray();
+
+            usort($allMessages, function ($a, $b) {
+                return strtotime($a->getDate()) - strtotime($b->getDate());
+            });
+
+            $allMessages = collect($allMessages);
+
+            return $this->processEmails($allMessages);
         });
     }
 
@@ -141,18 +102,19 @@ class EmailMessageService
         $client = Client::make($imapConfig);
         $client->connect();
 
-//        dd($client->getFolders());
         $folder = $client->getFolderByName($folderName);
-        $messages = $folder?->query()?->since(now()->subMonths($days))->get();
+        $messages = $folder?->query()?->since(now()->subDays($days))->get();
 
         return $messages ?? collect();
     }
 
-    protected function processEmails(Collection $messages, string $folderName): Collection
+    protected function processEmails(Collection $messages): Collection
     {
         $existingEmailMessages = EmailMessage::where('user_id', auth()->user()->id)->get();
         $existingEmailMessageIds = $existingEmailMessages->pluck('message_id');
+
         $createdEmailMessages = collect();
+        $emailMessageMap = [];
 
         foreach ($messages as $message) {
             $messageId = $message->getMessageId()->get()[0];
@@ -171,25 +133,11 @@ class EmailMessageService
                 $purifier = new HTMLPurifier($purifierConfig);
                 $bodyHtml = $purifier->purify($message->getHTMLBody());
 
-                $fromEmails = collect($message->getFrom()?->get())->map(function ($fromEmailObject) {
-                    return $fromEmailObject->mail;
-                });
-
-                $toEmails = collect($message->getTo()?->get())->map(function ($toEmailObject) {
-                    return $toEmailObject->mail;
-                });
-
-                $ccEmails = collect($message->getCc()?->get())->map(function ($ccEmailObject) {
-                    return $ccEmailObject->mail;
-                });
-
-                $bccEmails = collect($message->getBcc()?->get())->map(function ($bccEmailObject) {
-                    return $bccEmailObject->mail;
-                });
-
-                $replyToEmails = collect($message->getReplyTo()?->get())->map(function ($replyToEmailObject) {
-                    return $replyToEmailObject->mail;
-                });
+                $fromEmails = collect($message->getFrom()?->get())->map(fn($fromEmailObject) => $fromEmailObject->mail);
+                $toEmails = collect($message->getTo()?->get())->map(fn($toEmailObject) => $toEmailObject->mail);
+                $ccEmails = collect($message->getCc()?->get())->map(fn($ccEmailObject) => $ccEmailObject->mail);
+                $bccEmails = collect($message->getBcc()?->get())->map(fn($bccEmailObject) => $bccEmailObject->mail);
+                $replyToEmails = collect($message->getReplyTo()?->get())->map(fn($replyToEmailObject) => $replyToEmailObject->mail);
 
                 $inReplyTo = $message->getInReplyTo()?->get()[0] ?? null;
                 $inReplyTo = $inReplyTo ? trim($inReplyTo, '<>') : null;
@@ -213,10 +161,12 @@ class EmailMessageService
                     'is_seen' => $message->getFlags()->has('Seen') ?? false,
                     'is_flagged' => $message->getFlags()->has('Flagged') ?? false,
                     'is_answered' => $message->getFlags()->has('Answered') ?? false,
-                    'folder' => $folderName,
+                    'folder' => $message->folder_name ?? null,
                     'reply_to_email_message_id' => $replyToEmailMessage?->id,
-                    'user_id' => auth()->id()
+                    'user_id' => auth()->id(),
                 ]);
+
+                $emailMessageMap[$messageId] = $emailMessage;
 
                 foreach ($message->getAttachments() as $attachment) {
                     $this->attachmentService->store([
@@ -228,6 +178,18 @@ class EmailMessageService
                 }
 
                 $createdEmailMessages->push($emailMessage);
+            }
+        }
+
+        foreach ($messages as $message) {
+            $messageId = $message->getMessageId()->get()[0];
+            $inReplyTo = $message->getInReplyTo()?->get()[0] ?? null;
+            $inReplyTo = $inReplyTo ? trim($inReplyTo, '<>') : null;
+
+            if ($inReplyTo && isset($emailMessageMap[$inReplyTo])) {
+                $emailMessageMap[$messageId]->update([
+                    'reply_to_email_message_id' => $emailMessageMap[$inReplyTo]->id,
+                ]);
             }
         }
 

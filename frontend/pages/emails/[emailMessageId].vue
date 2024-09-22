@@ -111,6 +111,7 @@ async function handleReply() {
             authorization: `Bearer ${token.value}`
         },
         onResponse({response}) {
+            replyHtml.value = null;
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Replied successfully', life: 2000});
             } else {
@@ -137,6 +138,8 @@ async function handleReply() {
                         size="small"
                         icon="pi pi-reply"
                         class="mr-2"
+                        :disabled="!replyHtml"
+                        :loading="mainStore.actionLoading"
                         @click="handleReply"
                     />
                     <Button
@@ -144,11 +147,13 @@ async function handleReply() {
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
+                        :loading="mainStore.actionLoading"
                         @click="handleUpdate"
                     />
                     <Button
                         label="Back"
                         size="small"
+                        :disabled="mainStore.actionLoading"
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>

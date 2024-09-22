@@ -60,10 +60,13 @@ class EmailMessageDataTable extends BaseDataTable
     public function getItems(): array
     {
         $emailSettings = auth()->user()->emailMessages()
+            ->select('email_messages.*')
+            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
+            ->whereNull('replies.id') // Select only the latest emails (those without further replies)
             ->when(request('selected_folder'), function ($query) {
-                $query->where('folder', request('selected_folder'));
-            }) // todo fix folder
-            ->orderByDesc('date')
+                $query->where('email_messages.folder', request('selected_folder'));
+            })
+            ->orderByDesc('email_messages.date')
             ->get();
 
         $columns = $this->getColumnItemClosures();

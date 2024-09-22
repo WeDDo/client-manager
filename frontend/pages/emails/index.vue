@@ -131,7 +131,6 @@ async function handleGetEmails() {
                         @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
                     />
                     <Button
-                        label="Delete"
                         size="small"
                         icon="pi pi-trash"
                         class="mr-2"
