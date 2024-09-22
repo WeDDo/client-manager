@@ -94,7 +94,7 @@ function setupScrollListener() {
 
 function handleScrollCheck() {
     const container = messagesContainer?.value;
-    const isAtBottom = Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 100; // Tolerance of 100px
+    const isAtBottom = Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 500;
     showGoToBottom.value = !isAtBottom;
 }
 
