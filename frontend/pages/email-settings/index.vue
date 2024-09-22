@@ -18,7 +18,7 @@ const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
-const { data, pending, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}`, {
+const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}`, {
     headers: {
         authorization: `Bearer ${token.value}`
     },
@@ -71,7 +71,7 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-plus"
                         class="mr-2"
-                        @click="() => router.push(`/email-settings/create`)"
+                        @click="() => router.push(`/${store.frontRouteName}/create`)"
                     />
                     <Button
                         label="Edit"
@@ -79,15 +79,7 @@ async function handleCopy() {
                         icon="pi pi-pencil"
                         class="mr-2"
                         :disabled="!mainDataTableRef?.selection"
-                        @click="() => router.push(`/email-settings/${mainDataTableRef.selection.id}`)"
-                    />
-                    <Button
-                        label="Delete"
-                        size="small"
-                        icon="pi pi-trash"
-                        class="mr-2"
-                        :disabled="!mainDataTableRef?.selection"
-                        @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
+                        @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
                     />
                     <Button
                         label="Copy"
@@ -96,6 +88,13 @@ async function handleCopy() {
                         class="mr-2"
                         :disabled="!mainDataTableRef?.selection"
                         @click="handleCopy"
+                    />
+                    <Button
+                        size="small"
+                        icon="pi pi-trash"
+                        class="mr-2"
+                        :disabled="!mainDataTableRef?.selection"
+                        @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
                     />
                     <Button
                         label="Back"

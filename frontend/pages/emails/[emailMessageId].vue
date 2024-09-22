@@ -6,6 +6,7 @@ import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
+import {useConfirm} from "primevue/useconfirm";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -15,6 +16,7 @@ const route = useRoute();
 const router = useRouter();
 const store = useEmailMessageStore();
 const toast = useToast();
+const confirm = useConfirm();
 
 const token = useCookie('token');
 
@@ -121,6 +123,22 @@ async function handleReply() {
         },
     })
 }
+
+function confirmReply() {
+    console.log('ąčę');
+    confirm.require({
+        message: 'Are you sure you want to send a reply via email?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        rejectClass: 'p-button-secondary p-button-outlined',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Confirm',
+        accept: () => {
+            handleReply();
+        },
+        reject: () => {}
+    });
+}
 </script>
 
 <template>
@@ -140,7 +158,7 @@ async function handleReply() {
                         class="mr-2"
                         :disabled="!replyHtml"
                         :loading="mainStore.actionLoading"
-                        @click="handleReply"
+                        @click="confirmReply"
                     />
                     <Button
                         label="Save"

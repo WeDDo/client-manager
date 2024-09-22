@@ -19,9 +19,6 @@ class Email extends Mailable// implements ShouldQueue
     private ?EmailMessage $emailMessage;
     private ?string $emailSubject;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(
         ?array        $data = null,
         ?EmailMessage $emailMessage = null,
@@ -31,7 +28,6 @@ class Email extends Mailable// implements ShouldQueue
         $this->data = $data;
         $this->emailMessage = $emailMessage;
         $this->emailSubject = $emailSubject;
-
     }
 
     /**

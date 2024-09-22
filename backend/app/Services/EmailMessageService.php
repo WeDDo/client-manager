@@ -60,8 +60,8 @@ class EmailMessageService
 
         DB::transaction(function () use ($email, $toEmails, $ccEmails, $bccEmails, $emailMessage, $replyHtml, $subject) {
             Mail::mailer('smtp.users.' . auth()->user()->id)
-//                ->to($toEmails)
                 ->to(['mantuxas001@gmail.com'])
+//                ->to($toEmails)
 //                ->cc($ccEmails)
 //                ->bcc($bccEmails)
                 ->send($email);
