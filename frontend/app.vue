@@ -6,6 +6,7 @@
             position="top-center"
             class="w-11 sm:w-auto"
         />
+        <ConfirmDialog />
     </div>
 </template>
 
