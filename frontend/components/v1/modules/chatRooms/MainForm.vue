@@ -2,6 +2,7 @@
 import * as yup from "yup";
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
+import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 
 const props = defineProps({
     initialFormValues: {
@@ -31,6 +32,8 @@ const {defineField, handleSubmit, resetForm, errors, values, setValues} = useFor
     initialValues: {
         item: {
             name: null,
+            created_by_user_id: null,
+            is_private: false,
         }
     }
 });
@@ -44,6 +47,7 @@ onMounted(() => {
 useInsideFormValidation(values, errors, emit, props.tab);
 
 const [name] = defineField('item.name');
+const [isPrivate] = defineField('item.is_private');
 
 const onSubmit = handleSubmit((values) => {
     return true;
@@ -64,6 +68,13 @@ defineExpose({onSubmit});
                         label="Name"
                         :errors="errors"
                         required
+                    />
+                    <MainCheckbox
+                        v-model:value="isPrivate"
+                        name="is_private"
+                        label="Private"
+                        :show-error="false"
+                        align-with-inputs
                     />
                 </div>
             </div>

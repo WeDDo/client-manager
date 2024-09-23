@@ -10,6 +10,11 @@ class ChatRoomService
     {
         return ChatRoom::create($data);
     }
+
+    public function joinChatRoom(ChatRoom $chatRoom): void
+    {
+        $chatRoom->users()->attach(auth()->user()->id);
+    }
 }
 
 

@@ -12,11 +12,14 @@ class ChatMessageController extends Controller
 {
     public function getChatMessages(ChatRoom $chatRoom): JsonResponse
     {
+        $chatRoom->load(['users', 'messages.senderUser']);
+
         return response()->json([
             'chat_messages' => $chatRoom->messages()
                 ->with(['senderUser'])
                 ->orderBy('id')
-                ->get()
+                ->get(),
+            'chat_users' => $chatRoom->users,
         ]);
     }
 

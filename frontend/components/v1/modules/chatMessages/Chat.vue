@@ -26,7 +26,9 @@ const props = defineProps({
 
 const fetchHelper = useFetchHelper();
 
-const messages = ref([]);
+const chatMessages = ref([]);
+const chatUsers = ref([]);
+
 const messagesContainer = ref(null);
 const isSomeoneTyping = ref(false);
 const isSomeoneTypingTimer = ref(null);
@@ -56,9 +58,9 @@ onMounted(() => {
         },
     });
 
-    echo.value.private(`chat.${route.params.chatRoomId}`)
+    echo.value.private(`chat.${props.chatRoomId}`)
         .listen(".MessageSent", (response) => {
-            messages.value.push(response.chatMessage);
+            chatMessages.value.push(response.chatMessage);
             if (!showGoToBottom.value) {
                 scrollToBottom();  // Auto scroll only if the user is at the bottom
             }
@@ -80,7 +82,7 @@ onMounted(() => {
     setupScrollListener();
 });
 
-watch(messages, () => {
+watch(chatMessages, () => {
     nextTick(() => {
         handleScrollCheck();
     });
@@ -106,6 +108,23 @@ function scrollToBottom() {
     });
 }
 
+async function joinChatRoom() {
+    await $fetch(`${baseURL}/${store.apiRouteName}/${props.chatRoomId}/join`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                getChatMessages();
+                scrollToBottom();
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    });
+}
+
 async function getChatMessages() {
     await $fetch(`${baseURL}/${store.apiRouteName}/${props.chatRoomId}/chat/get-chat-messages`, {
         method: 'GET',
@@ -114,13 +133,14 @@ async function getChatMessages() {
         },
         onResponse({response}) {
             if (response.ok) {
-                messages.value = response._data.chat_messages;
+                chatMessages.value = response._data.chat_messages;
+                chatUsers.value = response._data.chat_users;
                 scrollToBottom();
             } else {
                 fetchHelper.handleResponseError(response);
             }
         },
-    })
+    });
 }
 
 async function sendMessage() {
@@ -171,6 +191,9 @@ function handleUserTyping() {
         }, 1000);
     }
 }
+
+const isJoined = computed(() => {
+    return (chatUsers.value ?? [])?.some((chatUser) => chatUser.id === mainStore.user?.item?.id);});
 </script>
 
 <template>
@@ -181,6 +204,13 @@ function handleUserTyping() {
             </div>
             <div>
                 <Button
+                    :label="isJoined ? 'Joined' : 'Join'"
+                    size="small"
+                    class="mr-2"
+                    :disabled="isJoined"
+                    @click="joinChatRoom"
+                />
+                <Button
                     label="Back"
                     size="small"
                     @click="() => router.push(`/${store.frontRouteName}`)"
@@ -190,7 +220,7 @@ function handleUserTyping() {
         <div class="chat-container">
             <div class="chat-window overflow-y-auto" ref="messagesContainer">
                 <div
-                    v-for="message in messages"
+                    v-for="message in chatMessages"
                     :key="message.id"
                     class="message-bubble-container"
                 >

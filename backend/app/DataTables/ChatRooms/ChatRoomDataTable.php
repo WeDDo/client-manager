@@ -3,6 +3,7 @@
 namespace App\DataTables\ChatRooms;
 
 use App\DataTables\BaseDataTable;
+use App\Models\ChatRoom;
 use App\Models\EmailSetting;
 use App\Services\EmailMessageService;
 
@@ -44,16 +45,17 @@ class ChatRoomDataTable extends BaseDataTable
 
     public function getItems(): array
     {
-        $emailSettings = auth()->user()->chatRooms()
-            ->get();
+//        $chatRooms = auth()->user()->chatRooms()
+//            ->get();
+        $chatRooms = ChatRoom::all();
 
         $columns = $this->getColumnItemClosures();
 
         $data = [];
-        foreach ($emailSettings as $emailSetting) {
+        foreach ($chatRooms as $chatRoom) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
-                $rowData[$columnKey] = $getColumnValue($emailSetting);
+                $rowData[$columnKey] = $getColumnValue($chatRoom);
             }
             $data[] = $rowData;
         }
