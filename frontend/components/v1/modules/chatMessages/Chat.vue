@@ -300,6 +300,7 @@ const isJoined = computed(() => {
                             placeholder="Enter your message here.."
                             hide-error-text
                             end-icon="pi-caret-right"
+                            :disabled="!isJoined"
                             @keyup="handleUserTyping"
                             @keyup.enter="sendMessage"
                         />

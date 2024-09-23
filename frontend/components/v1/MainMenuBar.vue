@@ -49,7 +49,13 @@
             <template #end>
                 <div class="flex align-items-center gap-2">
 <!--                    <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" size="small"/>-->
-                    <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle"/>
+                    <Avatar
+                        image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png"
+                        shape="circle"
+                        class="cursor-pointer"
+                        @click="handleClickUser"
+                    />
+                    <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
                 </div>
             </template>
         </Menubar>
@@ -58,6 +64,8 @@
 
 <script setup>
 const router = useRouter();
+
+const menu = ref();
 
 const items = ref([
     // {
@@ -91,8 +99,27 @@ const items = ref([
             },
         ]
     },
-
 ]);
+
+const menuItems = ref([
+    {
+        label: 'Menu',
+        items: [
+            {
+                label: 'Profile',
+                icon: 'pi pi-user'
+            },
+            {
+                label: 'Log out',
+                icon: 'pi pi-sign-out'
+            }
+        ]
+    }
+]);
+
+function handleClickUser(event) {
+    menu.value.toggle(event);
+}
 
 function handleItemClick(item) {
     if(!item?.routeName) {
