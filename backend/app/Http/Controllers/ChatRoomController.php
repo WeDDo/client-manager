@@ -39,7 +39,7 @@ class ChatRoomController extends Controller
 
     public function leaveChatRoom(ChatRoom $chatRoom): JsonResponse
     {
-        // TODO implement
+        $this->chatRoomService->leaveChatRoom($chatRoom);
 
         return response()->json([
             'message' => 'Success!',

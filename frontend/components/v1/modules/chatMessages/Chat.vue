@@ -41,6 +41,9 @@ let typingTimeout = null;
 
 const echo = ref();
 
+const leaveLoading = ref(false);
+const joinLoading = ref(false);
+
 onMounted(() => {
     echo.value = new Echo({
         broadcaster: 'reverb',
@@ -109,6 +112,8 @@ function scrollToBottom() {
 }
 
 async function joinChatRoom() {
+    joinLoading.value = true;
+
     await $fetch(`${baseURL}/${store.apiRouteName}/${props.chatRoomId}/join`, {
         method: 'GET',
         headers: {
@@ -121,6 +126,26 @@ async function joinChatRoom() {
             } else {
                 fetchHelper.handleResponseError(response);
             }
+            joinLoading.value = false;
+        },
+    });
+}
+
+async function leaveChatRoom() {
+    leaveLoading.value = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}/${props.chatRoomId}/leave`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                getChatMessages();
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            leaveLoading.value = false;
         },
     });
 }
@@ -193,7 +218,8 @@ function handleUserTyping() {
 }
 
 const isJoined = computed(() => {
-    return (chatUsers.value ?? [])?.some((chatUser) => chatUser.id === mainStore.user?.item?.id);});
+    return chatUsers.value && (chatUsers.value ?? [])?.some((chatUser) => chatUser.id === mainStore.user?.item?.id);
+});
 </script>
 
 <template>
@@ -204,12 +230,24 @@ const isJoined = computed(() => {
             </div>
             <div>
                 <Button
-                    :label="isJoined ? 'Joined' : 'Join'"
+                    v-if="isJoined"
+                    label="Leave"
                     size="small"
                     class="mr-2"
-                    :disabled="isJoined"
+                    :disabled="(chatUsers ?? []).length === 0 || joinLoading"
+                    :loading="leaveLoading"
+                    @click="leaveChatRoom"
+                />
+                <Button
+                    v-else
+                    label="Join"
+                    size="small"
+                    class="mr-2"
+                    :disabled="(chatUsers ?? []).length === 0 || leaveLoading"
+                    :loading="joinLoading"
                     @click="joinChatRoom"
                 />
+
                 <Button
                     label="Back"
                     size="small"
@@ -220,6 +258,7 @@ const isJoined = computed(() => {
         <div class="chat-container">
             <div class="chat-window overflow-y-auto" ref="messagesContainer">
                 <div
+                    v-if="isJoined"
                     v-for="message in chatMessages"
                     :key="message.id"
                     class="message-bubble-container"

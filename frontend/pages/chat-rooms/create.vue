@@ -17,6 +17,7 @@ const token = useCookie('token');
 let formValues = reactive({
     item: {
         name: null,
+        is_private: true,
     },
 });
 
