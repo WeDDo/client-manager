@@ -26,7 +26,9 @@ const props = defineProps({
 
 const fetchHelper = useFetchHelper();
 
-const messages = ref([]);
+const chatMessages = ref([]);
+const chatUsers = ref([]);
+
 const messagesContainer = ref(null);
 const isSomeoneTyping = ref(false);
 const isSomeoneTypingTimer = ref(null);
@@ -38,6 +40,9 @@ const messageText = ref();
 let typingTimeout = null;
 
 const echo = ref();
+
+const leaveLoading = ref(false);
+const joinLoading = ref(false);
 
 onMounted(() => {
     echo.value = new Echo({
@@ -56,9 +61,9 @@ onMounted(() => {
         },
     });
 
-    echo.value.private(`chat.${route.params.chatRoomId}`)
+    echo.value.private(`chat.${props.chatRoomId}`)
         .listen(".MessageSent", (response) => {
-            messages.value.push(response.chatMessage);
+            chatMessages.value.push(response.chatMessage);
             if (!showGoToBottom.value) {
                 scrollToBottom();  // Auto scroll only if the user is at the bottom
             }
@@ -80,7 +85,7 @@ onMounted(() => {
     setupScrollListener();
 });
 
-watch(messages, () => {
+watch(chatMessages, () => {
     nextTick(() => {
         handleScrollCheck();
     });
@@ -106,6 +111,45 @@ function scrollToBottom() {
     });
 }
 
+async function joinChatRoom() {
+    joinLoading.value = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}/${props.chatRoomId}/join`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                getChatMessages();
+                scrollToBottom();
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            joinLoading.value = false;
+        },
+    });
+}
+
+async function leaveChatRoom() {
+    leaveLoading.value = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}/${props.chatRoomId}/leave`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                getChatMessages();
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            leaveLoading.value = false;
+        },
+    });
+}
+
 async function getChatMessages() {
     await $fetch(`${baseURL}/${store.apiRouteName}/${props.chatRoomId}/chat/get-chat-messages`, {
         method: 'GET',
@@ -114,13 +158,14 @@ async function getChatMessages() {
         },
         onResponse({response}) {
             if (response.ok) {
-                messages.value = response._data.chat_messages;
+                chatMessages.value = response._data.chat_messages;
+                chatUsers.value = response._data.chat_users;
                 scrollToBottom();
             } else {
                 fetchHelper.handleResponseError(response);
             }
         },
-    })
+    });
 }
 
 async function sendMessage() {
@@ -171,6 +216,10 @@ function handleUserTyping() {
         }, 1000);
     }
 }
+
+const isJoined = computed(() => {
+    return chatUsers.value && (chatUsers.value ?? [])?.some((chatUser) => chatUser.id === mainStore.user?.item?.id);
+});
 </script>
 
 <template>
@@ -181,6 +230,25 @@ function handleUserTyping() {
             </div>
             <div>
                 <Button
+                    v-if="isJoined"
+                    label="Leave"
+                    size="small"
+                    class="mr-2"
+                    :disabled="(chatUsers ?? []).length === 0 || joinLoading"
+                    :loading="leaveLoading"
+                    @click="leaveChatRoom"
+                />
+                <Button
+                    v-else
+                    label="Join"
+                    size="small"
+                    class="mr-2"
+                    :disabled="(chatUsers ?? []).length === 0 || leaveLoading"
+                    :loading="joinLoading"
+                    @click="joinChatRoom"
+                />
+
+                <Button
                     label="Back"
                     size="small"
                     @click="() => router.push(`/${store.frontRouteName}`)"
@@ -190,7 +258,8 @@ function handleUserTyping() {
         <div class="chat-container">
             <div class="chat-window overflow-y-auto" ref="messagesContainer">
                 <div
-                    v-for="message in messages"
+                    v-if="isJoined"
+                    v-for="message in chatMessages"
                     :key="message.id"
                     class="message-bubble-container"
                 >
@@ -231,6 +300,7 @@ function handleUserTyping() {
                             placeholder="Enter your message here.."
                             hide-error-text
                             end-icon="pi-caret-right"
+                            :disabled="!isJoined"
                             @keyup="handleUserTyping"
                             @keyup.enter="sendMessage"
                         />

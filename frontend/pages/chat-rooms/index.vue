@@ -49,6 +49,13 @@ watch(data, () => {
                 </div>
                 <div>
                     <Button
+                        label="Create chat room"
+                        size="small"
+                        icon="pi pi-plus"
+                        class="mr-2"
+                        @click="() => router.push(`/${store.frontRouteName}/create`)"
+                    />
+                    <Button
                         label="Enter chat room"
                         size="small"
                         icon="pi pi-comments"

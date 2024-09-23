@@ -35,6 +35,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::prefix('chat-rooms')->group(function () {
         Route::prefix('{chatRoom}')->group(function () {
+            Route::get('join', [ChatRoomController::class, 'joinChatRoom']);
+            Route::get('leave', [ChatRoomController::class, 'leaveChatRoom']);
+
             Route::prefix('chat')->group(function () {
                 Route::get('get-chat-messages', [ChatMessageController::class, 'getChatMessages']);
                 Route::post('send-chat-message-to-chat-room', [ChatMessageController::class, 'sendChatMessageToChatRoom']);
@@ -42,7 +45,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         });
     });
     Route::apiResource('chat-rooms', ChatRoomController::class);
-
 
     Route::prefix('email-settings')->group(function () {
         Route::prefix('{emailSetting}')->group(function () {

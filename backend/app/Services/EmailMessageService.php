@@ -26,7 +26,7 @@ class EmailMessageService
 
     public function show(EmailMessage $emailMessage): EmailMessage
     {
-        $emailMessage->update(['is_seen' => true]);
+        $this->markThreadAsSeen($emailMessage);
 
         return $emailMessage;
     }
@@ -194,6 +194,17 @@ class EmailMessageService
         }
 
         return $createdEmailMessages;
+    }
+
+    protected function markThreadAsSeen(EmailMessage $emailMessage): void
+    {
+        if (!$emailMessage->is_seen) {
+            $emailMessage->update(['is_seen' => true]);
+        }
+
+        if ($emailMessage->replyToEmailMessage) {
+            $this->markThreadAsSeen($emailMessage->replyToEmailMessage);
+        }
     }
 }
 
