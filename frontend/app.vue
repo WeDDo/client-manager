@@ -6,7 +6,7 @@
             position="top-center"
             class="w-11 sm:w-auto"
         />
-        <ConfirmDialog />
+        <ConfirmDialog/>
     </div>
 </template>
 
@@ -24,6 +24,14 @@ const mainStore = useMainStore();
 onMounted(() => {
     mainStore.user = authHelper.getAuthUserFromLocalStorage();
 });
+
+useHead({
+    title: 'Client manager',
+    meta: [
+        { name: 'description', content: 'Manage your clients efficiently with our Client Manager tool. Track client interactions, organize contact information, and streamline communication to boost productivity and customer satisfaction.' },
+    ],
+})
+
 </script>
 
 <style>

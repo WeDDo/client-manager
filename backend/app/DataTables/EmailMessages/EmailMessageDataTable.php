@@ -10,11 +10,17 @@ class EmailMessageDataTable extends BaseDataTable
 {
     public function get(): array
     {
+        $activeColumns = $this->getActiveColumns();
+        $columns = array_keys($this->getColumnItemClosures());
+        $items = $this->getItems();
+        $additionalData = (new EmailMessageService())->getAdditionalData();
+
         return [
-            'active_columns' => $this->getActiveColumns(),
-            'columns' => array_keys($this->getColumnItemClosures()),
-            'items' => $this->getItems(),
-            'additional_data' => (new EmailMessageService())->getAdditionalData(),
+            'active_columns' => $activeColumns,
+            'columns' => $columns,
+            'items' => $items,
+            'additional_data' => $additionalData,
+            'items_total_count' => auth()->user()->emailMessages()->count(),
         ];
     }
 
@@ -42,6 +48,9 @@ class EmailMessageDataTable extends BaseDataTable
             'is_answered' => function ($rowData) {
                 return $rowData['is_answered'];
             },
+            'unread_count' => function ($rowData) {
+                return $rowData['unread_count'];
+            },
         ];
     }
 
@@ -49,9 +58,8 @@ class EmailMessageDataTable extends BaseDataTable
     {
         return [
             ['name' => 'subject', 'header' => 'Subject', 'align' => 'left', 'min_width' => 300],
-            ['name' => 'date', 'header' => 'Date', 'align' => 'left', 'min_width' => 150],
             ['name' => 'from', 'header' => 'From', 'align' => 'left', 'min_width' => 125],
-            ['name' => 'is_seen', 'header' => 'Is seen', 'align' => 'left', 'min_width' => 125],
+            ['name' => 'date', 'header' => 'Date', 'align' => 'left', 'min_width' => 150],
             ['name' => 'is_flagged', 'header' => 'Is flagged', 'align' => 'left', 'min_width' => 125],
             ['name' => 'is_answered', 'header' => 'Is answered', 'align' => 'left', 'min_width' => 125],
         ];
@@ -59,23 +67,47 @@ class EmailMessageDataTable extends BaseDataTable
 
     public function getItems(): array
     {
-        $emailSettings = auth()->user()->emailMessages()
-            ->select('email_messages.*')
-            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
-            ->whereNull('replies.id') // Select only the latest emails (those without further replies)
-            ->when(request('selected_folder'), function ($query) {
-                $query->where('email_messages.folder', request('selected_folder'));
-            })
+        $emailMessages = auth()->user()->emailMessages()
+//            ->select('email_messages.*')
+//            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
+//            ->where(function ($query) {
+//                // Select emails without further replies, including emails that aren't part of a thread
+//                $query->whereNull('replies.id')
+//                    ->orWhereNull('email_messages.reply_to_email_message_id');
+//            })
+//            ->when(request('selected_folder'), function ($query) {
+//                $query->where('email_messages.folder', request('selected_folder'));
+//            })
             ->orderByDesc('email_messages.date')
             ->get();
 
-        $columns = $this->getColumnItemClosures();
+        $emailMessages = $emailMessages->map(function ($email) {
+            $unreadCount = 0;
+            $currentEmail = $email;
 
+            if (!$currentEmail->is_seen) {
+                $unreadCount++;
+            }
+
+            while ($currentEmail->replyToEmailMessage) {
+                if (!$currentEmail->replyToEmailMessage->is_seen) {
+                    $unreadCount++;
+                    break;
+                }
+                $currentEmail = $currentEmail->replyToEmailMessage;
+            }
+
+            $email->unread_count = $unreadCount;
+            return $email;
+        });
+
+        $columns = $this->getColumnItemClosures();
         $data = [];
-        foreach ($emailSettings as $emailSetting) {
+
+        foreach ($emailMessages as $emailMessage) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
-                $rowData[$columnKey] = $getColumnValue($emailSetting);
+                $rowData[$columnKey] = $getColumnValue($emailMessage);
             }
             $data[] = $rowData;
         }
@@ -85,13 +117,13 @@ class EmailMessageDataTable extends BaseDataTable
 
     public function getItem(mixed $id): array
     {
-        $emailSetting = auth()->user()->emailMessages()->where('id', $id)->first();
+        $emailMessage = auth()->user()->emailMessages()->where('id', $id)->first();
 
         $columns = $this->getColumnItemClosures();
 
         $rowData = [];
         foreach ($columns as $columnKey => $getColumnValue) {
-            $rowData[$columnKey] = $getColumnValue($emailSetting);
+            $rowData[$columnKey] = $getColumnValue($emailMessage);
         }
 
         return $rowData;

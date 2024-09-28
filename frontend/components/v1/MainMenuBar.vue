@@ -74,15 +74,24 @@ const items = ref([
     //     routeName: '/'
     // },
     {
-        label: 'Chat rooms',
-        icon: 'pi pi-comment',
-        routeName: '/chat-rooms'
-    },
-    {
-        label: 'Clients',
+        label: 'Partners',
         icon: 'pi pi-star',
-        routeName: '/clients'
+        routeName: '/partners'
     },
+    // {
+    //     label: 'Chat',
+    //     icon: 'pi pi-comment',
+    //     items: [
+    //         {
+    //             label: 'Public chat rooms',
+    //             routeName: '/chat-rooms',
+    //         },
+    //         {
+    //             label: 'Joined chat rooms',
+    //             routeName: '/chat-rooms',
+    //         },
+    //     ]
+    // },
     {
         label: 'Emails',
         icon: 'pi pi-envelope',

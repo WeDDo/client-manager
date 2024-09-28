@@ -13,6 +13,7 @@ class EmailInboxSettingDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'items_total_count' => auth()->user()->emailInboxSettings()->count(),
         ];
     }
 

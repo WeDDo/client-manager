@@ -4,9 +4,11 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChatRoomController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailInboxSettingController;
 use App\Http\Controllers\EmailMessageController;
 use App\Http\Controllers\EmailSettingController;
+use App\Http\Controllers\PartnerController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -17,6 +19,8 @@ Route::get('sanctum/csrf-cookie', function () {
 });
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('dashboard', [DashboardController::class, 'index']);
+
     Route::prefix('attachments')->group(function () {
         Route::prefix('{attachment}')->group(function () {
             Route::get('download', [AttachmentController::class, 'downloadAttachment']);
@@ -32,6 +36,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             });
         });
     });
+
+    Route::apiResource('partners', PartnerController::class);
 
     Route::prefix('chat-rooms')->group(function () {
         Route::prefix('{chatRoom}')->group(function () {

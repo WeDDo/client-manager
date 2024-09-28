@@ -125,7 +125,6 @@ async function handleReply() {
 }
 
 function confirmReply() {
-    console.log('ąčę');
     confirm.require({
         message: 'Are you sure you want to send a reply via email?',
         header: 'Confirmation',
@@ -169,7 +168,7 @@ function confirmReply() {
                         @click="handleUpdate"
                     />
                     <Button
-                        label="Back"
+                        icon="pi pi-times"
                         size="small"
                         :disabled="mainStore.actionLoading"
                         @click="() => router.push(`/${store.frontRouteName}`)"
