@@ -74,7 +74,7 @@ class {$name}Service
         $controllerPath = app_path("Http/Controllers/{$name}Controller.php");
 
         if (file_exists($controllerPath)) {
-            $variableName = lcfirst($name); // This will set variable to $partner if name is Partner
+            $variableName = lcfirst($name);
             $controllerTemplate = "<?php
 
 namespace App\Http\Controllers;
