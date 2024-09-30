@@ -72,7 +72,7 @@ async function handleCreate() {
                         @click="handleCreate"
                     />
                     <Button
-                        label="Back"
+                        icon="pi pi-times"
                         size="small"
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />

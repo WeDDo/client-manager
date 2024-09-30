@@ -1,12 +1,11 @@
 <script setup>
-import MainForm from "~/components/v1/modules/emailMessages/MainForm.vue";
+import MainForm from "~/components/v1/modules/partners/MainForm.vue";
 import {useFormHelper} from "~/composables/useFormHelper.js";
 import {useMainStore} from "~/stores/main.js";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
-import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
-import {useConfirm} from "primevue/useconfirm";
+import {usePartnerStore} from "~/stores/modules/partner.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -14,29 +13,19 @@ const mainStore = useMainStore();
 
 const route = useRoute();
 const router = useRouter();
-const store = useEmailMessageStore();
+const store = usePartnerStore();
 const toast = useToast();
-const confirm = useConfirm();
 
 const token = useCookie('token');
 
 let formValues = reactive({
     item: {
-        message_id: '',
-        subject: '',
-        from: '',
-        to: '',
-        cc: '',
-        bcc: '',
-        reply_to: '',
-        date: '',
-        body_text: '',
-        body_html: '',
-        is_seen: false,
-        is_flagged: false,
-        is_answered: false,
-        folder: '',
-        user_id: null,
+        id_name: null,
+        name: null,
+        name2: null,
+        legal_status: null,
+        email: null,
+        phone: null,
     },
 });
 
@@ -44,8 +33,6 @@ const mainFormRef = ref();
 let tabs = reactive([
     {name: 'Main', ref: mainFormRef, errors: {}},
 ]);
-
-const replyHtml = ref('');
 
 const formHelper = useFormHelper(formValues, tabs);
 const fetchHelper = useFetchHelper();
@@ -55,7 +42,7 @@ const {
     status,
     error,
     refresh
-} = await useFetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}`, {
+} = await useFetch(`${baseURL}/${store.apiRouteName}/${route.params.partnerId}`, {
     headers: {
         authorization: `Bearer ${token.value}`
     },
@@ -67,7 +54,6 @@ if (!error.value) {
     fetchHelper.handleUseFetchError(error);
 }
 
-
 async function handleUpdate() {
     if (!await formHelper.validateForm(formHelper.errors)) {
         return;
@@ -75,7 +61,7 @@ async function handleUpdate() {
 
     mainStore.actionLoading = true;
 
-    await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}`, {
+    await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.partnerId}`, {
         method: 'PUT',
         body: formValues.item,
         headers: {
@@ -84,7 +70,7 @@ async function handleUpdate() {
         onResponse({response}) {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
-                store.lastSelection = response._data.item;
+                store.lastSelection = response.item;
                 router.push(`/${store.frontRouteName}`);
             } else {
                 fetchHelper.handleResponseError(response);
@@ -92,51 +78,6 @@ async function handleUpdate() {
             mainStore.actionLoading = false;
         },
     })
-}
-
-async function handleReply() {
-    if (!await formHelper.validateForm(formHelper.errors)) {
-        return;
-    }
-
-    mainStore.actionLoading = true;
-
-    await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}/send`, {
-        method: 'POST',
-        body: {
-            reply_html: replyHtml.value,
-            to_emails: formValues.item.from.split(',').map(email => email.trim()),
-            cc_emails: formValues.item?.cc?.split(',').map(email => email.trim()),
-            bcc_emails: formValues.item?.bcc?.split(',').map(email => email.trim()),
-        },
-        headers: {
-            authorization: `Bearer ${token.value}`
-        },
-        onResponse({response}) {
-            replyHtml.value = null;
-            if (response.ok) {
-                toast.add({severity: 'success', summary: 'Replied successfully', life: 2000});
-            } else {
-                fetchHelper.handleResponseError(response);
-            }
-            mainStore.actionLoading = false;
-        },
-    })
-}
-
-function confirmReply() {
-    confirm.require({
-        message: 'Are you sure you want to send a reply via email?',
-        header: 'Confirmation',
-        icon: 'pi pi-exclamation-triangle',
-        rejectClass: 'p-button-secondary p-button-outlined',
-        rejectLabel: 'Cancel',
-        acceptLabel: 'Confirm',
-        accept: () => {
-            handleReply();
-        },
-        reject: () => {}
-    });
 }
 </script>
 
@@ -146,31 +87,21 @@ function confirmReply() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email message
+                    Partner edit
                 </div>
                 <div>
-                    <Button
-                        v-if="formValues?.item?.folder === 'INBOX'"
-                        label="Reply"
-                        size="small"
-                        icon="pi pi-reply"
-                        class="mr-2"
-                        :disabled="!replyHtml"
-                        :loading="mainStore.actionLoading"
-                        @click="confirmReply"
-                    />
                     <Button
                         label="Save"
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
-                        :loading="mainStore.actionLoading"
+                        text
                         @click="handleUpdate"
                     />
                     <Button
                         icon="pi pi-times"
                         size="small"
-                        :disabled="mainStore.actionLoading"
+                        text
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>
@@ -182,7 +113,6 @@ function confirmReply() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
-                            v-model:reply-html="replyHtml"
                             :tab="0"
                             :initial-form-values="formValues"
                             @set-form-values="formHelper.setFormValues($event)"

@@ -13,6 +13,7 @@ class EmailSettingDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'items_total_count' => auth()->user()->emailSettings()->count(),
         ];
     }
 
@@ -80,7 +81,9 @@ class EmailSettingDataTable extends BaseDataTable
 
     public function getItem(mixed $id): array
     {
-        $emailSetting = auth()->user()->emailSettings()->where('id', $id)->first();
+        $emailSetting = auth()->user()->emailSettings()
+            ->where('id', $id)
+            ->first();
 
         $columns = $this->getColumnItemClosures();
 

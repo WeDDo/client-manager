@@ -1,29 +1,27 @@
 <script setup>
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
-import {useEmailSettingStore} from "~/stores/modules/emailSetting.js";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
-import MainForm from "~/components/v1/modules/emailSettings/MainForm.vue";
+import MainForm from "~/components/v1/modules/partners/MainForm.vue";
+import {usePartnerStore} from "~/stores/modules/partner.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
 const mainStore = useMainStore();
 
 const router = useRouter();
-const store = useEmailSettingStore();
+const store = usePartnerStore();
 const toast = useToast();
 
 const token = useCookie('token');
 
 let formValues = reactive({
     item: {
-        host: 'imap.gmail.com',
-        port: 993,
-        encryption: 'ssl',
-        validate_cert: false,
-        username: null,
-        password: null,
-        protocol: 'imap',
-        active: false,
+        id_name: null,
+        name: null,
+        name2: null,
+        legal_status: null,
+        email: null,
+        phone: null,
     },
 });
 
@@ -68,7 +66,7 @@ async function handleCreate() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email setting add
+                    Partner add
                 </div>
                 <div>
                     <Button
@@ -76,11 +74,13 @@ async function handleCreate() {
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
+                        text
                         @click="handleCreate"
                     />
                     <Button
                         icon="pi pi-times"
                         size="small"
+                        text
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>

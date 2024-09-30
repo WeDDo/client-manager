@@ -117,6 +117,7 @@ const replyHtml = defineModel('replyHtml');
                         name="subject"
                         label="Subject"
                         :errors="errors"
+                        disabled
                     />
 
                     <MainTextInput
@@ -124,6 +125,7 @@ const replyHtml = defineModel('replyHtml');
                         name="from"
                         label="From"
                         :errors="errors"
+                        disabled
                     />
 
                     <MainTextInput
@@ -131,6 +133,7 @@ const replyHtml = defineModel('replyHtml');
                         name="to"
                         label="To"
                         :errors="errors"
+                        disabled
                     />
                 </div>
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
@@ -139,6 +142,7 @@ const replyHtml = defineModel('replyHtml');
                         name="reply_to"
                         label="Reply To"
                         :errors="errors"
+                        disabled
                     />
 
                     <MainTextInput
@@ -146,6 +150,7 @@ const replyHtml = defineModel('replyHtml');
                         name="cc"
                         label="Cc"
                         :errors="errors"
+                        disabled
                     />
 
                     <MainTextInput
@@ -153,6 +158,7 @@ const replyHtml = defineModel('replyHtml');
                         name="bcc"
                         label="Bcc"
                         :errors="errors"
+                        disabled
                     />
                 </div>
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
@@ -203,6 +209,7 @@ const replyHtml = defineModel('replyHtml');
                         label="Is Answered"
                         :show-error="false"
                         align-with-inputs
+                        disabled
                     />
                 </div>
                 <div class="col-12">

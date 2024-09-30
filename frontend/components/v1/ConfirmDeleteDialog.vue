@@ -26,8 +26,8 @@ const emit = defineEmits([
 
 const toast = useToast();
 
-let visible = ref(false);
-let loading = ref(false);
+const visible = ref(false);
+const loading = ref(false);
 
 defineExpose({visible});
 

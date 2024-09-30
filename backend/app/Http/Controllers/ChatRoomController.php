@@ -32,17 +32,13 @@ class ChatRoomController extends Controller
     {
         $this->chatRoomService->joinChatRoom($chatRoom);
 
-        return response()->json([
-            'message' => 'Success!',
-        ]);
+        return response()->json([]);
     }
 
     public function leaveChatRoom(ChatRoom $chatRoom): JsonResponse
     {
         $this->chatRoomService->leaveChatRoom($chatRoom);
 
-        return response()->json([
-            'message' => 'Success!',
-        ]);
+        return response()->json([]);
     }
 }

@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
 
             $table->string('message_id')->nullable();
-            $table->string('subject')->nullable();
+            $table->text('subject')->nullable();
             $table->string('from')->nullable();
-            $table->string('to')->nullable();
-            $table->string('cc')->nullable();
-            $table->string('bcc')->nullable();
-            $table->string('reply_to')->nullable();
+            $table->text('to')->nullable();
+            $table->text('cc')->nullable();
+            $table->text('bcc')->nullable();
+            $table->text('reply_to')->nullable();
             $table->dateTime('date')->nullable();
             $table->text('body_text')->nullable();
             $table->text('body_html')->nullable();

@@ -95,7 +95,7 @@ async function handleGetEmails() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email messages ({{ store.selectedFolder }})
+                    {{ store.multiName }} ({{ store.selectedFolder }})
                 </div>
                 <div>
                     <Button
@@ -138,7 +138,7 @@ async function handleGetEmails() {
                         @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
                     />
                     <Button
-                        label="Back"
+                        icon="pi pi-times"
                         size="small"
                         @click="() => router.push('/')"
                     />
@@ -150,9 +150,14 @@ async function handleGetEmails() {
                     v-model:data="dataTableData"
                     v-model:store="store"
                 >
-                    <template #is_seen="slotProps">
-                        <div class="flex align-items-center">
-                            <i :class="`pi ${slotProps.data.is_seen ? 'pi-check-square' : 'pi-stop'}`" />
+                    <template #subject="slotProps">
+                        <div class="flex justify-content-between">
+                            <div>
+                                {{ slotProps.data.subject }}
+                            </div>
+                            <div v-tooltip.bottom="'Unread count'">
+                                ({{ slotProps.data.unread_count }})
+                            </div>
                         </div>
                     </template>
                     <template #is_flagged="slotProps">

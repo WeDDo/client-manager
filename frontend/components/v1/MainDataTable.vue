@@ -1,5 +1,7 @@
 <script setup>
 import ConfirmDeleteDialog from "~/components/v1/ConfirmDeleteDialog.vue";
+import DataTableFilter from "~/components/v1/datatables/DataTableFilter.vue";
+import DataTableSort from "~/components/v1/datatables/DataTableSort.vue";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
@@ -23,7 +25,7 @@ const props = defineProps({
     },
     scrollHeight: {
         type: String,
-        default: 'calc(100vh - 13rem)',
+        default: 'calc(100vh - 12rem)',
     },
     routeName: {
         type: String,
@@ -48,6 +50,8 @@ const dataTableRef = ref();
 const selection = ref(store?.value?.lastSelection);
 const filters = ref({global: { value: null},});
 const confirmDeleteDialogRef = ref();
+
+// const confirmDeleteDialogRef = ref();
 
 defineExpose({confirmDeleteDialogRef, selection, store});
 
@@ -94,22 +98,31 @@ onMounted(() => {
         >
             <template #header>
                 <div class="flex justify-content-between">
+                    <div>
+                        <IconField
+                            icon-position="left"
+                        >
+                            <InputIcon>
+                                <i class="pi pi-search" />
+                            </InputIcon>
+                            <InputText
+                                v-model="filters['global'].value"
+                                placeholder="Search"
+                                size="small"
+                                class="w-12 sm:w-auto"
+                            />
+                        </IconField>
+                    </div>
                     <div v-if="props.header" class="text-xl text-900 font-bold flex justify-content-center align-items-center">
                         {{ props.header }}
                     </div>
-                    <IconField
-                        icon-position="left"
-                    >
-                        <InputIcon>
-                            <i class="pi pi-search" />
-                        </InputIcon>
-                        <InputText
-                            v-model="filters['global'].value"
-                            placeholder="Search"
-                            size="small"
-                            class="w-12 sm:w-auto"
+
+                    <div class="flex">
+                        <DataTableFilter
+                            class="mr-2"
                         />
-                    </IconField>
+                        <DataTableSort />
+                    </div>
                 </div>
             </template>
 
@@ -159,6 +172,9 @@ onMounted(() => {
             <template #footer>
                 <div class="text-xs">
                     <slot name="footer" />
+                    <div>
+                        Showing {{ data?.items?.length ?? 0 }} {{ data.items_total_count ? `of ${data.items_total_count} entries` : '' }}
+                    </div>
                 </div>
             </template>
         </DataTable>

@@ -28,6 +28,8 @@ class Email extends Mailable// implements ShouldQueue
         $this->data = $data;
         $this->emailMessage = $emailMessage;
         $this->emailSubject = $emailSubject;
+
+        $this->emailMessage?->update(['is_answered' => true]);
     }
 
     /**

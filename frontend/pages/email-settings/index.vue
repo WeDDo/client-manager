@@ -97,7 +97,7 @@ async function handleCopy() {
                         @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
                     />
                     <Button
-                        label="Back"
+                        icon="pi pi-times"
                         size="small"
                         @click="() => router.push('/')"
                     />

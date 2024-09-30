@@ -134,7 +134,7 @@ async function handleUpdate() {
 <!--                        @click="checkConnection"-->
 <!--                    />-->
                     <Button
-                        label="Back"
+                        icon="pi pi-times"
                         size="small"
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
