@@ -34,11 +34,11 @@ class MakeModule extends Command
 
     protected function createService($name): void
     {
+        $variableName = lcfirst($name);
         $servicePath = app_path("Services/{$name}Service.php");
 
         if (!file_exists($servicePath)) {
-            $serviceTemplate = "
-<?php
+            $serviceTemplate = "<?php
 
 namespace App\Services;
 
@@ -46,46 +46,22 @@ use App\Models\\$name;
 
 class {$name}Service
 {
-    public function getAll()
+    public function show($name \$$variableName): $name
     {
-        return $name::all();
+        return \$$variableName;
     }
 
-    public function show($name \$model)
-    {
-        return \$model;
-    }
-
-    public function store(array \$data)
+    public function store(array \$data): $name
     {
         return $name::create(\$data);
     }
 
-    public function update(array \$data, $name \$model)
+    public function update(array \$data, $name \$$variableName): void
     {
-        \$model->update(\$data);
-        return \$model;
-    }
-
-    public function delete($name \$model)
-    {
-        \$model->delete();
-    }
-
-    public function copy($name \$model)
-    {
-        \$newModel = \$model->replicate();
-        \$newModel->save();
-        return \$newModel;
-    }
-
-    public function checkConnection($name \$model)
-    {
-        // Logic for checking the connection, if any
+        \${$variableName}->update(\$data);
     }
 }
 ";
-
             File::put($servicePath, $serviceTemplate);
             $this->info("Service created: {$servicePath}");
         } else {
@@ -98,8 +74,8 @@ class {$name}Service
         $controllerPath = app_path("Http/Controllers/{$name}Controller.php");
 
         if (file_exists($controllerPath)) {
-            $controllerTemplate = "
-<?php
+            $variableName = lcfirst($name); // This will set variable to $partner if name is Partner
+            $controllerTemplate = "<?php
 
 namespace App\Http\Controllers;
 
@@ -110,47 +86,46 @@ use Illuminate\Http\JsonResponse;
 
 class {$name}Controller extends Controller
 {
-    public function __construct(private {$name}Service \$service)
+    public function __construct(private {$name}Service \${$name}service)
     {
     }
 
     public function index(): JsonResponse
     {
-        return response()->json(\$this->service->getAll());
+        return response()->json(\$this->{$name}service->getAll());
     }
 
-    public function show($name \$model): JsonResponse
+    public function show($name \${$variableName}): JsonResponse
     {
         return response()->json([
-            'item' => \$this->service->show(\$model),
+            'item' => \$this->{$name}service->show(\${$variableName}),
         ]);
     }
 
     public function store({$name}Request \$request): JsonResponse
     {
-        \$model = \$this->service->store(\$request->validated());
+        \$model = \$this->{$name}service->store(\$request->validated());
 
         return response()->json([
             'item' => \$model,
         ]);
     }
 
-    public function update({$name}Request \$request, $name \$model): JsonResponse
+    public function update({$name}Request \$request, $name \${$variableName}): JsonResponse
     {
-        \$this->service->update(\$request->validated(), \$model);
+        \$this->{$name}service->update(\$request->validated(), \${$variableName});
 
         return response()->json([
-            'item' => \$model,
+            'item' => \${$variableName},
         ]);
     }
 
-    public function destroy($name \$model): JsonResponse
+    public function destroy($name \${$variableName}): JsonResponse
     {
-        \$this->service->delete(\$model);
+        \${$variableName}->delete();
         return response()->json([], 204);
     }
 }";
-
             File::put($controllerPath, $controllerTemplate);
             $this->info("Controller updated: {$controllerPath}");
         } else {
