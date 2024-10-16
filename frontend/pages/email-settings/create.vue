@@ -54,7 +54,7 @@ async function handleCreate() {
                 store.lastSelection = response._data.item;
                 router.push(`/${store.frontRouteName}`);
             } else {
-                fetchHelper.handleResponseError(response);
+                fetchHelper.handleResponseError(response, mainFormRef);
             }
             mainStore.actionLoading = false;
         },

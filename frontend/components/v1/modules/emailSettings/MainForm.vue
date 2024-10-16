@@ -31,7 +31,7 @@ onMounted(() => {
 
 const schema = yup.object({
     item: yup.object({
-        host: yup.string().required().label('Host'),
+        host: yup.string().nullable().label('Host'),
         port: yup.number().required().label('Port'),
         encryption: yup.string().required().label('Encryption'),
         validate_cert: yup.string().nullable().label('Validate cert'),
@@ -73,7 +73,7 @@ const onSubmit = handleSubmit((values) => {
     return true;
 });
 
-defineExpose({onSubmit});
+defineExpose({onSubmit, errors});
 
 </script>
 

@@ -58,6 +58,9 @@ export function useFetchHelper() {
 
             toast.add({severity: 'error', summary: 'Authorisation error!', life: 5000});
             break;
+        case 422:
+            toast.add({severity: 'error', summary: 'Please correctly fill out the fields', life: 5000});
+            break;
         default:
             toast.add({severity: 'error', summary: 'Server error!', life: 5000});
         }

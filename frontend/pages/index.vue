@@ -44,7 +44,7 @@ if (!error.value) {
                 <template #title>
                     <div class="text-xl">
                         <div>
-                            You have {{ data.unread_email_count }} unread emails
+                            You have {{ data?.unread_email_count ?? 0 }} unread emails
                         </div>
                     </div>
                 </template>
