@@ -6,8 +6,11 @@ import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import EmailConversation from "~/components/v1/modules/emailMessages/EmailConversation.vue";
 import MainEditor from "~/components/v1/MainEditor.vue";
+import moment from "moment";
 
 const {public: {baseURL}} = useRuntimeConfig();
+
+const toast = useToast();
 
 const token = useCookie('token');
 
@@ -104,7 +107,17 @@ const onSubmit = handleSubmit((values) => {
 
 defineExpose({onSubmit});
 
+const files = defineModel('files');
 const replyHtml = defineModel('replyHtml');
+
+function uploadFile(event) {
+    files.value = event.files;
+}
+
+function removeFile(index) {
+    files.value.splice(index, 1);
+}
+
 </script>
 
 <template>
@@ -218,6 +231,49 @@ const replyHtml = defineModel('replyHtml');
                         name="reply_html"
                         label="Reply HTML"
                     />
+                    {{files}}
+                    <div v-if="files.length" class="mt-2 flex flex-wrap gap-2">
+                        <div
+                            v-for="(file, index) in files"
+                            :key="file.name"
+                            class="surface-100 p-2 border-round flex flex-column align-items-center justify-content-between w-6rem h-6rem"
+                        >
+                            <div v-if="file.type.startsWith('image/')" v-tooltip.right="file.name" class="w-full h-full flex align-items-center justify-content-center overflow-hidden border-round mb-1">
+                                <img :src="file.objectURL" :alt="file.name" class="w-full h-full object-cover" />
+                            </div>
+                            <div v-else class="w-full mb-1">
+                                <div v-tooltip.right="file.name" class="text-sm text-center text-ellipsis overflow-hidden white-space-nowrap" style="max-width: 5rem;">
+                                    {{ file.name }}
+                                </div>
+                            </div>
+
+                            <Button
+                                label="Clear"
+                                icon="pi pi-times"
+                                class="p-button-danger p-button-text mt-auto"
+                                size="small"
+                                @click="removeFile(index)"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <FileUpload
+                            name="files[]"
+                            choose-label="Change"
+                            :max-file-size="10000000"
+                            multiple
+                            auto
+                            :show-upload-button="false"
+                            :show-cancel-button="false"
+                            custom-upload
+                            @uploader="uploadFile($event)"
+                        >
+                            <template #empty>
+                                <div>Drag and drop files to here to send</div>
+                            </template>
+                        </FileUpload>
+                    </div>
                 </div>
                 <div class="col-12">
                    <EmailConversation
@@ -230,5 +286,31 @@ const replyHtml = defineModel('replyHtml');
 </template>
 
 <style scoped>
+.file-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 
+.file-thumbnail-wrapper {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.file-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 </style>

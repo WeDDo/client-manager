@@ -79,7 +79,8 @@ class EmailMessageController extends Controller
             $data['cc_emails'] ?? [],
             $data['bcc_emails'] ?? [],
             $data['reply_html'],
-            $emailMessage
+            $emailMessage,
+            files: $data['files'] ?? [],
         );
 
         return response()->json([

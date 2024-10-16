@@ -45,6 +45,7 @@ class EmailMessageService
         ?string       $replyHtml = null,
         ?EmailMessage $emailMessage = null,
         ?string       $subject = null,
+        array         $files = [],
     ): void
     {
         $emailSetting = auth()->user()->emailSettings()
@@ -56,7 +57,7 @@ class EmailMessageService
 
         $email = (new Email([
             'text' => $replyHtml
-        ], $emailMessage));
+        ], $emailMessage, files: $files));
 
         DB::transaction(function () use ($email, $toEmails, $ccEmails, $bccEmails, $emailMessage, $replyHtml, $subject) {
             Mail::mailer('smtp.users.' . auth()->user()->id)

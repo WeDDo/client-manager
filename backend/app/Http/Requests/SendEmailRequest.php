@@ -26,6 +26,7 @@ class SendEmailRequest extends FormRequest
             'cc_emails' => 'nullable',
             'bcc_emails' => 'nullable',
             'reply_html' => 'nullable',
+            'files' => 'nullable',
         ];
     }
 }

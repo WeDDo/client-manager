@@ -39,6 +39,7 @@ let formValues = reactive({
         user_id: null,
     },
 });
+const files = ref([]);
 
 const mainFormRef = ref();
 let tabs = reactive([
@@ -66,7 +67,6 @@ if (!error.value) {
 } else {
     fetchHelper.handleUseFetchError(error);
 }
-
 
 async function handleUpdate() {
     if (!await formHelper.validateForm(formHelper.errors)) {
@@ -101,19 +101,25 @@ async function handleReply() {
 
     mainStore.actionLoading = true;
 
+    const formData = new FormData();
+    formData.append('reply_html', replyHtml.value);
+    formValues.item.from.split(',').map(email => email.trim()).forEach(email => formData.append('to_emails[]', email));
+    formValues.item.cc?.split(',').map(email => email.trim()).forEach(email => formData.append('cc_emails[]', email));
+    formValues.item.bcc?.split(',').map(email => email.trim()).forEach(email => formData.append('bcc_emails[]', email));
+
+    files.value.forEach((file, index) => {
+        formData.append(`files[${index}]`, file);
+    });
+
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}/send`, {
         method: 'POST',
-        body: {
-            reply_html: replyHtml.value,
-            to_emails: formValues.item.from.split(',').map(email => email.trim()),
-            cc_emails: formValues.item?.cc?.split(',').map(email => email.trim()),
-            bcc_emails: formValues.item?.bcc?.split(',').map(email => email.trim()),
-        },
+        body: formData,
         headers: {
             authorization: `Bearer ${token.value}`
         },
         onResponse({response}) {
             replyHtml.value = null;
+            files.value = [];
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Replied successfully', life: 2000});
             } else {
@@ -183,6 +189,7 @@ function confirmReply() {
                         <MainForm
                             ref="mainFormRef"
                             v-model:reply-html="replyHtml"
+                            v-model:files="files"
                             :tab="0"
                             :initial-form-values="formValues"
                             @set-form-values="formHelper.setFormValues($event)"
