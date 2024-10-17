@@ -47,7 +47,7 @@ export function useFetchHelper() {
         }
     }
 
-    async function handleResponseError(response) {
+    async function handleResponseError(response, form) {
         switch (response.status) {
         case 401:
         case 405:
@@ -59,12 +59,26 @@ export function useFetchHelper() {
             toast.add({severity: 'error', summary: 'Authorisation error!', life: 5000});
             break;
         case 422:
-            toast.add({severity: 'error', summary: 'Please correctly fill out the fields', life: 5000});
+            let message = 'Please correctly fill out the fields';
+
+            if (form) {
+                if (response._data.errors) {
+                    Object.keys(response._data.errors).forEach((field) => {
+                        const errorMessages = response._data.errors[field];
+                        form.setFieldError(`item.${field}`, errorMessages[0]);
+                    });
+                }
+            }
+
+            if (response._data.message) {
+                message = response._data.message;
+            }
+
+            toast.add({severity: 'error', summary: message, life: 5000});
             break;
         default:
             toast.add({severity: 'error', summary: 'Server error!', life: 5000});
         }
-
     }
 
     return {
