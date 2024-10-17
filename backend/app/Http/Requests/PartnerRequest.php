@@ -24,7 +24,7 @@ class PartnerRequest extends FormRequest
         $partnerId = $this->route('partner');
 
         return [
-            'id_name' => ['required'], //todo add unique
+            'id_name' => ['required', 'unique:partners'],
             'name' => 'required',
             'name2' => 'nullable',
             'legal_status' => 'nullable',

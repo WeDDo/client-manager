@@ -66,17 +66,6 @@ class Email extends Mailable// implements ShouldQueue
      */
     public function attachments(): array
     {
-//        $attachments = [];
-//
-//        if (!empty($this->attachments)) {
-//            foreach ($this->attachments as $file) {
-//                $attachments[] = Attachment::fromPath($file['path'])
-//                    ->as($file['name']);
-//            }
-//        }
-//
-//        return $attachments;
-
         $attachments = [];
 
         if (!empty($this->files)) {
