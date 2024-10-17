@@ -77,7 +77,7 @@ async function handleUpdate() {
                 store.lastSelection = response.item;
                 form.setValues(response._data);
             } else {
-                fetchHelper.handleResponseError(response);
+                fetchHelper.handleResponseError(response, form);
             }
             mainStore.actionLoading = false;
         },

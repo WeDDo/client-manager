@@ -91,7 +91,7 @@ async function handleUpdate() {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
                 store.lastSelection = response._data.item;
             } else {
-                fetchHelper.handleResponseError(response);
+                fetchHelper.handleResponseError(response, form);
             }
             mainStore.actionLoading = false;
         },
@@ -127,7 +127,7 @@ async function handleReply() {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Replied successfully', life: 2000});
             } else {
-                fetchHelper.handleResponseError(response);
+                fetchHelper.handleResponseError(response, form);
             }
             mainStore.actionLoading = false;
         },

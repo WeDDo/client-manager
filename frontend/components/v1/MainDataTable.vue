@@ -171,7 +171,7 @@ onMounted(() => {
                 <div class="text-xs">
                     <slot name="footer" />
                     <div>
-                        Showing {{ data?.items?.length ?? 0 }} {{ data.items_total_count ? `of ${data.items_total_count} entries` : '' }}
+                        Showing {{ data?.items?.length ?? 0 }} {{ (data?.items_total_count ?? 0) ? `of ${data.items_total_count} entries` : '' }}
                     </div>
                 </div>
             </template>

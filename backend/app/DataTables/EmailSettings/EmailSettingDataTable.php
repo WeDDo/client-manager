@@ -79,6 +79,35 @@ class EmailSettingDataTable extends BaseDataTable
         return $data;
     }
 
+//    todo pagination
+//    public function getItems(): array
+//    {
+//        $emailSettings = auth()->user()->emailSettings()->paginate(4); // Paginate directly
+//
+//        $columns = $this->getColumnItemClosures();
+//
+//        $data = [];
+//        foreach ($emailSettings as $emailSetting) {
+//            $rowData = [];
+//            foreach ($columns as $columnKey => $getColumnValue) {
+//                $rowData[$columnKey] = $getColumnValue($emailSetting);
+//            }
+//            $data[] = $rowData;
+//        }
+//
+//        return [
+//            'data' => $data,  // Return the transformed items
+//            'pagination' => [
+//                'total' => $emailSettings->total(),
+//                'per_page' => $emailSettings->perPage(),
+//                'current_page' => $emailSettings->currentPage(),
+//                'last_page' => $emailSettings->lastPage(),
+//                'from' => $emailSettings->firstItem(),
+//                'to' => $emailSettings->lastItem(),
+//            ]
+//        ];
+//    }
+
     public function getItem(mixed $id): array
     {
         $emailSetting = auth()->user()->emailSettings()
