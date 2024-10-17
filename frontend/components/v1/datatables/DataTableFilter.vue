@@ -16,10 +16,6 @@ defineExpose({visible});
 function handleFilterClick() {
     visible.value = !visible.value;
 }
-
-onMounted(() => {
-
-});
 </script>
 
 <template>
@@ -28,6 +24,7 @@ onMounted(() => {
             size="small"
             icon="pi pi-filter"
             severity="secondary"
+            text
             @click="handleFilterClick"
         />
         <Dialog
