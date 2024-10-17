@@ -81,7 +81,7 @@ async function handleUpdate() {
                 store.lastSelection = response.item;
                 form.setValues(response._data);
             } else {
-                fetchHelper.handleResponseError(response);
+                fetchHelper.handleResponseError(response, form);
             }
             mainStore.actionLoading = false;
         },
@@ -106,7 +106,7 @@ async function checkConnection() {
                 toast.add({severity: 'success', summary: 'Connection successfully established!', life: 2000});
             } else {
                 checkConnectionResult.value = 'error';
-                fetchHelper.handleResponseError(response);
+                fetchHelper.handleResponseError(response, form);
             }
             mainStore.actionLoading = false;
         },
