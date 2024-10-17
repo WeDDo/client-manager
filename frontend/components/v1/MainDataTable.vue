@@ -51,8 +51,6 @@ const selection = ref(store?.value?.lastSelection);
 const filters = ref({global: { value: null},});
 const confirmDeleteDialogRef = ref();
 
-// const confirmDeleteDialogRef = ref();
-
 defineExpose({confirmDeleteDialogRef, selection, store});
 
 function handleDataTableClick(event) {

@@ -49,6 +49,7 @@ onMounted(() => {
             size="small"
             icon="pi pi-sort-alt"
             severity="secondary"
+            text
             @click="toggleMenu"
         />
         <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
