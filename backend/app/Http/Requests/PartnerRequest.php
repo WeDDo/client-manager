@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PartnerRequest extends FormRequest
 {
@@ -24,7 +25,10 @@ class PartnerRequest extends FormRequest
         $partnerId = $this->route('partner');
 
         return [
-            'id_name' => ['required', 'unique:partners'],
+            'id_name' => [
+                'required',
+                Rule::unique('partners', 'id_name')->ignore($partnerId)
+            ],
             'name' => 'required',
             'name2' => 'nullable',
             'legal_status' => 'nullable',
