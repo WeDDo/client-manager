@@ -37,7 +37,9 @@ class EmailMessageController extends Controller
         $emailMessage->update($request->validated());
 
         return response()->json([
-            'item' => $emailMessage
+            'item' => $emailMessage,
+            'relations' => $emailMessage->getAllRelations(),
+            'additional'=> $emailMessage->getAdditionalData(),
         ]);
     }
 
@@ -55,20 +57,20 @@ class EmailMessageController extends Controller
         ]);
     }
 
-    public function sendEmailUsingSmtp(SendEmailRequest $request): JsonResponse
-    {
-        $data = $request->validated();
-
-        $this->emailMessageService->sendEmailUsingSMTP(
-            $data['to_emails'],
-            $data['cc_emails'],
-            $data['bcc_emails'],
-        );
-
-        return response()->json([
-            'message' => 'Email sent successfully!',
-        ]);
-    }
+//    public function sendEmailUsingSmtp(SendEmailRequest $request): JsonResponse
+//    {
+//        $data = $request->validated();
+//
+//        $this->emailMessageService->sendEmailUsingSMTP(
+//            $data['to_emails'],
+//            $data['cc_emails'],
+//            $data['bcc_emails'],
+//        );
+//
+//        return response()->json([
+//            'message' => 'Email sent successfully!',
+//        ]);
+//    }
 
     public function replyToEmailUsingSmtp(SendEmailRequest $request, EmailMessage $emailMessage): JsonResponse
     {
@@ -79,11 +81,14 @@ class EmailMessageController extends Controller
             $data['cc_emails'] ?? [],
             $data['bcc_emails'] ?? [],
             $data['reply_html'],
-            $emailMessage
+            $emailMessage,
+            files: $data['files'] ?? [],
         );
 
         return response()->json([
-            'message' => 'Email sent successfully!',
+            'item' => $emailMessage,
+            'relations' => $emailMessage->getAllRelations(),
+            'additional'=> $emailMessage->getAdditionalData(),
         ]);
     }
 }

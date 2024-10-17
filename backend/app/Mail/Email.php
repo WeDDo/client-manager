@@ -6,6 +6,7 @@ use App\Models\EmailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
@@ -18,16 +19,19 @@ class Email extends Mailable// implements ShouldQueue
     private ?array $data;
     private ?EmailMessage $emailMessage;
     private ?string $emailSubject;
+    public ?array $files;
 
     public function __construct(
         ?array        $data = null,
         ?EmailMessage $emailMessage = null,
-        ?string       $emailSubject = null
+        ?string       $emailSubject = null,
+        ?array        $files = [],
     )
     {
         $this->data = $data;
         $this->emailMessage = $emailMessage;
         $this->emailSubject = $emailSubject;
+        $this->files = $files;
 
         $this->emailMessage?->update(['is_answered' => true]);
     }
@@ -62,7 +66,28 @@ class Email extends Mailable// implements ShouldQueue
      */
     public function attachments(): array
     {
-        return [];
+//        $attachments = [];
+//
+//        if (!empty($this->attachments)) {
+//            foreach ($this->attachments as $file) {
+//                $attachments[] = Attachment::fromPath($file['path'])
+//                    ->as($file['name']);
+//            }
+//        }
+//
+//        return $attachments;
+
+        $attachments = [];
+
+        if (!empty($this->files)) {
+            foreach ($this->files as $file) {
+                $attachments[] = Attachment::fromPath($file->getRealPath())
+                    ->as($file->getClientOriginalName())
+                    ->withMime($file->getMimeType());
+            }
+        }
+
+        return $attachments;
     }
 
     public function headers(): Headers

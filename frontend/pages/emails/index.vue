@@ -17,7 +17,6 @@ const dataTableData = ref();
 const store = useEmailMessageStore();
 const emailInboxSettingStore = useEmailInboxSettingStore();
 const mainDataTableRef = ref();
-const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
@@ -103,6 +102,9 @@ async function handleGetEmails() {
                         size="small"
                         icon="pi pi-envelope"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         @click="changeFolder"
                     />
                     <Button
@@ -110,6 +112,9 @@ async function handleGetEmails() {
                         size="small"
                         icon="pi pi-inbox"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"
                         :loading="mainStore.actionLoading"
                         @click="handleGetEmails"
@@ -119,6 +124,9 @@ async function handleGetEmails() {
                         size="small"
                         icon="pi pi-sliders-h"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="mainStore.actionLoading"
                         @click="() => router.push(`/${emailInboxSettingStore.frontRouteName}`)"
                     />
@@ -127,6 +135,9 @@ async function handleGetEmails() {
                         size="small"
                         icon="pi pi-pencil"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
                     />
@@ -134,12 +145,18 @@ async function handleGetEmails() {
                         size="small"
                         icon="pi pi-trash"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
                     />
                     <Button
                         icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push('/')"
                     />
                 </div>

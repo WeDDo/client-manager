@@ -68,16 +68,16 @@ class EmailMessageDataTable extends BaseDataTable
     public function getItems(): array
     {
         $emailMessages = auth()->user()->emailMessages()
-//            ->select('email_messages.*')
-//            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
-//            ->where(function ($query) {
-//                // Select emails without further replies, including emails that aren't part of a thread
-//                $query->whereNull('replies.id')
-//                    ->orWhereNull('email_messages.reply_to_email_message_id');
-//            })
-//            ->when(request('selected_folder'), function ($query) {
-//                $query->where('email_messages.folder', request('selected_folder'));
-//            })
+            ->select('email_messages.*')
+            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
+            ->where(function ($query) {
+                // Select emails without further replies, including emails that aren't part of a thread
+                $query->whereNull('replies.id')
+                    ->orWhereNull('email_messages.reply_to_email_message_id');
+            })
+            ->when(request('selected_folder'), function ($query) {
+                $query->where('email_messages.folder', request('selected_folder'));
+            })
             ->orderByDesc('email_messages.date')
             ->get();
 

@@ -6,6 +6,7 @@ import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
+import {emailInboxSettingSchema} from "~/schemas/emailInboxSettingSchema.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -18,10 +19,13 @@ const toast = useToast();
 
 const token = useCookie('token');
 
-let formValues = reactive({
-    item: {
-        name: '',
-    },
+const form = useForm({
+    validationSchema: emailInboxSettingSchema,
+    initialValues: {
+        item: {
+            name: null,
+        }
+    }
 });
 
 const mainFormRef = ref();
@@ -29,7 +33,7 @@ let tabs = reactive([
     {name: 'Main', ref: mainFormRef, errors: {}},
 ]);
 
-const formHelper = useFormHelper(formValues, tabs);
+const formHelper = useFormHelper(tabs);
 const fetchHelper = useFetchHelper();
 
 const {
@@ -44,7 +48,7 @@ const {
 });
 
 if (!error.value) {
-    formHelper.setFormValues(data.value)
+    form.setValues(data.value)
 } else {
     fetchHelper.handleUseFetchError(error);
 }
@@ -59,7 +63,7 @@ async function handleUpdate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailInboxSettingId}`, {
         method: 'PUT',
-        body: formValues.item,
+        body: form.values.item,
         headers: {
             authorization: `Bearer ${token.value}`
         },
@@ -67,7 +71,7 @@ async function handleUpdate() {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
                 store.lastSelection = response.item;
-                router.push(`/${store.frontRouteName}`);
+                form.setValues(response._data);
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -75,38 +79,6 @@ async function handleUpdate() {
         },
     })
 }
-//
-// async function checkConnection() {
-//     if (!await formHelper.validateForm(formHelper.errors)) {
-//         return;
-//     }
-//
-//     mainStore.actionLoading = true;
-//
-//     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailInboxSettingId}/check-connection`, {
-//         method: 'GET',
-//         headers: {
-//             authorization: `Bearer ${token.value}`
-//         },
-//         onResponse({response}) {
-//             if (response.ok) {
-//                 checkConnectionResult.value = null;
-//                 toast.add({severity: 'success', summary: 'Connection established!', life: 2000});
-//             } else {
-//                 checkConnectionResult.value = 'error';
-//                 fetchHelper.handleResponseError(response);
-//             }
-//             mainStore.actionLoading = false;
-//         },
-//     })
-// }
-//
-// function getCheckConnectionButtonSeverity() {
-//     if(checkConnectionResult.value === 'error') return 'danger';
-//     if(checkConnectionResult.value === 'loading') return 'secondary';
-//
-//     return undefined;
-// }
 </script>
 
 <template>
@@ -123,19 +95,17 @@ async function handleUpdate() {
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         @click="handleUpdate"
                     />
-<!--                    <Button-->
-<!--                        label="Check"-->
-<!--                        size="small"-->
-<!--                        icon="pi pi-wifi"-->
-<!--                        class="mr-2"-->
-<!--                        :severity="getCheckConnectionButtonSeverity()"-->
-<!--                        @click="checkConnection"-->
-<!--                    />-->
                     <Button
                         icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>
@@ -147,9 +117,8 @@ async function handleUpdate() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
+                            v-model:form="form"
                             :tab="0"
-                            :initial-form-values="formValues"
-                            @set-form-values="formHelper.setFormValues($event)"
                             @handle-submit="handleUpdate()"
                             @set-errors="formHelper.setErrors"
                         />

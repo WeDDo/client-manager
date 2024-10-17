@@ -1,5 +1,4 @@
 <script setup>
-import * as yup from "yup";
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
@@ -9,15 +8,12 @@ import MainEditor from "~/components/v1/MainEditor.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
+const toast = useToast();
 const token = useCookie('token');
 
 const fetchHelper = useFetchHelper();
 
 const props = defineProps({
-    initialFormValues: {
-        type: Object,
-        default: null,
-    },
     tab: {
         type: Number,
         default: 0,
@@ -25,86 +21,48 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-    'set-form-values',
-    'handle-submit',
     'set-errors',
 ]);
 
-onMounted(() => {
-    if (props.initialFormValues) {
-        setValues(props.initialFormValues);
-    }
-})
+const form = defineModel('form');
+const files = defineModel('files');
+const replyHtml = defineModel('replyHtml');
 
-const schema = yup.object({
-    item: yup.object({
-        message_id: yup.string().nullable().label('Message ID'),
-        subject: yup.string().nullable().label('Subject'),
-        from: yup.string().nullable().label('From'),
-        to: yup.string().nullable().label('To'),
-        cc: yup.string().nullable().label('Cc'),
-        bcc: yup.string().nullable().label('Bcc'),
-        reply_to: yup.string().nullable().label('Reply To'),
-        date: yup.date().nullable().label('Date'),
-        body_text: yup.string().nullable().label('Body Text'),
-        body_html: yup.string().nullable().label('Body HTML'),
-        is_seen: yup.boolean().default(false).label('Seen'),
-        is_flagged: yup.boolean().default(false).label('Flagged'),
-        is_answered: yup.boolean().default(false).label('Answered'),
-        folder: yup.string().nullable().label('Folder'),
-        user_id: yup.number().nullable().label('User ID'),
-    }),
-});
+useInsideFormValidation(form.value.errors, emit, props.tab);
 
-const {defineField, handleSubmit, resetForm, errors, values, setValues} = useForm({
-    validationSchema: schema,
-    initialValues: {
-        item: {
-            message_id: '',
-            subject: '',
-            from: '',
-            to: '',
-            cc: '',
-            bcc: '',
-            reply_to: '',
-            date: '',
-            body_text: '',
-            body_html: '',
-            is_seen: false,
-            is_flagged: false,
-            is_answered: false,
-            folder: '',
-            reply_to_email_message_id: null,
-            user_id: null,
-        }
-    }
-});
+const [messageId] = form.value.defineField('item.message_id');
+const [subject] = form.value.defineField('item.subject');
+const [from] = form.value.defineField('item.from');
+const [to] = form.value.defineField('item.to');
+const [cc] = form.value.defineField('item.cc');
+const [bcc] = form.value.defineField('item.bcc');
+const [replyTo] = form.value.defineField('item.reply_to');
+const [date] = form.value.defineField('item.date');
+const [bodyText] = form.value.defineField('item.body_text');
+const [bodyHtml] = form.value.defineField('item.body_html');
+const [isSeen] = form.value.defineField('item.is_seen');
+const [isFlagged] = form.value.defineField('item.is_flagged');
+const [isAnswered] = form.value.defineField('item.is_answered');
+const [folder] = form.value.defineField('item.folder');
+const [userId] = form.value.defineField('item.user_id');
 
-useInsideFormValidation(values, errors, emit, props.tab);
-
-const [messageId] = defineField('item.message_id');
-const [subject] = defineField('item.subject');
-const [from] = defineField('item.from');
-const [to] = defineField('item.to');
-const [cc] = defineField('item.cc');
-const [bcc] = defineField('item.bcc');
-const [replyTo] = defineField('item.reply_to');
-const [date] = defineField('item.date');
-const [bodyText] = defineField('item.body_text');
-const [bodyHtml] = defineField('item.body_html');
-const [isSeen] = defineField('item.is_seen');
-const [isFlagged] = defineField('item.is_flagged');
-const [isAnswered] = defineField('item.is_answered');
-const [folder] = defineField('item.folder');
-const [userId] = defineField('item.user_id');
-
-const onSubmit = handleSubmit((values) => {
+const onSubmit = form.value.handleSubmit((values) => {
     return true;
 });
 
 defineExpose({onSubmit});
 
-const replyHtml = defineModel('replyHtml');
+function uploadFile(event) {
+    files.value = event.files;
+}
+
+function removeFile(index) {
+    files.value.splice(index, 1);
+}
+
+function removeAllFiles() {
+    files.value = [];
+}
 </script>
 
 <template>
@@ -116,7 +74,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="subject"
                         name="subject"
                         label="Subject"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
 
@@ -124,7 +82,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="from"
                         name="from"
                         label="From"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
 
@@ -132,7 +90,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="to"
                         name="to"
                         label="To"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
                 </div>
@@ -141,7 +99,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="replyTo"
                         name="reply_to"
                         label="Reply To"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
 
@@ -149,7 +107,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="cc"
                         name="cc"
                         label="Cc"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
 
@@ -157,7 +115,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="bcc"
                         name="bcc"
                         label="Bcc"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
                 </div>
@@ -166,7 +124,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="messageId"
                         name="message_id"
                         label="Message ID"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
 
@@ -174,7 +132,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="date"
                         name="date"
                         label="Date"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
 
@@ -182,7 +140,7 @@ const replyHtml = defineModel('replyHtml');
                         v-model:value="folder"
                         name="folder"
                         label="Folder"
-                        :errors="errors"
+                        :errors="form.errors"
                         disabled
                     />
                 </div>
@@ -218,10 +176,66 @@ const replyHtml = defineModel('replyHtml');
                         name="reply_html"
                         label="Reply HTML"
                     />
+
+                    <div class="mt-2">
+                        <FileUpload
+                            name="files[]"
+                            choose-label="Change"
+                            :max-file-size="10000000"
+                            multiple
+                            auto
+                            :show-upload-button="false"
+                            :show-cancel-button="false"
+                            custom-upload
+                            @uploader="uploadFile($event)"
+                        >
+                            <template #empty>
+                                <div class="mt-2">
+                                    Drag and drop files to here to send
+                                </div>
+                            </template>
+                            <template #content>
+                                <div v-if="files.length" class="mt-2 flex flex-wrap gap-2">
+                                    <div
+                                        v-for="(file, index) in files"
+                                        :key="file.name"
+                                        class="surface-100 p-2 border-round flex flex-column align-items-center justify-content-between w-6rem h-6rem"
+                                    >
+                                        <div v-if="file.type.startsWith('image/')" v-tooltip.right="file.name" class="w-full h-full flex align-items-center justify-content-center overflow-hidden border-round mb-1">
+                                            <img :src="file.objectURL" :alt="file.name" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div v-else class="w-full mb-1">
+                                            <div v-tooltip.right="file.name" class="text-sm text-center text-ellipsis overflow-hidden white-space-nowrap" style="max-width: 5rem;">
+                                                {{ file.name }}
+                                            </div>
+                                        </div>
+
+                                        <Button
+                                            label="Clear"
+                                            icon="pi pi-times"
+                                            class="p-button-danger p-button-text mt-auto"
+                                            size="small"
+                                            @click="removeFile(index)"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div v-if="files.length" class="mt-3">
+                                    <Button
+                                        label="Clear All"
+                                        icon="pi pi-times"
+                                        class="p-button-danger p-button-text"
+                                        size="small"
+                                        @click="removeAllFiles"
+                                    />
+                                </div>
+                            </template>
+                        </FileUpload>
+                    </div>
                 </div>
                 <div class="col-12">
                    <EmailConversation
-                        :conversation="initialFormValues.additional.conversation"
+                        :conversation="form.values.additional.conversation"
                    />
                 </div>
             </div>
@@ -230,5 +244,4 @@ const replyHtml = defineModel('replyHtml');
 </template>
 
 <style scoped>
-
 </style>

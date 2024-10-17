@@ -1,5 +1,4 @@
 <script setup>
-import * as yup from "yup";
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
@@ -7,10 +6,6 @@ import MainPasswordInput from "~/components/v1/MainPasswordInput.vue";
 import MainSelectInput from "~/components/v1/MainSelectInput.vue";
 
 const props = defineProps({
-    initialFormValues: {
-        type: Object,
-        default: null,
-    },
     tab: {
         type: Number,
         default: 0,
@@ -18,58 +13,23 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-    'set-form-values',
-    'handle-submit',
     'set-errors',
 ]);
 
-onMounted(() => {
-    if (props.initialFormValues) {
-        setValues(props.initialFormValues);
-    }
-})
+const form = defineModel('form');
 
-const schema = yup.object({
-    item: yup.object({
-        host: yup.string().required().label('Host'),
-        port: yup.number().required().label('Port'),
-        encryption: yup.string().required().label('Encryption'),
-        validate_cert: yup.string().nullable().label('Validate cert'),
-        username: yup.string().required().label('Username'),
-        password: yup.string().required().label('Password'),
-        protocol: yup.string().required().label('Protocol'),
-        active: yup.bool().required().label('Active'),
-    }),
-});
+useInsideFormValidation(form.value.errors, emit, props.tab);
 
-const {defineField, handleSubmit, resetForm, errors, values, setValues} = useForm({
-    validationSchema: schema,
-    initialValues: {
-        item: {
-            host: null,
-            port: null,
-            encryption: null,
-            validate_cert: false,
-            username: null,
-            password: null,
-            protocol: null,
-            active: false,
-        }
-    }
-});
+const [host] = form.value.defineField('item.host');
+const [port] = form.value.defineField('item.port');
+const [encryption] = form.value.defineField('item.encryption');
+const [validateCert] = form.value.defineField('item.validate_cert');
+const [username] = form.value.defineField('item.username');
+const [password] = form.value.defineField('item.password');
+const [protocol] = form.value.defineField('item.protocol');
+const [active] = form.value.defineField('item.active');
 
-useInsideFormValidation(values, errors, emit, props.tab);
-
-const [host] = defineField('item.host');
-const [port] = defineField('item.port');
-const [encryption] = defineField('item.encryption');
-const [validateCert] = defineField('item.validate_cert');
-const [username] = defineField('item.username');
-const [password] = defineField('item.password');
-const [protocol] = defineField('item.protocol');
-const [active] = defineField('item.active');
-
-const onSubmit = handleSubmit((values) => {
+const onSubmit = form.value.handleSubmit((values) => {
     return true;
 });
 
@@ -86,33 +46,35 @@ defineExpose({onSubmit});
                         v-model:value="host"
                         name="host"
                         label="Host"
-                        :errors="errors"
+                        :errors="form.errors"
                         required
                     />
                     <MainTextInput
                         v-model:value="port"
                         name="port"
                         label="Port"
-                        :errors="errors"
+                        :errors="form.errors"
                         required
                     />
                     <MainSelectInput
                         v-model:value="encryption"
                         name="encryption"
                         label="Encryption"
-                        :errors="errors"
+                        :errors="form.errors"
                         :options="['ssl', 'tls']"
                         form-prefix=""
                         simple-options
+                        required
                     />
                     <MainSelectInput
                         v-model:value="protocol"
                         name="protocol"
                         label="Protocol"
-                        :errors="errors"
+                        :errors="form.errors"
                         :options="['smtp', 'imap']"
                         form-prefix=""
                         simple-options
+                        required
                     />
                 </div>
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
@@ -120,14 +82,14 @@ defineExpose({onSubmit});
                         v-model:value="username"
                         name="username"
                         label="Username"
-                        :errors="errors"
+                        :errors="form.errors"
                         required
                     />
                     <MainPasswordInput
                         v-model:value="password"
                         name="password"
                         label="Password"
-                        :errors="errors"
+                        :errors="form.errors"
                         required
                     />
                     <MainCheckbox
