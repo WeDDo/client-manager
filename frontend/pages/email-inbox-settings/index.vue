@@ -17,11 +17,10 @@ const token = useCookie('token');
 
 const dataTableData = ref();
 const mainDataTableRef = ref();
-const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
-const { data, pending, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}`, {
+const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}`, {
     headers: {
         authorization: `Bearer ${token.value}`
     },
@@ -37,26 +36,26 @@ function deleteTextTemplate(item) {
     return `the item ID: ${item.id}`;
 }
 
-async function handleCopy() {
-    mainStore.actionLoading = true;
-
-    await $fetch(`${baseURL}/${store.apiRouteName}/${mainDataTableRef.value.selection.id}/copy`, {
-        method: 'GET',
-        headers: {
-            authorization: `Bearer ${token.value}`
-        },
-        onResponse({response}) {
-            if (response.ok) {
-                toast.add({ severity: 'success', summary: 'Copied successfully', life: 2000 });
-                dataTableData.value.items.push(response._data.additional?.data_table_item ?? response._data.item);
-                mainDataTableRef.value.selection = response._data.additional?.data_table_item ?? response._data.item;
-            } else {
-                fetchHelper.handleResponseError(response);
-            }
-            mainStore.actionLoading = false;
-        },
-    });
-}
+// async function handleCopy() {
+//     mainStore.actionLoading = true;
+//
+//     await $fetch(`${baseURL}/${store.apiRouteName}/${mainDataTableRef.value.selection.id}/copy`, {
+//         method: 'GET',
+//         headers: {
+//             authorization: `Bearer ${token.value}`
+//         },
+//         onResponse({response}) {
+//             if (response.ok) {
+//                 toast.add({ severity: 'success', summary: 'Copied successfully', life: 2000 });
+//                 dataTableData.value.items.push(response._data.additional?.data_table_item ?? response._data.item);
+//                 mainDataTableRef.value.selection = response._data.additional?.data_table_item ?? response._data.item;
+//             } else {
+//                 fetchHelper.handleResponseError(response);
+//             }
+//             mainStore.actionLoading = false;
+//         },
+//     });
+// }
 
 </script>
 
@@ -66,7 +65,7 @@ async function handleCopy() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email inbox settings
+                    {{ store.singleName }}
                 </div>
                 <div>
                     <Button
@@ -74,6 +73,9 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-plus"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${store.frontRouteName}/create`)"
                     />
                     <Button
@@ -81,6 +83,9 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-pencil"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
                     />
@@ -89,6 +94,9 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-trash"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
                     />
@@ -103,6 +111,9 @@ async function handleCopy() {
                     <Button
                         icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${emailMessageStore.frontRouteName}`)"
                     />
                 </div>

@@ -6,6 +6,7 @@ import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import {useEmailSettingStore} from "~/stores/modules/emailSetting.js";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
+import {emailSettingSchema} from "~/schemas/emailSettingSchema.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -18,10 +19,20 @@ const toast = useToast();
 
 const token = useCookie('token');
 
-let formValues = reactive({
-    item: {
-        name: '',
-    },
+const form = useForm({
+    validationSchema: emailSettingSchema,
+    initialValues: {
+        item: {
+            host: null,
+            port: null,
+            encryption: null,
+            validate_cert: false,
+            username: null,
+            password: null,
+            protocol: null,
+            active: false,
+        },
+    }
 });
 
 const mainFormRef = ref();
@@ -31,12 +42,12 @@ let tabs = reactive([
 
 const checkConnectionResult = ref('loading');
 
-const formHelper = useFormHelper(formValues, tabs);
+const formHelper = useFormHelper(tabs);
 const fetchHelper = useFetchHelper();
 
 const {
     data,
-    pending,
+    status,
     error,
     refresh
 } = await useFetch(`${baseURL}/${store.apiRouteName}/${route.params.emailSettingId}`, {
@@ -46,11 +57,10 @@ const {
 });
 
 if (!error.value) {
-    formHelper.setFormValues(data.value)
+    form.setValues(data.value)
 } else {
     fetchHelper.handleUseFetchError(error);
 }
-
 
 async function handleUpdate() {
     if (!await formHelper.validateForm(formHelper.errors)) {
@@ -61,7 +71,7 @@ async function handleUpdate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailSettingId}`, {
         method: 'PUT',
-        body: formValues.item,
+        body: form.values.item,
         headers: {
             authorization: `Bearer ${token.value}`
         },
@@ -69,7 +79,7 @@ async function handleUpdate() {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
                 store.lastSelection = response.item;
-                router.push(`/${store.frontRouteName}`);
+                form.setValues(response._data);
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -93,7 +103,7 @@ async function checkConnection() {
         onResponse({response}) {
             if (response.ok) {
                 checkConnectionResult.value = null;
-                toast.add({severity: 'success', summary: 'Connection established!', life: 2000});
+                toast.add({severity: 'success', summary: 'Connection successfully established!', life: 2000});
             } else {
                 checkConnectionResult.value = 'error';
                 fetchHelper.handleResponseError(response);
@@ -117,27 +127,35 @@ function getCheckConnectionButtonSeverity() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email setting edit
+                    {{ store.singleName }} edit
                 </div>
                 <div>
-                    <Button
-                        label="Save"
-                        size="small"
-                        icon="pi pi-save"
-                        class="mr-2"
-                        @click="handleUpdate"
-                    />
                     <Button
                         label="Check"
                         size="small"
                         icon="pi pi-wifi"
                         class="mr-2"
+                        text
+                        raised
                         :severity="getCheckConnectionButtonSeverity()"
                         @click="checkConnection"
                     />
                     <Button
+                        label="Save"
+                        size="small"
+                        icon="pi pi-save"
+                        class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
+                        @click="handleUpdate"
+                    />
+                    <Button
                         icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>
@@ -149,9 +167,8 @@ function getCheckConnectionButtonSeverity() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
+                            v-model:form="form"
                             :tab="0"
-                            :initial-form-values="formValues"
-                            @set-form-values="formHelper.setFormValues($event)"
                             @handle-submit="handleUpdate()"
                             @set-errors="formHelper.setErrors"
                         />

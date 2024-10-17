@@ -3,6 +3,7 @@ import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainForm from "~/components/v1/modules/emailInboxSettings/MainForm.vue";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
+import {emailInboxSettingSchema} from "~/schemas/emailInboxSettingSchema.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -14,10 +15,13 @@ const toast = useToast();
 
 const token = useCookie('token');
 
-let formValues = reactive({
-    item: {
-        name: null,
-    },
+const form = useForm({
+    validationSchema: emailInboxSettingSchema,
+    initialValues: {
+        item: {
+            name: null,
+        }
+    }
 });
 
 const mainFormRef = ref();
@@ -25,7 +29,7 @@ let tabs = reactive([
     {name: "Main", ref: mainFormRef, errors: {}},
 ]);
 
-const formHelper = useFormHelper(formValues, tabs);
+const formHelper = useFormHelper(tabs);
 const fetchHelper = useFetchHelper();
 
 async function handleCreate() {
@@ -37,7 +41,7 @@ async function handleCreate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}`, {
         method: 'POST',
-        body: formValues.item,
+        body: form.values.item,
         headers: {
             authorization: `Bearer ${token.value}`
         },
@@ -61,7 +65,7 @@ async function handleCreate() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email inbox setting add
+                    {{ store.singleName }} add
                 </div>
                 <div>
                     <Button
@@ -69,11 +73,17 @@ async function handleCreate() {
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         @click="handleCreate"
                     />
                     <Button
                         icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>
@@ -85,9 +95,8 @@ async function handleCreate() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
+                            v-model:form="form"
                             :tab="0"
-                            :initial-form-values="formValues"
-                            @set-form-values="formHelper.setFormValues($event)"
                             @handle-submit="handleCreate()"
                             @set-errors="formHelper.setErrors"
                         />

@@ -1,13 +1,8 @@
 <script setup>
-import * as yup from "yup";
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 
 const props = defineProps({
-    initialFormValues: {
-        type: Object,
-        default: null,
-    },
     tab: {
         type: Number,
         default: 0,
@@ -15,37 +10,16 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-    'set-form-values',
-    'handle-submit',
     'set-errors',
 ]);
 
-onMounted(() => {
-    if (props.initialFormValues) {
-        setValues(props.initialFormValues);
-    }
-})
+const form = defineModel('form');
 
-const schema = yup.object({
-    item: yup.object({
-        name: yup.string().required().label('Name'),
-    }),
-});
+useInsideFormValidation(form.value.errors, emit, props.tab);
 
-const {defineField, handleSubmit, resetForm, errors, values, setValues} = useForm({
-    validationSchema: schema,
-    initialValues: {
-        item: {
-            name: null,
-        }
-    }
-});
+const [name] = form.value.defineField('item.name');
 
-useInsideFormValidation(values, errors, emit, props.tab);
-
-const [name] = defineField('item.name');
-
-const onSubmit = handleSubmit((values) => {
+const onSubmit = form.value.handleSubmit((values) => {
     return true;
 });
 
@@ -62,7 +36,7 @@ defineExpose({onSubmit});
                         v-model:value="name"
                         name="name"
                         label="Name"
-                        :errors="errors"
+                        :errors="form.errors"
                         required
                     />
                 </div>

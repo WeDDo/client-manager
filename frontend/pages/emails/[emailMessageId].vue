@@ -7,6 +7,7 @@ import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
 import {useConfirm} from "primevue/useconfirm";
+import {emailMessageSchema} from "~/schemas/emailMessageSchema.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -20,35 +21,39 @@ const confirm = useConfirm();
 
 const token = useCookie('token');
 
-let formValues = reactive({
-    item: {
-        message_id: '',
-        subject: '',
-        from: '',
-        to: '',
-        cc: '',
-        bcc: '',
-        reply_to: '',
-        date: '',
-        body_text: '',
-        body_html: '',
-        is_seen: false,
-        is_flagged: false,
-        is_answered: false,
-        folder: '',
-        user_id: null,
-    },
+const form = useForm({
+    validationSchema: emailMessageSchema,
+    initialValues: {
+        item: {
+            message_id: '',
+            subject: '',
+            from: '',
+            to: '',
+            cc: '',
+            bcc: '',
+            reply_to: '',
+            date: '',
+            body_text: '',
+            body_html: '',
+            is_seen: false,
+            is_flagged: false,
+            is_answered: false,
+            folder: '',
+            reply_to_email_message_id: null,
+            user_id: null,
+        }
+    }
 });
 const files = ref([]);
+
+const replyHtml = ref('');
 
 const mainFormRef = ref();
 let tabs = reactive([
     {name: 'Main', ref: mainFormRef, errors: {}},
 ]);
 
-const replyHtml = ref('');
-
-const formHelper = useFormHelper(formValues, tabs);
+const formHelper = useFormHelper(tabs);
 const fetchHelper = useFetchHelper();
 
 const {
@@ -63,7 +68,7 @@ const {
 });
 
 if (!error.value) {
-    formHelper.setFormValues(data.value)
+    form.setValues(data.value);
 } else {
     fetchHelper.handleUseFetchError(error);
 }
@@ -77,7 +82,7 @@ async function handleUpdate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}`, {
         method: 'PUT',
-        body: formValues.item,
+        body: form.values.item,
         headers: {
             authorization: `Bearer ${token.value}`
         },
@@ -85,7 +90,6 @@ async function handleUpdate() {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
                 store.lastSelection = response._data.item;
-                router.push(`/${store.frontRouteName}`);
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -98,14 +102,13 @@ async function handleReply() {
     if (!await formHelper.validateForm(formHelper.errors)) {
         return;
     }
-
     mainStore.actionLoading = true;
 
     const formData = new FormData();
     formData.append('reply_html', replyHtml.value);
-    formValues.item.from.split(',').map(email => email.trim()).forEach(email => formData.append('to_emails[]', email));
-    formValues.item.cc?.split(',').map(email => email.trim()).forEach(email => formData.append('cc_emails[]', email));
-    formValues.item.bcc?.split(',').map(email => email.trim()).forEach(email => formData.append('bcc_emails[]', email));
+    form.values.item.from.split(',').map(email => email.trim()).forEach(email => formData.append('to_emails[]', email));
+    form.values.item.cc?.split(',').map(email => email.trim()).forEach(email => formData.append('cc_emails[]', email));
+    form.values.item.bcc?.split(',').map(email => email.trim()).forEach(email => formData.append('bcc_emails[]', email));
 
     files.value.forEach((file, index) => {
         formData.append(`files[${index}]`, file);
@@ -118,6 +121,7 @@ async function handleReply() {
             authorization: `Bearer ${token.value}`
         },
         onResponse({response}) {
+            form.setValues(response._data);
             replyHtml.value = null;
             files.value = [];
             if (response.ok) {
@@ -152,15 +156,18 @@ function confirmReply() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email message
+                    {{ store.singleName }}
                 </div>
                 <div>
                     <Button
-                        v-if="formValues?.item?.folder === 'INBOX'"
+                        v-if="form.values?.item?.folder === 'INBOX'"
                         label="Reply"
                         size="small"
                         icon="pi pi-reply"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!replyHtml"
                         :loading="mainStore.actionLoading"
                         @click="confirmReply"
@@ -170,12 +177,18 @@ function confirmReply() {
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :loading="mainStore.actionLoading"
                         @click="handleUpdate"
                     />
                     <Button
                         icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="mainStore.actionLoading"
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
@@ -188,11 +201,10 @@ function confirmReply() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
+                            v-model:form="form"
                             v-model:reply-html="replyHtml"
                             v-model:files="files"
                             :tab="0"
-                            :initial-form-values="formValues"
-                            @set-form-values="formHelper.setFormValues($event)"
                             @handle-submit="handleUpdate()"
                             @set-errors="formHelper.setErrors"
                         />

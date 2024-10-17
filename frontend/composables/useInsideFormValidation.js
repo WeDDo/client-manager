@@ -1,8 +1,4 @@
-export function useInsideFormValidation(values, errors, emit, tab) {
-    watch(values, async (newValues) => {
-        emit('set-form-values', newValues);
-    });
-
+export function useInsideFormValidation(errors, emit, tab) {
     watch(errors, async (newValues) => {
         emit('set-errors', {errors: newValues, tab: tab});
     });

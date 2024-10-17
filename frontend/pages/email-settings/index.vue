@@ -14,7 +14,6 @@ const token = useCookie('token');
 
 const dataTableData = ref();
 const mainDataTableRef = ref();
-const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
@@ -63,7 +62,7 @@ async function handleCopy() {
         <div class="m-2">
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
-                    Email settings
+                    {{ store.multiName }}
                 </div>
                 <div>
                     <Button
@@ -71,6 +70,9 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-plus"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${store.frontRouteName}/create`)"
                     />
                     <Button
@@ -78,6 +80,9 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-pencil"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
                     />
@@ -86,6 +91,9 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-copy"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="handleCopy"
                     />
@@ -93,12 +101,18 @@ async function handleCopy() {
                         size="small"
                         icon="pi pi-trash"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
                     />
                     <Button
                         icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push('/')"
                     />
                 </div>

@@ -36,7 +36,11 @@ const props = defineProps({
     showClear: {
         type: Boolean,
         default: false,
-    }
+    },
+    required: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 const value = defineModel('value');
@@ -44,10 +48,15 @@ const value = defineModel('value');
 
 <template>
     <div>
-        <div>
+        <div v-if="label">
             <label :for="name">
                 {{ label }}
             </label>
+            <Badge
+                v-if="required"
+                class="ml-1 mb-1"
+                size="1"
+            />
         </div>
         <Dropdown
             v-model="value"

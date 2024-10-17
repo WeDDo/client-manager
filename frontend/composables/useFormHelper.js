@@ -1,4 +1,4 @@
-export function useFormHelper(formValues, tabs = null) {
+export function useFormHelper(tabs = null) {
     const toast = useToast();
     const errors = reactive({});
 
@@ -24,10 +24,6 @@ export function useFormHelper(formValues, tabs = null) {
         return !errorInTabs;
     }
 
-    function setFormValues(values) {
-        Object.assign(formValues, values);
-    }
-
     async function setErrors(event) {
         tabs[event.tab].errors = event.errors;
     }
@@ -35,7 +31,6 @@ export function useFormHelper(formValues, tabs = null) {
     return {
         errors,
         setErrors,
-        setFormValues,
         validateForm
     };
 }
