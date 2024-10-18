@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     modules: [
         'nuxt-primevue',
         '@pinia/nuxt',
+        'pinia-plugin-persistedstate/nuxt',
         '@vee-validate/nuxt',
         '@nuxt/eslint'
     ],

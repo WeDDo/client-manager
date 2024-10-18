@@ -4,6 +4,7 @@ namespace App\DataTables\EmailInboxSettings;
 
 use App\DataTables\BaseDataTable;
 use App\Models\EmailSetting;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailInboxSettingDataTable extends BaseDataTable
 {
@@ -13,7 +14,6 @@ class EmailInboxSettingDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
-            'items_total_count' => auth()->user()->emailInboxSettings()->count(),
         ];
     }
 
@@ -36,20 +36,22 @@ class EmailInboxSettingDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems(): array
+    public function getItems(): LengthAwarePaginator
     {
-        $emailSettings = auth()->user()->emailInboxSettings;
+        $items = auth()->user()->emailInboxSettings()->paginate($this->perPage);
+
         $columns = $this->getColumnItemClosures();
 
-        $data = [];
-        foreach ($emailSettings as $emailSetting) {
+        $transformedItems = $items->getCollection()->map(function ($emailSetting) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
                 $rowData[$columnKey] = $getColumnValue($emailSetting);
             }
-            $data[] = $rowData;
-        }
+            return $rowData;
+        });
 
-        return $data;
+        $items->setCollection(collect($transformedItems));
+
+        return $items;
     }
 }

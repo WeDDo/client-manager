@@ -5,6 +5,7 @@ import MainForm from "~/components/v1/modules/login/MainForm.vue";
 import {useAuthHelper} from "~/composables/useAuthHelper.js";
 import {useMainStore} from "~/stores/main.js";
 import Container from "~/components/v1/Container.vue";
+import {loginSchema} from "~/schemas/loginSchema.js";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
@@ -14,11 +15,14 @@ const router = useRouter();
 const toast = useToast();
 const token = useCookie('token');
 
-let formValues = reactive({
-  item: {
-    email: '',
-    password: ''
-  },
+const form = useForm({
+    validationSchema: loginSchema,
+    initialValues: {
+        item: {
+            email: '',
+            password: '',
+        }
+    }
 });
 
 const mainFormRef = ref();
@@ -27,7 +31,7 @@ let tabs = reactive([
 ]);
 
 const authHelper = useAuthHelper();
-const formHelper = useFormHelper(formValues, tabs);
+const formHelper = useFormHelper(tabs);
 const fetchHelper = useFetchHelper();
 
 async function handleLogin() {
@@ -51,7 +55,7 @@ async function handleLogin() {
 
   await $fetch(`${baseURL}/login`, {
     method: 'POST',
-    body: formValues.item,
+    body: form.values.item,
     headers: {
       'X-CSRF-TOKEN': csrfToken,
     },
@@ -84,9 +88,8 @@ function handleKeyDown(event) {
         <div class="px-1 py-6 sm:px-5 sm:py-6 mt-8 w-12 sm:w-6 m-auto">
           <main-form
               ref="mainFormRef"
+              v-model:form="form"
               :tab="0"
-              :initial-form-values="formValues"
-              @set-form-values="formHelper.setFormValues($event)"
               @handle-submit="handleLogin()"
               @set-errors="formHelper.setErrors"
           />

@@ -6,6 +6,7 @@ use App\DataTables\BaseDataTable;
 use App\Models\ChatRoom;
 use App\Models\EmailSetting;
 use App\Services\EmailMessageService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ChatRoomDataTable extends BaseDataTable
 {
@@ -43,7 +44,7 @@ class ChatRoomDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems(): array
+    public function getItems(): LengthAwarePaginator
     {
 //        $chatRooms = auth()->user()->chatRooms()
 //            ->get();

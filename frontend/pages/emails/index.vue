@@ -20,7 +20,7 @@ const mainDataTableRef = ref();
 
 const fetchHelper = useFetchHelper();
 
-const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}${store.selectedFolder ? `?selected_folder=${store.selectedFolder}` : ''}`, {
+const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}${store.selectedFolder ? `?selected_folder=${store.selectedFolder}` : ''}&page=1`, {
     headers: {
         authorization: `Bearer ${token.value}`
     },
@@ -79,6 +79,25 @@ async function handleGetEmails() {
             if (response.ok) {
                 fetchEmails();
                 toast.add({ severity: 'success', summary: 'Emails created successfully', life: 2000 });
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            mainStore.actionLoading = false;
+        },
+    });
+}
+
+async function handleGetDataTableData(event) {
+    mainStore.actionLoading = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}&page=${event.page + 1}`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                dataTableData.value = response._data;
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -166,6 +185,8 @@ async function handleGetEmails() {
                     ref="mainDataTableRef"
                     v-model:data="dataTableData"
                     v-model:store="store"
+                    paginate
+                    @page="handleGetDataTableData"
                 >
                     <template #subject="slotProps">
                         <div class="flex justify-content-between">

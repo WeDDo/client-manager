@@ -55,7 +55,21 @@
                         class="cursor-pointer"
                         @click="handleClickUser"
                     />
-                    <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
+                    <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true">
+                        <template #item="{ item, props }">
+                            <a
+                                v-ripple
+                                class="flex align-items-center"
+                                v-bind="props.action"
+                                @click="router.push(item.routeName)"
+                            >
+                                <span :class="item.icon" />
+                                <span class="ml-2">{{ item.label }}</span>
+                                <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
+                                <span v-if="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
+                            </a>
+                        </template>
+                    </Menu>
                 </div>
             </template>
         </Menubar>
@@ -116,7 +130,8 @@ const menuItems = ref([
         items: [
             {
                 label: 'Profile',
-                icon: 'pi pi-user'
+                icon: 'pi pi-user',
+                routeName: '/profile'
             },
             {
                 label: 'Log out',

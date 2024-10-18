@@ -5,6 +5,7 @@ namespace App\DataTables\Partners;
 use App\DataTables\BaseDataTable;
 use App\Models\EmailSetting;
 use App\Models\Partner;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PartnerDataTable extends BaseDataTable
 {
@@ -14,7 +15,6 @@ class PartnerDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
-            'items_total_count' => Partner::all()->count(),
         ];
     }
 
@@ -57,21 +57,27 @@ class PartnerDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems(): array
+    public function getItems(): LengthAwarePaginator
     {
-        $items = Partner::all();
+        $items = Partner::paginate($this->perPage);
+
+        // Get the column closures
         $columns = $this->getColumnItemClosures();
 
-        $data = [];
-        foreach ($items as $item) {
+        // Map through each paginated item and apply the closures
+        $transformedItems = $items->getCollection()->map(function ($item) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
                 $rowData[$columnKey] = $getColumnValue($item);
             }
-            $data[] = $rowData;
-        }
+            return $rowData;
+        });
 
-        return $data;
+        // Replace the original items collection with the transformed data
+        $items->setCollection(collect($transformedItems));
+
+        // Return the paginated object with transformed items
+        return $items;
     }
 
     public function getItem(mixed $id): array

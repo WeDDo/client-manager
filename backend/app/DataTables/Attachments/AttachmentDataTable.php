@@ -5,6 +5,7 @@ namespace App\DataTables\Attachments;
 use App\DataTables\BaseDataTable;
 use App\Models\Attachment;
 use App\Models\EmailSetting;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AttachmentDataTable extends BaseDataTable
 {
@@ -37,7 +38,7 @@ class AttachmentDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems(): array
+    public function getItems(): LengthAwarePaginator
     {
         $attachments = Attachment::where('related_name', request('related_name'))
             ->where('related_id', request('related_id'))

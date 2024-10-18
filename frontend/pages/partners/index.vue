@@ -14,11 +14,10 @@ const token = useCookie('token');
 
 const dataTableData = ref();
 const mainDataTableRef = ref();
-const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
-const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}`, {
+const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}?page=1`, {
     headers: {
         authorization: `Bearer ${token.value}`
     },
@@ -32,6 +31,25 @@ if (!error.value) {
 
 function deleteTextTemplate(item) {
     return `the item ID: ${item.id}`;
+}
+
+async function handleGetDataTableData(event) {
+    mainStore.actionLoading = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}?page=${event.page + 1}`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                dataTableData.value = response._data;
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            mainStore.actionLoading = false;
+        },
+    });
 }
 
 async function handleCopy() {
@@ -112,14 +130,10 @@ async function handleCopy() {
                     ref="mainDataTableRef"
                     v-model:data="dataTableData"
                     v-model:store="store"
+                    paginate
                     :delete-text-template="deleteTextTemplate"
-                >
-<!--                    <template #active="slotProps">-->
-<!--                        <div class="flex align-items-center">-->
-<!--                            <i :class="`pi ${slotProps.data.active ? 'pi-check-square' : 'pi-stop'}`" />-->
-<!--                        </div>-->
-<!--                    </template>-->
-                </MainDataTable>
+                    @page="handleGetDataTableData"
+                />
             </div>
         </div>
     </div>

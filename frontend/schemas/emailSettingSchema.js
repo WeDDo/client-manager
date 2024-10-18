@@ -3,7 +3,7 @@ import * as yup from 'yup';
 export const emailSettingSchema = yup.object({
     item: yup.object({
         host: yup.string().required().label('Host'),
-        port: yup.number().required().label('Port'),
+        port: yup.number().required().label('Port').typeError('Port must be a number'),
         encryption: yup.string().required().label('Encryption'),
         validate_cert: yup.string().nullable().label('Validate cert'),
         username: yup.string().required().label('Username'),
