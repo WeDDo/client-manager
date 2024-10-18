@@ -21,5 +21,6 @@ export const useMainStore = defineStore('main', {
                 this.settings = response.item;
             })
         },
-    }
+    },
+    persist: true,
 });

@@ -20,7 +20,7 @@ const mainDataTableRef = ref();
 
 const fetchHelper = useFetchHelper();
 
-const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}`, {
+const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}?page=1`, {
     headers: {
         authorization: `Bearer ${token.value}`
     },
@@ -34,6 +34,25 @@ if (!error.value) {
 
 function deleteTextTemplate(item) {
     return `the item ID: ${item.id}`;
+}
+
+async function handleGetDataTableData(event) {
+    mainStore.actionLoading = true;
+
+    await $fetch(`${baseURL}/${store.apiRouteName}?page=${event.page + 1}`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                dataTableData.value = response._data;
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            mainStore.actionLoading = false;
+        },
+    });
 }
 
 // async function handleCopy() {
@@ -123,9 +142,10 @@ function deleteTextTemplate(item) {
                     ref="mainDataTableRef"
                     v-model:data="dataTableData"
                     v-model:store="store"
+                    paginate
                     :delete-text-template="deleteTextTemplate"
-                >
-                </MainDataTable>
+                    @page="handleGetDataTableData"
+                />
             </div>
         </div>
     </div>

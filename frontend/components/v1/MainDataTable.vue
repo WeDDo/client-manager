@@ -25,7 +25,7 @@ const props = defineProps({
     },
     scrollHeight: {
         type: String,
-        default: 'calc(100vh - 12rem)',
+        default: 'calc(100vh - 15rem)',
     },
     routeName: {
         type: String,
@@ -34,12 +34,17 @@ const props = defineProps({
     customRowDblClick: {
         type: Boolean,
         default: false,
+    },
+    paginate: {
+        type: Boolean,
+        default: false,
     }
 });
 
 const emit = defineEmits([
     'row-dblclick',
     'item-deleted',
+    'page',
 ]);
 
 const store = defineModel('store');
@@ -84,7 +89,7 @@ onMounted(() => {
             ref="dataTableRef"
             v-model:selection="selection"
             v-model:filters="filters"
-            :value="data?.items ?? []"
+            :value="data?.items.data ?? []"
             selection-mode="single"
             scrollable
             data-key="id"
@@ -168,14 +173,34 @@ onMounted(() => {
             </Column>
 
             <template #footer>
-                <div class="text-xs">
-                    <slot name="footer" />
-                    <div>
-                        Showing {{ data?.items?.length ?? 0 }} {{ (data?.items_total_count ?? 0) ? `of ${data.items_total_count} entries` : '' }}
-                    </div>
+<!--                <div class="text-xs">-->
+<!--                    <slot name="footer" />-->
+<!--                    <div>-->
+<!--                        Showing {{ data?.items?.length ?? 0 }} {{ (data?.items_total_count ?? 0) ? `of ${data.items_total_count} entries` : '' }}-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <div>
+
                 </div>
             </template>
         </DataTable>
+
+        <div class="flex justify-content-end">
+            <Paginator
+                v-if="paginate"
+                :rows="data.items.per_page"
+                :total-records="data.items.total"
+                :first="(data.items.current_page - 1) * data.items.per_page"
+                @page="emit('page', $event)"
+            >
+                <template #start="slotProps">
+                    <div class="text-xs">
+                        {{ slotProps.state.first + 1 }}-{{ slotProps.state.first + Math.min(slotProps.state.rows, data.items.total) }} of {{data.items.total}}
+                    </div>
+                </template>
+            </Paginator>
+        </div>
 
         <ConfirmDeleteDialog
             ref="confirmDeleteDialogRef"

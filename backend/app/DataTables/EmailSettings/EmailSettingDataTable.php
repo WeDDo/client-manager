@@ -62,21 +62,28 @@ class EmailSettingDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems(): array
+    public function getItems()
     {
-        $emailSettings = auth()->user()->emailSettings;
+        // Paginate the user's email settings
+        $emailSettings = auth()->user()->emailSettings()->paginate($this->perPage); // Use $this->perPage or a default value
+
+        // Get the column closures
         $columns = $this->getColumnItemClosures();
 
-        $data = [];
-        foreach ($emailSettings as $emailSetting) {
+        // Map through each paginated item and apply the closures
+        $transformedItems = $emailSettings->getCollection()->map(function ($emailSetting) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
                 $rowData[$columnKey] = $getColumnValue($emailSetting);
             }
-            $data[] = $rowData;
-        }
+            return $rowData;
+        });
 
-        return $data;
+        // Replace the original items collection with the transformed data
+        $emailSettings->setCollection(collect($transformedItems));
+
+        // Return the paginated object with transformed items
+        return $emailSettings;
     }
 
 //    todo pagination

@@ -36,20 +36,22 @@ class EmailInboxSettingDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems(): array
+    public function getItems()
     {
-        $emailSettings = auth()->user()->emailInboxSettings;
+        $items = auth()->user()->emailInboxSettings()->paginate($this->perPage);
+
         $columns = $this->getColumnItemClosures();
 
-        $data = [];
-        foreach ($emailSettings as $emailSetting) {
+        $transformedItems = $items->getCollection()->map(function ($emailSetting) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
                 $rowData[$columnKey] = $getColumnValue($emailSetting);
             }
-            $data[] = $rowData;
-        }
+            return $rowData;
+        });
 
-        return $data;
+        $items->setCollection(collect($transformedItems));
+
+        return $items;
     }
 }

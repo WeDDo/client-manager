@@ -65,8 +65,9 @@ class EmailMessageDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems(): array
+    public function getItems()
     {
+        // Paginate the user's email messages
         $emailMessages = auth()->user()->emailMessages()
             ->select('email_messages.*')
             ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
@@ -79,12 +80,14 @@ class EmailMessageDataTable extends BaseDataTable
                 $query->where('email_messages.folder', request('selected_folder'));
             })
             ->orderByDesc('email_messages.date')
-            ->get();
+            ->paginate($this->perPage); // Use pagination here
 
-        $emailMessages = $emailMessages->map(function ($email) {
+        // Apply transformations to the email messages collection
+        $emailMessages->getCollection()->transform(function ($email) {
             $unreadCount = 0;
             $currentEmail = $email;
 
+            // Calculate unread count
             if (!$currentEmail->is_seen) {
                 $unreadCount++;
             }
@@ -101,19 +104,25 @@ class EmailMessageDataTable extends BaseDataTable
             return $email;
         });
 
+        // Get the column closures for transformation
         $columns = $this->getColumnItemClosures();
-        $data = [];
 
-        foreach ($emailMessages as $emailMessage) {
+        // Transform each email message into the format defined by the column closures
+        $transformedItems = $emailMessages->getCollection()->map(function ($emailMessage) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
                 $rowData[$columnKey] = $getColumnValue($emailMessage);
             }
-            $data[] = $rowData;
-        }
+            return $rowData;
+        });
 
-        return $data;
+        // Replace the original collection with the transformed items
+        $emailMessages->setCollection(collect($transformedItems));
+
+        // Return the paginated object with transformed data
+        return $emailMessages;
     }
+
 
     public function getItem(mixed $id): array
     {
