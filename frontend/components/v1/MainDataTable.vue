@@ -173,16 +173,6 @@ onMounted(() => {
             </Column>
 
             <template #footer>
-<!--                <div class="text-xs">-->
-<!--                    <slot name="footer" />-->
-<!--                    <div>-->
-<!--                        Showing {{ data?.items?.length ?? 0 }} {{ (data?.items_total_count ?? 0) ? `of ${data.items_total_count} entries` : '' }}-->
-<!--                    </div>-->
-<!--                </div>-->
-
-                <div>
-
-                </div>
             </template>
         </DataTable>
 

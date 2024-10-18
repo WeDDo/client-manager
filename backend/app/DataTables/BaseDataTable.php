@@ -2,15 +2,17 @@
 
 namespace App\DataTables;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+
 abstract class BaseDataTable
 {
     protected ?array $additionalData = null;
 
     protected array $activeColumns = [];
     protected array $columns = [];
-    protected $items = [];
+    protected LengthAwarePaginator $items;
 
-    protected int $perPage = 5;
+    protected int $perPage = 500;
 
     public function __construct(?array $additionalData = null)
     {
@@ -25,5 +27,5 @@ abstract class BaseDataTable
 
     public abstract function getActiveColumns(): array;
 
-    public abstract function getItems();
+    public abstract function getItems(): LengthAwarePaginator;
 }

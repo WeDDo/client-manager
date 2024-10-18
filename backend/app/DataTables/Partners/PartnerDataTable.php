@@ -5,6 +5,7 @@ namespace App\DataTables\Partners;
 use App\DataTables\BaseDataTable;
 use App\Models\EmailSetting;
 use App\Models\Partner;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PartnerDataTable extends BaseDataTable
 {
@@ -14,7 +15,6 @@ class PartnerDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
-            'items_total_count' => Partner::all()->count(),
         ];
     }
 
@@ -57,7 +57,7 @@ class PartnerDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems()
+    public function getItems(): LengthAwarePaginator
     {
         $items = Partner::paginate($this->perPage);
 

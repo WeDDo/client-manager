@@ -4,6 +4,7 @@ namespace App\DataTables\EmailSettings;
 
 use App\DataTables\BaseDataTable;
 use App\Models\EmailSetting;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailSettingDataTable extends BaseDataTable
 {
@@ -13,7 +14,6 @@ class EmailSettingDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
-            'items_total_count' => auth()->user()->emailSettings()->count(),
         ];
     }
 
@@ -62,7 +62,7 @@ class EmailSettingDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems()
+    public function getItems(): LengthAwarePaginator
     {
         // Paginate the user's email settings
         $emailSettings = auth()->user()->emailSettings()->paginate($this->perPage); // Use $this->perPage or a default value

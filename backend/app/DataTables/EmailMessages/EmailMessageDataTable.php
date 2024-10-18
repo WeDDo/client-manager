@@ -5,6 +5,7 @@ namespace App\DataTables\EmailMessages;
 use App\DataTables\BaseDataTable;
 use App\Models\EmailSetting;
 use App\Services\EmailMessageService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailMessageDataTable extends BaseDataTable
 {
@@ -20,7 +21,6 @@ class EmailMessageDataTable extends BaseDataTable
             'columns' => $columns,
             'items' => $items,
             'additional_data' => $additionalData,
-            'items_total_count' => auth()->user()->emailMessages()->count(),
         ];
     }
 
@@ -65,7 +65,7 @@ class EmailMessageDataTable extends BaseDataTable
         ];
     }
 
-    public function getItems()
+    public function getItems(): LengthAwarePaginator
     {
         // Paginate the user's email messages
         $emailMessages = auth()->user()->emailMessages()
