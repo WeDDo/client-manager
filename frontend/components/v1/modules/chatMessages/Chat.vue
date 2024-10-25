@@ -174,11 +174,11 @@ async function sendMessage() {
     })
 }
 
-const sendTypingEvent = () => {
+function sendTypingEvent() {
     echo.value.private(`chat.${route.params.chatRoomId}`).whisper("typing", {
         chatRoomId: route.params.chatRoomId,
     });
-};
+}
 
 const previousMessageLength = ref(0);
 
