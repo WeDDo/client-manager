@@ -57,7 +57,7 @@ const value = defineModel('value');
                 :aria-describedby="`${name}-help`"
                 type="text"
                 :placeholder="placeholder"
-                :class="{ 'p-invalid': errors.value?.[`item.${name}`], 'w-full': true }"
+                :class="{ 'p-invalid': errors?.value?.[`item.${name}`], 'w-full': true }"
                 :style="{ 'padding-right': endIcon ? '2rem' : '0.5rem' }"
                 :disabled="disabled"
             />
@@ -75,7 +75,7 @@ const value = defineModel('value');
                 id="email-help"
                 class="p-error"
             >
-                {{ errors.value?.[`item.${name}`] ?? '&nbsp;' }}
+                {{ errors?.value?.[`item.${name}`] ?? '&nbsp;' }}
             </small>
         </div>
     </div>
