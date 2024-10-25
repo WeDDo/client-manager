@@ -31,7 +31,11 @@ class ChatMessageController extends Controller
             'message' => request()->input('message')
         ]);
 
-        broadcast(new SendMessage($chatMessage));
+        try {
+            broadcast(new SendMessage($chatMessage));
+        } catch (\Throwable) {
+
+        }
 
         return response()->json([
             'item' => $chatMessage

@@ -49,10 +49,6 @@ class EmailSettingService
                 ->update(['active' => false]);
         }
     }
-//    public function getEmailsFromInbox()
-//    {
-//
-//    }
 
     public function copy(EmailSetting $emailSetting): EmailSetting
     {
@@ -62,19 +58,6 @@ class EmailSettingService
         return $newEmailSetting;
     }
 
-//    public function checkConnection(EmailSetting $emailSetting): void
-//    {
-//        $client = Client::make($this->setImapEmailConfig($emailSetting));
-//        try {
-//            $client->connect();
-//        } catch (ConnectionFailedException $e) {
-//            throw new HttpResponseException(
-//                response()->json([
-//                    'error' => 'connection_failed'
-//                ], 401)
-//            );
-//        }
-//    }
     public function checkConnection(EmailSetting $emailSetting): void
     {
         if ($emailSetting->protocol === EmailSetting::$imapProtocol) {
