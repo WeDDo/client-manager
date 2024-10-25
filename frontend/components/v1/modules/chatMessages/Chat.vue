@@ -222,7 +222,7 @@ const isJoined = computed(() => {
                     severity="contrast"
                     text
                     raised
-                    :disabled="(chatUsers ?? []).length === 0 || joinLoading"
+                    :disabled="joinLoading"
                     :loading="leaveLoading"
                     @click="leaveChatRoom"
                 />
@@ -234,7 +234,7 @@ const isJoined = computed(() => {
                     severity="contrast"
                     text
                     raised
-                    :disabled="(chatUsers ?? []).length === 0 || leaveLoading"
+                    :disabled="leaveLoading"
                     :loading="joinLoading"
                     @click="joinChatRoom"
                 />
