@@ -11,6 +11,7 @@ import {partnerSchema} from "~/schemas/partnerSchema.js";
 const {public: {baseURL}} = useRuntimeConfig();
 
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -63,7 +64,7 @@ async function handleUpdate() {
         return;
     }
 
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.partnerId}`, {
         method: 'PUT',
@@ -79,7 +80,7 @@ async function handleUpdate() {
             } else {
                 fetchHelper.handleResponseError(response, form);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     })
 }

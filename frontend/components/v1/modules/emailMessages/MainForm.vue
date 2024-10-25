@@ -170,69 +170,83 @@ function removeAllFiles() {
                         disabled
                     />
                 </div>
+
+                <Divider />
                 <div class="col-12">
-                    <MainEditor
-                        v-model:value="replyHtml"
-                        name="reply_html"
-                        label="Reply HTML"
-                    />
-
                     <div class="mt-2">
-                        <FileUpload
-                            name="files[]"
-                            choose-label="Change"
-                            :max-file-size="10000000"
-                            multiple
-                            auto
-                            :show-upload-button="false"
-                            :show-cancel-button="false"
-                            custom-upload
-                            @uploader="uploadFile($event)"
-                        >
-                            <template #empty>
-                                <div class="mt-2">
-                                    Drag and drop files to here to send
-                                </div>
-                            </template>
-                            <template #content>
-                                <div v-if="files.length" class="mt-2 flex flex-wrap gap-2">
-                                    <div
-                                        v-for="(file, index) in files"
-                                        :key="file.name"
-                                        class="surface-100 p-2 border-round flex flex-column align-items-center justify-content-between w-6rem h-6rem"
-                                    >
-                                        <div v-if="file.type.startsWith('image/')" v-tooltip.right="file.name" class="w-full h-full flex align-items-center justify-content-center overflow-hidden border-round mb-1">
-                                            <img :src="file.objectURL" :alt="file.name" class="w-full h-full object-cover" />
-                                        </div>
-                                        <div v-else class="w-full mb-1">
-                                            <div v-tooltip.right="file.name" class="text-sm text-center text-ellipsis overflow-hidden white-space-nowrap" style="max-width: 5rem;">
-                                                {{ file.name }}
-                                            </div>
-                                        </div>
-
-                                        <Button
-                                            label="Clear"
-                                            icon="pi pi-times"
-                                            class="p-button-danger p-button-text mt-auto"
-                                            size="small"
-                                            @click="removeFile(index)"
-                                        />
+                        <Accordion multiple>
+                            <AccordionTab
+                            >
+                                <template #header>
+                                    <div>
+                                        <div>Reply</div>
                                     </div>
-                                </div>
-
-                                <div v-if="files.length" class="mt-3">
-                                    <Button
-                                        label="Clear All"
-                                        icon="pi pi-times"
-                                        class="p-button-danger p-button-text"
-                                        size="small"
-                                        @click="removeAllFiles"
+                                </template>
+                                <div>
+                                    <MainEditor
+                                        v-model:value="replyHtml"
+                                        name="reply_html"
+                                        label="Reply HTML"
                                     />
+                                    <FileUpload
+                                        name="files[]"
+                                        choose-label="Change"
+                                        :max-file-size="10000000"
+                                        multiple
+                                        auto
+                                        :show-upload-button="false"
+                                        :show-cancel-button="false"
+                                        custom-upload
+                                        @uploader="uploadFile($event)"
+                                    >
+                                        <template #empty>
+                                            <div class="mt-2">
+                                                Drag and drop files to here to send
+                                            </div>
+                                        </template>
+                                        <template #content>
+                                            <div v-if="files.length" class="mt-2 flex flex-wrap gap-2">
+                                                <div
+                                                    v-for="(file, index) in files"
+                                                    :key="file.name"
+                                                    class="surface-100 p-2 border-round flex flex-column align-items-center justify-content-between w-6rem h-6rem"
+                                                >
+                                                    <div v-if="file.type.startsWith('image/')" v-tooltip.right="file.name" class="w-full h-full flex align-items-center justify-content-center overflow-hidden border-round mb-1">
+                                                        <img :src="file.objectURL" :alt="file.name" class="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div v-else class="w-full mb-1">
+                                                        <div v-tooltip.right="file.name" class="text-sm text-center text-ellipsis overflow-hidden white-space-nowrap" style="max-width: 5rem;">
+                                                            {{ file.name }}
+                                                        </div>
+                                                    </div>
+
+                                                    <Button
+                                                        label="Clear"
+                                                        icon="pi pi-times"
+                                                        class="p-button-danger p-button-text mt-auto"
+                                                        size="small"
+                                                        @click="removeFile(index)"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div v-if="files.length" class="mt-3">
+                                                <Button
+                                                    label="Clear All"
+                                                    icon="pi pi-times"
+                                                    class="p-button-danger p-button-text"
+                                                    size="small"
+                                                    @click="removeAllFiles"
+                                                />
+                                            </div>
+                                        </template>
+                                    </FileUpload>
                                 </div>
-                            </template>
-                        </FileUpload>
+                            </AccordionTab>
+                        </Accordion>
                     </div>
                 </div>
+                <Divider />
                 <div class="col-12">
                    <EmailConversation
                         :conversation="form.values.additional.conversation"

@@ -7,9 +7,10 @@ import {useMainStore} from "~/stores/main.js";
 import Container from "~/components/v1/Container.vue";
 import {loginSchema} from "~/schemas/loginSchema.js";
 
-const { public: { baseURL } } = useRuntimeConfig();
+const {public: {baseURL}} = useRuntimeConfig();
 
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
 
 const router = useRouter();
 const toast = useToast();
@@ -27,7 +28,7 @@ const form = useForm({
 
 const mainFormRef = ref();
 let tabs = reactive([
-  { name: "Main", ref: mainFormRef, errors: {} },
+    {name: "Main", ref: mainFormRef, errors: {}},
 ]);
 
 const authHelper = useAuthHelper();
@@ -35,47 +36,47 @@ const formHelper = useFormHelper(tabs);
 const fetchHelper = useFetchHelper();
 
 async function handleLogin() {
-  if(!await formHelper.validateForm(formHelper.errors)) {
-    return ;
-  }
+    if (!await formHelper.validateForm(formHelper.errors)) {
+        return;
+    }
 
-  mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
-  let csrfToken = null;
-  await $fetch(`${baseURL}/sanctum/csrf-cookie`, {
-    method: 'GET',
-    onResponse({ response }) {
-      if (response.ok) {
-        csrfToken = response._data.csrf_token;
-      } else {
-        fetchHelper.handleResponseError(response);
-      }
-    },
-  })
+    let csrfToken = null;
+    await $fetch(`${baseURL}/sanctum/csrf-cookie`, {
+        method: 'GET',
+        onResponse({response}) {
+            if (response.ok) {
+                csrfToken = response._data.csrf_token;
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    })
 
-  await $fetch(`${baseURL}/login`, {
-    method: 'POST',
-    body: form.values.item,
-    headers: {
-      'X-CSRF-TOKEN': csrfToken,
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        authHelper.setUserInLocalStorage(response._data);
-        token.value = response._data.token;
-        router.push('/');
-      } else {
-        fetchHelper.handleResponseError(response);
-      }
-      mainStore.actionLoading = false;
-    },
-  })
+    await $fetch(`${baseURL}/login`, {
+        method: 'POST',
+        body: form.values.item,
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                authHelper.setUserInLocalStorage(response._data);
+                token.value = response._data.token;
+                router.push('/');
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+            loadingStore.actionLoading = false;
+        },
+    })
 }
 
 function handleKeyDown(event) {
-  if (event.key === 'Enter') {
-    handleLogin();
-  }
+    if (event.key === 'Enter') {
+        handleLogin();
+    }
 }
 </script>
 
@@ -84,24 +85,24 @@ function handleKeyDown(event) {
         class="p-2"
         @keydown="handleKeyDown"
     >
-      <template #content>
-        <div class="px-1 py-6 sm:px-5 sm:py-6 mt-8 w-12 sm:w-6 m-auto">
-          <main-form
-              ref="mainFormRef"
-              v-model:form="form"
-              :tab="0"
-              @handle-submit="handleLogin()"
-              @set-errors="formHelper.setErrors"
-          />
+        <template #content>
+            <div class="px-1 py-6 sm:px-5 sm:py-6 mt-8 w-12 sm:w-6 m-auto">
+                <main-form
+                    ref="mainFormRef"
+                    v-model:form="form"
+                    :tab="0"
+                    @handle-submit="handleLogin()"
+                    @set-errors="formHelper.setErrors"
+                />
 
-          <Button
-              label="Login"
-              class="button w-full mt-2"
-              :loading="mainStore.actionLoading"
-              @click="handleLogin()"
-          />
-        </div>
-      </template>
+                <Button
+                    label="Login"
+                    class="button w-full mt-2"
+                    :loading="loadingStore.actionLoading"
+                    @click="handleLogin()"
+                />
+            </div>
+        </template>
     </Container>
 </template>
 

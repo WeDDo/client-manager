@@ -8,7 +8,10 @@ const { public: { baseURL } } = useRuntimeConfig();
 
 const route = useRoute();
 const router = useRouter();
+
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
+
 const toast = useToast();
 
 const token = useCookie('token');
@@ -48,7 +51,7 @@ async function fetchEmails() {
             } else {
                 fetchHelper.handleResponseError(response);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     });
 }
@@ -68,7 +71,7 @@ function changeFolder() {
 }
 
 async function handleGetEmails() {
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}/get-emails-using-imap`, {
         method: 'GET',
@@ -82,13 +85,13 @@ async function handleGetEmails() {
             } else {
                 fetchHelper.handleResponseError(response);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     });
 }
 
 async function handleGetDataTableData(event) {
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}&page=${event.page + 1}`, {
         method: 'GET',
@@ -101,7 +104,7 @@ async function handleGetDataTableData(event) {
             } else {
                 fetchHelper.handleResponseError(response);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     });
 }
@@ -135,7 +138,7 @@ async function handleGetDataTableData(event) {
                         text
                         raised
                         :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"
-                        :loading="mainStore.actionLoading"
+                        :loading="loadingStore.actionLoading"
                         @click="handleGetEmails"
                     />
                     <Button
@@ -146,7 +149,7 @@ async function handleGetDataTableData(event) {
                         severity="contrast"
                         text
                         raised
-                        :disabled="mainStore.actionLoading"
+                        :disabled="loadingStore.actionLoading"
                         @click="() => router.push(`/${emailInboxSettingStore.frontRouteName}`)"
                     />
                     <Button

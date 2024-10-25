@@ -46,6 +46,7 @@ class EmailInboxSettingController extends Controller
 
     public function destroy(EmailInboxSetting $emailInboxSetting): JsonResponse
     {
-        $emailInboxSetting->delete();
-        return response()->json([], 204);    }
+        $this->emailInboxSettingService->destroy($emailInboxSetting);
+        return response()->json([], 204);
+    }
 }
