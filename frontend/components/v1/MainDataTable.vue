@@ -70,7 +70,7 @@ function handleDataTableDoubleClick(event) {
 }
 
 function handleAfterDelete(id) {
-    data.value.items = data.value.items.data.filter(item => item.id !== id);
+    data.value.items.data = data.value.items.data.filter(item => item.id !== id);
     selection.value = null;
     emit('item-deleted', store.value.lastSelection);
 }
