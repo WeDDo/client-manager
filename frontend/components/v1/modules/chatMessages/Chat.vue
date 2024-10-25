@@ -227,7 +227,7 @@ const isJoined = computed(() => {
                     @click="leaveChatRoom"
                 />
                 <Button
-                    v-else
+                    v-if="!isJoined"
                     label="Join"
                     size="small"
                     class="mr-2"
