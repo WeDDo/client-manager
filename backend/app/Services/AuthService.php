@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\EmailInboxSetting;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
@@ -30,13 +31,18 @@ class AuthService
 
     public function login(array $data): array
     {
-        if(!Auth::attempt($data)){
+        if (!Auth::attempt($data)) {
             throw new AuthenticationException('Incorrect password');
         }
 
         $user = auth()->user();
 //            ->load('profile');
         $token = $user->createToken('authToken')->plainTextToken;
+
+        EmailInboxSetting::firstOrCreate(
+            ['name' => 'INBOX', 'user_id' => $user->id],
+            ['name' => 'INBOX']
+        );
 
 //        (new SettingService())->createInitialSettings();
 

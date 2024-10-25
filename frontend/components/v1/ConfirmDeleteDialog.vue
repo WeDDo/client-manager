@@ -1,5 +1,7 @@
 <script setup>
 
+import {useFetchHelper} from "~/composables/useFetchHelper.js";
+
 const {public: {baseURL}} = useRuntimeConfig();
 
 const token = useCookie('token');
@@ -31,24 +33,26 @@ const loading = ref(false);
 
 defineExpose({visible});
 
+const fetchHelper = useFetchHelper();
+
 async function confirm() {
     loading.value = true;
 
-    $fetch(`${baseURL}/${props.routeName}/${props.selection.id}`, {
+    await $fetch(`${baseURL}/${props.routeName}/${props.selection.id}`, {
         method: 'DELETE',
         headers: {
             authorization: `Bearer ${token.value}`
         },
-    }).then((response) => {
-        toast.add({ severity: 'success', summary: 'Deleted successfully', life: 2000 });
-        emit('set-deleted-id', props.selection.id);
-        emit('set-form-values', response);
-        visible.value = false;
-    }).catch((error) => {
-        console.log('error', error)
-        toast.add({ severity: 'error', summary: 'Server error!', life: 5000 });
-    }).finally(() => {
-        loading.value = false;
+        onResponse({ response }) {
+            if (response.ok) {
+                toast.add({ severity: 'success', summary: 'Deleted successfully', life: 2000 });
+                emit('set-deleted-id', props.selection.id);
+                emit('set-form-values', response);
+                visible.value = false;
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
     })
 }
 

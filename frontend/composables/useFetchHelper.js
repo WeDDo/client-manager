@@ -49,6 +49,9 @@ export function useFetchHelper() {
 
     async function handleResponseError(response, form) {
         switch (response.status) {
+        case 400:
+            toast.add({severity: 'error', summary: response._data.error, life: 5000});
+            break;
         case 401:
         case 405:
             if(router.currentRoute.value.fullPath === '/login') {
