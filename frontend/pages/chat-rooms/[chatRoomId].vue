@@ -19,7 +19,7 @@ const store = useChatRoomStore();
 <template>
     <div>
         <MainMenuBar />
-        <div>
+        <div v-if="route.params.chatRoomId">
             <Chat :chat-room-id="route.params.chatRoomId" />
         </div>
     </div>
