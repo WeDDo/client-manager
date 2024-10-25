@@ -109,8 +109,6 @@ async function joinChatRoom() {
         },
         onResponse({response}) {
             if (response.ok) {
-                getChatMessages();
-                scrollToBottom();
                 location.reload();
             } else {
                 fetchHelper.handleResponseError(response);
@@ -130,7 +128,7 @@ async function leaveChatRoom() {
         },
         onResponse({response}) {
             if (response.ok) {
-                getChatMessages();
+                location.reload();
             } else {
                 fetchHelper.handleResponseError(response);
             }
