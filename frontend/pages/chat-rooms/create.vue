@@ -4,23 +4,26 @@ import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainForm from "~/components/v1/modules/chatRooms/MainForm.vue";
 import {useChatRoomStore} from "~/stores/modules/chatRoom.js";
 import {useLoadingStore} from "~/stores/loading.js";
+import {chatRoomSchema} from "~/schemas/chatRoomSchema.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
-const mainStore = useMainStore();
-const loadingStore = useLoadingStore();
-
 const router = useRouter();
-const store = useChatRoomStore();
 const toast = useToast();
-
 const token = useCookie('token');
 
-let formValues = reactive({
-    item: {
-        name: null,
-        is_private: true,
-    },
+const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
+const store = useChatRoomStore();
+
+const form = useForm({
+    validationSchema: chatRoomSchema,
+    initialValues: {
+        item: {
+            name: null,
+            is_private: true,
+        },
+    }
 });
 
 const mainFormRef = ref();
@@ -28,7 +31,7 @@ let tabs = reactive([
     {name: "Main", ref: mainFormRef, errors: {}},
 ]);
 
-const formHelper = useFormHelper(formValues, tabs);
+const formHelper = useFormHelper(tabs);
 const fetchHelper = useFetchHelper();
 
 async function handleCreate() {
@@ -40,7 +43,7 @@ async function handleCreate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}`, {
         method: 'POST',
-        body: formValues.item,
+        body: form.values.item,
         headers: {
             authorization: `Bearer ${token.value}`
         },
@@ -50,7 +53,7 @@ async function handleCreate() {
                 store.lastSelection = response._data.item;
                 router.push(`/${store.frontRouteName}`);
             } else {
-                fetchHelper.handleResponseError(response);
+                fetchHelper.handleResponseError(response, form);
             }
             loadingStore.actionLoading = false;
         },
@@ -72,11 +75,17 @@ async function handleCreate() {
                         size="small"
                         icon="pi pi-save"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         @click="handleCreate"
                     />
                     <Button
-                        label="Back"
+                        icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>
@@ -88,9 +97,8 @@ async function handleCreate() {
                     <template #tab0>
                         <MainForm
                             ref="mainFormRef"
+                            v-model:form="form"
                             :tab="0"
-                            :initial-form-values="formValues"
-                            @set-form-values="formHelper.setFormValues($event)"
                             @handle-submit="handleCreate()"
                             @set-errors="formHelper.setErrors"
                         />

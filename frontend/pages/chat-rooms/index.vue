@@ -1,6 +1,5 @@
 <script setup>
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
-import Chat from "~/components/v1/modules/chatMessages/Chat.vue";
 import {useChatRoomStore} from "~/stores/modules/chatRoom.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
 
@@ -8,15 +7,15 @@ const {public: {baseURL}} = useRuntimeConfig();
 
 const route = useRoute();
 const router = useRouter();
-const mainStore = useMainStore();
 const toast = useToast();
 
 const token = useCookie('token');
 
-const dataTableData = ref();
+const mainStore = useMainStore();
 const store = useChatRoomStore();
+
+const dataTableData = ref();
 const mainDataTableRef = ref();
-const confirmDeleteDialogRef = ref();
 
 const fetchHelper = useFetchHelper();
 
@@ -35,8 +34,6 @@ if (!error.value) {
 watch(data, () => {
     dataTableData.value = data.value;
 });
-
-
 </script>
 
 <template>
@@ -53,6 +50,9 @@ watch(data, () => {
                         size="small"
                         icon="pi pi-plus"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push(`/${store.frontRouteName}/create`)"
                     />
                     <Button
@@ -60,12 +60,18 @@ watch(data, () => {
                         size="small"
                         icon="pi pi-comments"
                         class="mr-2"
+                        severity="contrast"
+                        text
+                        raised
                         :disabled="!mainDataTableRef?.selection"
                         @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
                     />
                     <Button
-                        label="Back"
+                        icon="pi pi-times"
                         size="small"
+                        severity="contrast"
+                        text
+                        raised
                         @click="() => router.push('/')"
                     />
                 </div>
@@ -75,23 +81,7 @@ watch(data, () => {
                     ref="mainDataTableRef"
                     v-model:data="dataTableData"
                     v-model:store="store"
-                >
-<!--                    <template #is_seen="slotProps">-->
-<!--                        <div class="flex align-items-center">-->
-<!--                            <i :class="`pi ${slotProps.data.is_seen ? 'pi-check-square' : 'pi-stop'}`" />-->
-<!--                        </div>-->
-<!--                    </template>-->
-<!--                    <template #is_flagged="slotProps">-->
-<!--                        <div class="flex align-items-center">-->
-<!--                            <i :class="`pi ${slotProps.data.is_flagged ? 'pi-check-square' : 'pi-stop'}`" />-->
-<!--                        </div>-->
-<!--                    </template>-->
-<!--                    <template #is_answered="slotProps">-->
-<!--                        <div class="flex align-items-center">-->
-<!--                            <i :class="`pi ${slotProps.data.is_answered ? 'pi-check-square' : 'pi-stop'}`" />-->
-<!--                        </div>-->
-<!--                    </template>-->
-                </MainDataTable>
+                />
             </div>
         </div>
     </div>

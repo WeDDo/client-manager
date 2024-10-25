@@ -6,14 +6,14 @@ import {useChatRoomStore} from "~/stores/modules/chatRoom.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
-const mainStore = useMainStore();
-
 const route = useRoute();
 const router = useRouter();
-const store = useChatRoomStore();
 const toast = useToast();
-
 const token = useCookie('token');
+
+const mainStore = useMainStore();
+const store = useChatRoomStore();
+
 </script>
 
 <template>

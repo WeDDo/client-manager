@@ -6,16 +6,17 @@ import MainTextInput from "~/components/v1/MainTextInput.vue";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import moment from 'moment';
 import {useChatRoomStore} from "~/stores/modules/chatRoom.js";
+import {useEcho} from "~/composables/useEcho.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
+const store = useChatRoomStore();
+const mainStore = useMainStore();
+
 const route = useRoute();
 const router = useRouter();
-const store = useChatRoomStore();
 const token = useCookie('token');
 const toast = useToast();
-
-const mainStore = useMainStore();
 
 const props = defineProps({
     chatRoomId: {
@@ -39,28 +40,12 @@ const messageText = ref();
 
 let typingTimeout = null;
 
-const echo = ref();
+const echo = useEcho();
 
 const leaveLoading = ref(false);
 const joinLoading = ref(false);
 
 onMounted(() => {
-    echo.value = new Echo({
-        broadcaster: 'reverb',
-        key: 'csf7pk9cj8ezjgbq9neh',
-        wsHost: 'localhost',
-        wsPort: 8080,
-        wssPort: 443,
-        forceTLS: false,
-        enabledTransports: ['ws', 'wss'],
-        authEndpoint: 'http://client-manager.test/broadcasting/auth',
-        auth: {
-            headers: {
-                Authorization: `Bearer ${token.value}`,
-            },
-        },
-    });
-
     echo.value.private(`chat.${props.chatRoomId}`)
         .listen(".MessageSent", (response) => {
             chatMessages.value.push(response.chatMessage);
@@ -234,6 +219,9 @@ const isJoined = computed(() => {
                     label="Leave"
                     size="small"
                     class="mr-2"
+                    severity="contrast"
+                    text
+                    raised
                     :disabled="(chatUsers ?? []).length === 0 || joinLoading"
                     :loading="leaveLoading"
                     @click="leaveChatRoom"
@@ -243,14 +231,20 @@ const isJoined = computed(() => {
                     label="Join"
                     size="small"
                     class="mr-2"
+                    severity="contrast"
+                    text
+                    raised
                     :disabled="(chatUsers ?? []).length === 0 || leaveLoading"
                     :loading="joinLoading"
                     @click="joinChatRoom"
                 />
 
                 <Button
-                    label="Back"
+                    icon="pi pi-times"
                     size="small"
+                    severity="contrast"
+                    text
+                    raised
                     @click="() => router.push(`/${store.frontRouteName}`)"
                 />
             </div>
