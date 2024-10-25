@@ -52,6 +52,7 @@ async function confirm() {
             } else {
                 fetchHelper.handleResponseError(response);
             }
+            loading.value = false;
         },
     })
 }
