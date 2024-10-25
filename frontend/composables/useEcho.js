@@ -2,6 +2,8 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
 export function useEcho() {
+    const {public: {baseURL}} = useRuntimeConfig();
+
     const token = useCookie('token');
 
     const echo = ref(null);
@@ -16,7 +18,7 @@ export function useEcho() {
                 wssPort: 443,
                 forceTLS: false,
                 enabledTransports: ['ws', 'wss'],
-                authEndpoint: 'http://client-manager.test/broadcasting/auth',
+                authEndpoint: `${baseURL.replace(/\/api$/, '')}/broadcasting/auth`,
                 auth: {
                     headers: {
                         Authorization: `Bearer ${token.value}`,

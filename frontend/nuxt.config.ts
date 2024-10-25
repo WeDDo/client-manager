@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     devtools: {enabled: true},
     runtimeConfig: {
         public: {
-            baseURL: process.env.API_URL || 'http://client-manager.test/api',
+            baseURL: process.env.CLIENT_MANAGER_API_URL || 'http://client-manager.test/api',
         },
     },
     modules: [
