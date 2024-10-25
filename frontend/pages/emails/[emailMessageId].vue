@@ -12,6 +12,7 @@ import {emailMessageSchema} from "~/schemas/emailMessageSchema.js";
 const {public: {baseURL}} = useRuntimeConfig();
 
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -78,7 +79,7 @@ async function handleUpdate() {
         return;
     }
 
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailMessageId}`, {
         method: 'PUT',
@@ -93,7 +94,7 @@ async function handleUpdate() {
             } else {
                 fetchHelper.handleResponseError(response, form);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     })
 }
@@ -102,7 +103,7 @@ async function handleReply() {
     if (!await formHelper.validateForm(formHelper.errors)) {
         return;
     }
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     const formData = new FormData();
     formData.append('reply_html', replyHtml.value);
@@ -129,7 +130,7 @@ async function handleReply() {
             } else {
                 fetchHelper.handleResponseError(response, form);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     })
 }
@@ -169,7 +170,7 @@ function confirmReply() {
                         text
                         raised
                         :disabled="!replyHtml"
-                        :loading="mainStore.actionLoading"
+                        :loading="loadingStore.actionLoading"
                         @click="confirmReply"
                     />
                     <Button
@@ -180,7 +181,7 @@ function confirmReply() {
                         severity="contrast"
                         text
                         raised
-                        :loading="mainStore.actionLoading"
+                        :loading="loadingStore.actionLoading"
                         @click="handleUpdate"
                     />
                     <Button
@@ -189,7 +190,7 @@ function confirmReply() {
                         severity="contrast"
                         text
                         raised
-                        :disabled="mainStore.actionLoading"
+                        :disabled="loadingStore.actionLoading"
                         @click="() => router.push(`/${store.frontRouteName}`)"
                     />
                 </div>

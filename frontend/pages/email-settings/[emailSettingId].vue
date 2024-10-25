@@ -10,11 +10,12 @@ import {emailSettingSchema} from "~/schemas/emailSettingSchema.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
+const store = useEmailSettingStore();
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
 
 const route = useRoute();
 const router = useRouter();
-const store = useEmailSettingStore();
 const toast = useToast();
 
 const token = useCookie('token');
@@ -67,7 +68,7 @@ async function handleUpdate() {
         return;
     }
 
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailSettingId}`, {
         method: 'PUT',
@@ -83,7 +84,7 @@ async function handleUpdate() {
             } else {
                 fetchHelper.handleResponseError(response, form);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     })
 }
@@ -93,7 +94,7 @@ async function checkConnection() {
         return;
     }
 
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.emailSettingId}/check-connection`, {
         method: 'GET',
@@ -108,7 +109,7 @@ async function checkConnection() {
                 checkConnectionResult.value = 'error';
                 fetchHelper.handleResponseError(response, form);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     })
 }

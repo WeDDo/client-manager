@@ -3,8 +3,6 @@ import {defineStore} from "pinia";
 export const useMainStore = defineStore('main', {
     state: () => ({
         settings: null,
-        fetchLoading: false,
-        actionLoading: false,
         user: null,
         token: null,
     }),

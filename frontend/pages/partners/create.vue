@@ -8,6 +8,7 @@ import {partnerSchema} from "~/schemas/partnerSchema.js";
 const {public: {baseURL}} = useRuntimeConfig();
 
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
 
 const router = useRouter();
 const store = usePartnerStore();
@@ -42,7 +43,7 @@ async function handleCreate() {
         return;
     }
 
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}`, {
         method: 'POST',
@@ -58,7 +59,7 @@ async function handleCreate() {
             } else {
                 fetchHelper.handleResponseError(response, form);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     })
 }

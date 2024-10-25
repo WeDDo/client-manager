@@ -3,10 +3,12 @@ import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainForm from "~/components/v1/modules/chatRooms/MainForm.vue";
 import {useChatRoomStore} from "~/stores/modules/chatRoom.js";
+import {useLoadingStore} from "~/stores/loading.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
 
 const router = useRouter();
 const store = useChatRoomStore();
@@ -34,7 +36,7 @@ async function handleCreate() {
         return;
     }
 
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}`, {
         method: 'POST',
@@ -50,7 +52,7 @@ async function handleCreate() {
             } else {
                 fetchHelper.handleResponseError(response);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     })
 }

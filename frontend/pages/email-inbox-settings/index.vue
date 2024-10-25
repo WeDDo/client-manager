@@ -8,9 +8,12 @@ import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
 const { public: { baseURL } } = useRuntimeConfig();
 
 const router = useRouter();
+
 const store = useEmailInboxSettingStore();
 const emailMessageStore = useEmailMessageStore();
 const mainStore = useMainStore();
+const loadingStore = useLoadingStore();
+
 const toast = useToast();
 
 const token = useCookie('token');
@@ -37,7 +40,7 @@ function deleteTextTemplate(item) {
 }
 
 async function handleGetDataTableData(event) {
-    mainStore.actionLoading = true;
+    loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}?page=${event.page + 1}`, {
         method: 'GET',
@@ -50,13 +53,13 @@ async function handleGetDataTableData(event) {
             } else {
                 fetchHelper.handleResponseError(response);
             }
-            mainStore.actionLoading = false;
+            loadingStore.actionLoading = false;
         },
     });
 }
 
 // async function handleCopy() {
-//     mainStore.actionLoading = true;
+//     loadingStore.actionLoading = true;
 //
 //     await $fetch(`${baseURL}/${store.apiRouteName}/${mainDataTableRef.value.selection.id}/copy`, {
 //         method: 'GET',
@@ -71,7 +74,7 @@ async function handleGetDataTableData(event) {
 //             } else {
 //                 fetchHelper.handleResponseError(response);
 //             }
-//             mainStore.actionLoading = false;
+//             loadingStore.actionLoading = false;
 //         },
 //     });
 // }
