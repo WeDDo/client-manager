@@ -8,7 +8,10 @@ class ChatRoomService
 {
     public function store(array $data): ChatRoom
     {
-        return ChatRoom::create($data);
+        $chatRoom = ChatRoom::create($data);
+        $chatRoom->users()->attach(auth()->user()->id);
+
+        return $chatRoom;
     }
 
     public function joinChatRoom(ChatRoom $chatRoom): void
