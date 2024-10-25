@@ -46,6 +46,19 @@ const leaveLoading = ref(false);
 const joinLoading = ref(false);
 
 onMounted(() => {
+    setupEcho();
+    getChatMessages();
+    scrollToBottom();
+    setupScrollListener();
+});
+
+watch(chatMessages, () => {
+    nextTick(() => {
+        handleScrollCheck();
+    });
+});
+
+function setupEcho() {
     echo.value.private(`chat.${props.chatRoomId}`)
         .listen(".MessageSent", (response) => {
             chatMessages.value.push(response.chatMessage);
@@ -64,17 +77,7 @@ onMounted(() => {
                 isSomeoneTyping.value = false;
             }, 1000);
         });
-
-    getChatMessages();
-    scrollToBottom();
-    setupScrollListener();
-});
-
-watch(chatMessages, () => {
-    nextTick(() => {
-        handleScrollCheck();
-    });
-});
+}
 
 function setupScrollListener() {
     if (messagesContainer?.value) {
@@ -106,6 +109,7 @@ async function joinChatRoom() {
         },
         onResponse({response}) {
             if (response.ok) {
+                setupEcho();
                 getChatMessages();
                 scrollToBottom();
             } else {
