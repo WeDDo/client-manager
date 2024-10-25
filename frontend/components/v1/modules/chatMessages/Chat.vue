@@ -109,9 +109,9 @@ async function joinChatRoom() {
         },
         onResponse({response}) {
             if (response.ok) {
-                setupEcho();
                 getChatMessages();
                 scrollToBottom();
+                location.reload();
             } else {
                 fetchHelper.handleResponseError(response);
             }
