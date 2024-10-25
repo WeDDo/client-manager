@@ -10,13 +10,18 @@ export function useEcho() {
 
     onMounted(() => {
         if (!echo.value) {
+            const url = new URL(baseURL).hostname;
+            const wsHost = url.includes("client-manager.test")
+                ? 'localhost'
+                : new URL(baseURL).hostname;
+
             echo.value = new Echo({
                 broadcaster: 'reverb',
                 key: 'csf7pk9cj8ezjgbq9neh',
-                wsHost: 'localhost',
+                wsHost: wsHost,
                 wsPort: 8080,
                 wssPort: 443,
-                forceTLS: false,
+                forceTLS: true,
                 enabledTransports: ['ws', 'wss'],
                 authEndpoint: `${baseURL.replace(/\/api$/, '')}/broadcasting/auth`,
                 auth: {
