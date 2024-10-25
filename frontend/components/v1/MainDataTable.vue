@@ -70,7 +70,7 @@ function handleDataTableDoubleClick(event) {
 }
 
 function handleAfterDelete(id) {
-    data.value.items = data.value.items.filter(item => item.id !== id);
+    data.value.items = data.value.items.data.filter(item => item.id !== id);
     selection.value = null;
     emit('item-deleted', store.value.lastSelection);
 }
@@ -176,17 +176,23 @@ onMounted(() => {
             </template>
         </DataTable>
 
-        <div class="flex justify-content-end">
+        <div
+            v-if="paginate"
+            class="flex justify-content-end">
             <Paginator
-                v-if="paginate"
                 :rows="data.items.per_page"
                 :total-records="data.items.total"
                 :first="(data.items.current_page - 1) * data.items.per_page"
                 @page="emit('page', $event)"
             >
                 <template #start="slotProps">
-                    <div class="text-xs">
-                        {{ slotProps.state.first + 1 }}-{{ slotProps.state.first + Math.min(slotProps.state.rows, data.items.total) }} of {{data.items.total}}
+                    <div class="text-sm">
+                        <div v-if="data.items.total > 0">
+                            {{ slotProps.state.first + 1 }}-{{ slotProps.state.first + Math.min(slotProps.state.rows, data.items.total) }} of {{data.items.total}}
+                        </div>
+                        <div v-else>
+                            No entries
+                        </div>
                     </div>
                 </template>
             </Paginator>

@@ -45,6 +45,7 @@ async function confirm() {
         emit('set-form-values', response);
         visible.value = false;
     }).catch((error) => {
+        console.log('error', error)
         toast.add({ severity: 'error', summary: 'Server error!', life: 5000 });
     }).finally(() => {
         loading.value = false;
