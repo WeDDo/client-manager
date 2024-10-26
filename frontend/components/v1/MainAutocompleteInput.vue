@@ -1,4 +1,11 @@
 <script setup>
+import {useFetchHelper} from "~/composables/useFetchHelper.js";
+
+const {public: {baseURL}} = useRuntimeConfig();
+
+const token = useCookie('token');
+
+const fetchHelper = useFetchHelper();
 
 const props = defineProps({
     name: {
@@ -13,88 +20,105 @@ const props = defineProps({
         type: Object,
         default: () => {},
     },
-    items: {
-        type: Array,
-        default: () => [],
+    table: {
+        type: String,
+        required: true,
     },
-    initialLocalValue: {
-        type: Object,
-        default: null,
-    }
+    searchFields: {
+        type: Array,
+        default: () => ['id', 'name'],
+    },
+    required: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 const value = defineModel('value');
-const localValue = ref(props.initialLocalValue);
-
-const filteredItems = ref();
-
-// onMounted(() => {
-//     localValue.value = props.initialLocalValue;
-// });
-
-// watch(value, async (newValue, oldValue) => {
-//     // if(!oldValue && !localValue) {
-//     //     localValue.value = value.value
-//     // }
-//
-//     if(!oldValue && !localValue) {
-//         localValue.value = props.initialLocalValue;
-//     }
-//     console.log('watch mainAutocompleteInput', newValue)
-// });
-
-// watch(props.initialLocalValue, async (newValue, oldValue) => {
-//     console.log('watch(initialLocalValue, async (newValue, oldValue)', props.initialLocalValue)
-//     // if(!oldValue && !localValue) {
-//     //     localValue.value = value.value
-//     // }
-//     // console.log('watch mainAutocompleteInput', newValue)
-// });
-
-watch(() => props.initialLocalValue, (newVal) => {
-    localValue.value = newVal;
-}, { deep: true });
+const items = ref();
 
 async function search(event) {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            filteredItems.value = [...props.items];
-        } else {
-            filteredItems.value = props.items.filter((item) => {
-                return item.name.toLowerCase().includes(event.query.toLowerCase());
-            });
-        }
-    }, 250);
+    console.log('event', event)
+
+    await $fetch(`${baseURL}/autocomplete/search`, {
+        method: 'POST',
+        body: {
+            table: props.table,
+            query: event.query,
+            search_fields: props.searchFields,
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                items.value = response._data;
+                console.log('response', response);
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    });
 }
 
-function handleInput(event) {
-    localValue.value = event.value;
-    value.value = event.value.id;
+async function fetchById(id) {
+    if (!id || typeof id === 'object') return;
+
+    await $fetch(`${baseURL}/autocomplete/search-by-id`, {
+        method: 'POST',
+        body: {
+            table: props.table,
+            id: id,
+            search_fields: props.searchFields,
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({ response }) {
+            if (response.ok) {
+                value.value = response._data;
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    });
 }
+
+onMounted(() => {
+    fetchById(value.value);
+})
 </script>
 
 <template>
     <div>
-        <div><label :for="name">{{ label }}</label></div>
+        <div v-if="label">
+            <label :for="name">
+                {{ label }}
+            </label>
+            <Badge
+                v-if="required"
+                class="ml-1 mb-1"
+                size="1"
+            />
+        </div>
         <AutoComplete
-            :model-value="localValue"
-            option-label="name"
-
-            data-key="id"
-            :suggestions="filteredItems"
-            :aria-describedby="`${name}-help`"
-            type="text"
+            v-model="value"
             dropdown
+            dropdown-mode="blank"
+            option-label="label"
+            :suggestions="items"
+            force-selection
             :class="{ 'p-invalid': errors?.[`item.${name}`] }"
-            @complete="search($event)"
-            @item-select="handleInput($event)"
+            :aria-describedby="`${name}-help`"
+            @complete="search"
         />
-        {{value}} {{localValue}}
         <div>
             <small
                 id="email-help"
                 class="p-error"
-            >{{ errors?.[`item.${name}`] ?? '&nbsp;' }}</small>
+            >
+                {{ errors?.value?.[`item.${name}`] ?? '&nbsp;' }}
+            </small>
         </div>
     </div>
 </template>
