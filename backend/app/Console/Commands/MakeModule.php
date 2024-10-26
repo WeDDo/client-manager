@@ -104,10 +104,10 @@ class {$name}Controller extends Controller
 
     public function store({$name}Request \$request): JsonResponse
     {
-        \$model = \$this->{$name}service->store(\$request->validated());
+        \${$variableName} = \$this->{$name}service->store(\$request->validated());
 
         return response()->json([
-            'item' => \$model,
+            'item' => \${$variableName},
         ]);
     }
 
