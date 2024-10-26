@@ -19,7 +19,6 @@ export const useContactStore = defineStore('contact', {
         },
         async setAdditionalFormData(data) {
             this.additionalFormData = data;
-            console.log('123', this.additionalFormData)
         }
     }
 });
