@@ -5,6 +5,7 @@ namespace App\DataTables\Contacts;
 use App\DataTables\BaseDataTable;
 use App\Models\Contact;
 use App\Models\EmailSetting;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ContactDataTable extends BaseDataTable
@@ -44,8 +45,8 @@ class ContactDataTable extends BaseDataTable
             'partner_id' => fn($rowData) => $rowData['partner_id'],
             'created_by' => fn($rowData) => $rowData['created_by'],
             'updated_by' => fn($rowData) => $rowData['updated_by'],
-            'created_at' => fn($rowData) => $rowData['created_at'],
-            'updated_at' => fn($rowData) => $rowData['updated_at'],
+            'created_at' => fn($rowData) => Carbon::parse($rowData['created_at'])->format('Y-m-d H:i:s'),
+            'updated_at' => fn($rowData) => Carbon::parse($rowData['updated_at'])->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -60,8 +61,8 @@ class ContactDataTable extends BaseDataTable
             ['name' => 'email1', 'header' => 'Primary Email', 'align' => 'left', 'min_width' => 150],
             ['name' => 'email2', 'header' => 'Secondary Email', 'align' => 'left', 'min_width' => 150],
             ['name' => 'birthday', 'header' => 'Birthday', 'align' => 'center', 'min_width' => 150],
-            ['name' => 'address1', 'header' => 'Address Line 1', 'align' => 'left', 'min_width' => 150],
-            ['name' => 'address2', 'header' => 'Address Line 2', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'address1', 'header' => 'Address 1', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'address2', 'header' => 'Address 2', 'align' => 'left', 'min_width' => 150],
             ['name' => 'city', 'header' => 'City', 'align' => 'left', 'min_width' => 150],
             ['name' => 'state', 'header' => 'State', 'align' => 'left', 'min_width' => 150],
             ['name' => 'postal_code', 'header' => 'Postal Code', 'align' => 'center', 'min_width' => 150],
@@ -69,10 +70,10 @@ class ContactDataTable extends BaseDataTable
             ['name' => 'website', 'header' => 'Website', 'align' => 'left', 'min_width' => 150],
             ['name' => 'preferred_contact_method', 'header' => 'Preferred Contact', 'align' => 'left', 'min_width' => 150],
             ['name' => 'status', 'header' => 'Status', 'align' => 'center', 'min_width' => 150],
-            ['name' => 'last_contacted_at', 'header' => 'Last Contacted', 'align' => 'right', 'min_width' => 150],
+            ['name' => 'last_contacted_at', 'header' => 'Last Contacted', 'align' => 'right', 'min_width' => 200],
             ['name' => 'partner_id', 'header' => 'Partner ID', 'align' => 'center', 'min_width' => 150],
-            ['name' => 'created_at', 'header' => 'Created At', 'align' => 'right', 'min_width' => 150],
-            ['name' => 'updated_at', 'header' => 'Updated At', 'align' => 'right', 'min_width' => 150],
+            ['name' => 'created_at', 'header' => 'Created At', 'align' => 'right', 'min_width' => 200],
+            ['name' => 'updated_at', 'header' => 'Updated At', 'align' => 'right', 'min_width' => 200],
         ];
     }
 
