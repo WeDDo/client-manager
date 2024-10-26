@@ -48,16 +48,10 @@ const onSubmit = form.value.handleSubmit((values) => {
 
 defineExpose({onSubmit});
 
-const items = ref([]);
-
-const search = (event) => {
-    items.value = [...Array(10).keys()].map((item) => event.query + '-' + item);
-}
-
 </script>
 
 <template>
-    <div>
+    <div class="p-2">
         <form>
             <div class="formgrid grid">
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">

@@ -7,6 +7,7 @@ import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {usePartnerStore} from "~/stores/modules/partner.js";
 import {partnerSchema} from "~/schemas/partnerSchema.js";
+import ContactTab from "~/components/v1/modules/partners/ContactTab.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -35,8 +36,10 @@ const form = useForm({
 });
 
 const mainFormRef = ref();
+const contactTabRef = ref();
 let tabs = reactive([
     {name: 'Main', ref: mainFormRef, errors: {}},
+    {name: 'Contacts', ref: contactTabRef, errors: {}},
 ]);
 
 const formHelper = useFormHelper(tabs);
@@ -126,6 +129,13 @@ async function handleUpdate() {
                             :tab="0"
                             @handle-submit="handleUpdate()"
                             @set-errors="formHelper.setErrors"
+                        />
+                    </template>
+                    <template #tab1>
+                        <ContactTab
+                            ref="contactTabRef"
+                            v-model:form="form"
+                            :tab="1"
                         />
                     </template>
                 </BasicTabs>
