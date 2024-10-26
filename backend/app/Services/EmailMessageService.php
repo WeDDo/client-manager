@@ -34,7 +34,7 @@ class EmailMessageService
     public function getAdditionalData(): array
     {
         return [
-            'email_inbox_settings' => EmailInboxSetting::where('user_id', auth()->user()->id)->pluck('name'),
+            'email_inbox_settings' => EmailInboxSetting::where('created_by', auth()->user()->id)->pluck('name'),
         ];
     }
 
@@ -164,7 +164,6 @@ class EmailMessageService
                     'is_answered' => $message->getFlags()->has('Answered') ?? false,
                     'folder' => $message->folder_name ?? null,
                     'reply_to_email_message_id' => $replyToEmailMessage?->id,
-                    'user_id' => auth()->id(),
                 ]);
 
                 $emailMessageMap[$messageId] = $emailMessage;

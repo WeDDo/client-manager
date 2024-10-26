@@ -40,7 +40,6 @@ class AuthService
         $token = $user->createToken('authToken')->plainTextToken;
 
         EmailInboxSetting::firstOrCreate(
-            ['name' => 'INBOX', 'user_id' => $user->id],
             ['name' => 'INBOX']
         );
 

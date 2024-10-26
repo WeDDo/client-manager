@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\DataTables\EmailSettings\EmailSettingDataTable;
+use App\Traits\CreateUpdateUserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EmailSetting extends Model
 {
-    use HasFactory;
+    use HasFactory, CreateUpdateUserTrait;
 
     public static string $smtpProtocol = 'smtp';
     public static string $imapProtocol = 'imap';
@@ -23,7 +24,6 @@ class EmailSetting extends Model
         'password',
         'protocol',
         'active',
-        'user_id',
     ];
 
     public function getAdditionalData(): array
@@ -31,10 +31,5 @@ class EmailSetting extends Model
         return [
             'data_table_item' => (new EmailSettingDataTable())->getItem($this->id),
         ];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

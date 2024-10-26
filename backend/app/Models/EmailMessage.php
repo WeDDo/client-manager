@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\CreateUpdateUserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EmailMessage extends Model
 {
-    use HasFactory;
+    use HasFactory, CreateUpdateUserTrait;
 
     protected $fillable = [
         'message_id',
@@ -27,7 +28,6 @@ class EmailMessage extends Model
         'is_answered',
         'folder',
         'reply_to_email_message_id',
-        'user_id',
     ];
 
     public function getAllRelations(): array
@@ -82,16 +82,6 @@ class EmailMessage extends Model
     public function replyToEmailMessage(): BelongsTo
     {
         return $this->belongsTo(EmailMessage::class, 'reply_to_email_message_id', 'id');
-    }
-
-    /**
-     * Get the user associated with this email.
-     *
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function attachments(): HasMany

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\CreateUpdateUserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Attachment extends Model
 {
-    use HasFactory;
+    use HasFactory, CreateUpdateUserTrait;
 
     protected $fillable = [
         'related_name',
