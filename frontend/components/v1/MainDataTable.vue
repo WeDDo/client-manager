@@ -129,7 +129,6 @@ onMounted(() => {
                 </div>
             </template>
 
-
             <Column
                 v-for="(column, index) in data?.active_columns ?? []"
                 :key="index"
@@ -178,16 +177,17 @@ onMounted(() => {
 
         <div
             v-if="paginate"
-            class="flex justify-content-end">
+            class="flex justify-content-end"
+        >
             <Paginator
-                :rows="data.items.per_page"
-                :total-records="data.items.total"
-                :first="(data.items.current_page - 1) * data.items.per_page"
+                :rows="data?.items?.per_page ?? 0"
+                :total-records="data?.items?.total ?? 0"
+                :first="((data?.items?.current_page ?? 0) - 1) * (data?.items?.per_page ?? 0)"
                 @page="emit('page', $event)"
             >
                 <template #start="slotProps">
                     <div class="text-sm">
-                        <div v-if="data.items.total > 0">
+                        <div v-if="(data?.items?.total ?? 0) > 0">
                             {{ slotProps.state.first + 1 }}-{{ slotProps.state.first + Math.min(slotProps.state.rows, data.items.total) }} of {{data.items.total}}
                         </div>
                         <div v-else>

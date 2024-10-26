@@ -92,6 +92,11 @@ const items = ref([
         icon: 'pi pi-star',
         routeName: '/partners'
     },
+    {
+        label: 'Contacts',
+        icon: 'pi pi-address-book',
+        routeName: '/contacts'
+    },
     // {
     //     label: 'Chat',
     //     icon: 'pi pi-comment',

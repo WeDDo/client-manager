@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\CreateUpdateUserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ChatRoom extends Model
 {
-    use HasFactory;
+    use HasFactory, CreateUpdateUserTrait;
 
     protected $fillable = [
         'name',
-        'created_by_user_id',
         'is_private',
     ];
 
@@ -26,10 +25,5 @@ class ChatRoom extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(ChatMessage::class);
-    }
-
-    public function createdByUser(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by_user_id');
     }
 }

@@ -35,17 +35,17 @@ class User extends Authenticatable
 
     public function emailSettings(): HasMany
     {
-        return $this->hasMany(EmailSetting::class);
+        return $this->hasMany(EmailSetting::class, 'created_by');
     }
 
     public function emailMessages(): HasMany
     {
-        return $this->hasMany(EmailMessage::class);
+        return $this->hasMany(EmailMessage::class, 'created_by');
     }
 
     public function emailInboxSettings(): HasMany
     {
-        return $this->hasMany(EmailInboxSetting::class);
+        return $this->hasMany(EmailInboxSetting::class, 'created_by');
     }
 
     public function chatRooms(): BelongsToMany
@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function createdChatRooms(): HasMany
     {
-        return $this->hasMany(ChatRoom::class, 'created_by_user_id');
+        return $this->hasMany(ChatRoom::class, 'created_by');
     }
 }

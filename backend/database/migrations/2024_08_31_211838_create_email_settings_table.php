@@ -22,10 +22,15 @@ return new class extends Migration {
             $table->string('protocol');
             $table->boolean('active')->default(false);
 
-            $table->foreignId('user_id')->nullable()
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

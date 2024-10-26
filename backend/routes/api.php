@@ -4,6 +4,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChatRoomController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailInboxSettingController;
 use App\Http\Controllers\EmailMessageController;
@@ -38,6 +39,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
     Route::apiResource('partners', PartnerController::class);
+
+    Route::apiResource('contacts', ContactController::class);
 
     Route::prefix('chat-rooms')->group(function () {
         Route::prefix('{chatRoom}')->group(function () {

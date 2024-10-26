@@ -28,14 +28,21 @@ return new class extends Migration
             $table->boolean('is_flagged')->default(false);
             $table->boolean('is_answered')->default(false);
             $table->string('folder')->nullable();
+
             $table->foreignId('reply_to_email_message_id')
                 ->nullable()
                 ->constrained('email_messages')
                 ->nullOnDelete();
 
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDelete('cascade');
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

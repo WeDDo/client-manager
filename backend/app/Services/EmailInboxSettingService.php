@@ -17,8 +17,6 @@ class EmailInboxSettingService
             );
         }
 
-        $data['user_id'] = auth()->user()->id;
-
         return EmailInboxSetting::create($data);
     }
 
