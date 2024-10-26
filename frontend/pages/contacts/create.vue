@@ -8,6 +8,7 @@ import {contactSchema} from "~/schemas/contactSchema.js";
 const {public: {baseURL}} = useRuntimeConfig();
 
 const router = useRouter();
+const route = useRoute();
 const toast = useToast();
 
 const token = useCookie('token');
@@ -15,6 +16,8 @@ const token = useCookie('token');
 const store = useContactStore();
 const mainStore = useMainStore();
 const loadingStore = useLoadingStore();
+
+const additionalFormData = store?.getAdditionalFormData();
 
 const form = useForm({
     validationSchema: contactSchema,
@@ -39,7 +42,7 @@ const form = useForm({
             preferred_contact_method: null,
             status: null,
             last_contacted_at: null,
-            partner_id: null,
+            partner_id: additionalFormData?.partner_id,
         },
     }
 });
@@ -83,6 +86,7 @@ async function handleCreate() {
     <div>
         <MainMenuBar/>
         <div class="m-2">
+            {{ store.additionalFormData }}
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
                     {{ store.singleName }} add

@@ -120,11 +120,16 @@ onMounted(() => {
                         {{ props.header }}
                     </div>
 
-                    <div class="flex">
-                        <DataTableFilter
-                            class="mr-2"
-                        />
-                        <DataTableSort />
+                    <div class="flex justify-content-between w-full">
+                        <div class="flex">
+                            <DataTableFilter
+                                class="mx-2"
+                            />
+<!--                            <DataTableSort />-->
+                        </div>
+                        <div>
+                            <slot name="buttons" />
+                        </div>
                     </div>
                 </div>
             </template>
