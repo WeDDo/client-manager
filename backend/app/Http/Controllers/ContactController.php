@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class ContactController extends Controller
 {
-    public function __construct(private ContactService $Contactservice)
+    public function __construct(private ContactService $contactService)
     {
     }
 
@@ -22,25 +22,28 @@ class ContactController extends Controller
     public function show(Contact $contact): JsonResponse
     {
         return response()->json([
-            'item' => $this->Contactservice->show($contact),
+            'item' => $this->contactService->show($contact),
+            'additional' => $contact->getAdditionalData(),
         ]);
     }
 
     public function store(ContactRequest $request): JsonResponse
     {
-        $contact = $this->Contactservice->store($request->validated());
+        $contact = $this->contactService->store($request->validated());
 
         return response()->json([
             'item' => $contact,
+            'additional' => $contact->getAdditionalData(),
         ]);
     }
 
     public function update(ContactRequest $request, Contact $contact): JsonResponse
     {
-        $this->Contactservice->update($request->validated(), $contact);
+        $this->contactService->update($request->validated(), $contact);
 
         return response()->json([
             'item' => $contact,
+            'additional' => $contact->getAdditionalData(),
         ]);
     }
 

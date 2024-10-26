@@ -38,8 +38,6 @@ const value = defineModel('value');
 const items = ref();
 
 async function search(event) {
-    console.log('event', event)
-
     await $fetch(`${baseURL}/autocomplete/search`, {
         method: 'POST',
         body: {
@@ -53,7 +51,6 @@ async function search(event) {
         onResponse({response}) {
             if (response.ok) {
                 items.value = response._data;
-                console.log('response', response);
             } else {
                 fetchHelper.handleResponseError(response);
             }

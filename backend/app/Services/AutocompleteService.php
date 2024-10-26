@@ -22,11 +22,15 @@ class AutocompleteService
         return $query->get();
     }
 
-    public function searchById()
+    public function searchById(
+        string $table = null,
+        mixed  $id = null,
+        ?array  $searchFields = null
+    )
     {
-        $table = request('table');
-        $id = request('id');
-        $searchFields = request('search_fields', ['id', 'name']);
+        $table = $table ?: request('table');
+        $id = $id ?: request('id');
+        $searchFields = $searchFields ?: request('search_fields', ['id', 'name']);
 
         $query = $this->buildSearchQuery($table, $searchFields);
 
@@ -34,8 +38,8 @@ class AutocompleteService
     }
 
     protected function buildSearchQuery(
-        string $table,
-        array $searchFields,
+        string  $table,
+        array   $searchFields,
         ?string $query = null
     ): Builder
     {

@@ -59,14 +59,9 @@ async function handleCreate() {
 
     loadingStore.actionLoading = true;
 
-    const requestBody = {
-        ...form.values.item,
-        partner_id: form.values.item.partner_id?.id
-    };
-
     await $fetch(`${baseURL}/${store.apiRouteName}`, {
         method: 'POST',
-        body: requestBody,
+        body: fetchHelper.getRequestBodyWithAutocompleteData(form),
         headers: {
             authorization: `Bearer ${token.value}`
         },

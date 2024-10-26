@@ -84,9 +84,43 @@ export function useFetchHelper() {
         }
     }
 
+    function handleResponseAutocompleteData(data, form) {
+        if (!data.additional?.autocomplete_data) return;
+
+        const autocompleteData = data.additional?.autocomplete_data;
+
+        const mergedData = { ...data };
+
+        mergedData.item = { ...mergedData.item, ...Object.fromEntries(
+                Object.entries(autocompleteData).map(([key, value]) => [key, value.item || null])
+            )};
+
+        form.setValues(mergedData);
+    }
+
+    function getRequestBodyWithAutocompleteData(form) {
+        if (!form.values.additional?.autocomplete_data) return;
+
+        const autocompleteData = form.values.additional.autocomplete_data;
+        const autocompleteIds = Object.fromEntries(
+            Object.keys(autocompleteData).map(key => [
+                key,
+                form.values.item[key]?.id
+            ])
+        );
+
+        return {
+            ...form.values.item,
+            ...autocompleteIds,
+        };
+    }
+
     return {
         handleDownloadBlob,
         handleResponseError,
         handleUseFetchError,
+
+        handleResponseAutocompleteData,
+        getRequestBodyWithAutocompleteData,
     };
 }
