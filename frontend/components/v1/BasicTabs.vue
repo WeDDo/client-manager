@@ -34,6 +34,8 @@ const props = defineProps({
     </TabView>
 </template>
 
-<style scoped>
-
+<style>
+.p-tabview .p-tabview-panels {
+    padding: 0
+}
 </style>

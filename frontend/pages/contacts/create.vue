@@ -61,7 +61,7 @@ async function handleCreate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}`, {
         method: 'POST',
-        body: form.values.item,
+        body: fetchHelper.getRequestBodyWithAutocompleteData(form),
         headers: {
             authorization: `Bearer ${token.value}`
         },

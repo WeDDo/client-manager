@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTables\Contacts;
+namespace App\DataTables\Partners\Contacts;
 
 use App\DataTables\BaseDataTable;
 use App\Models\Contact;
@@ -8,7 +8,7 @@ use App\Models\EmailSetting;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ContactDataTable extends BaseDataTable
+class PartnerContactDataTable extends BaseDataTable
 {
     public function get(): array
     {
@@ -79,7 +79,7 @@ class ContactDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        $items = Contact::paginate($this->perPage);
+        $items = Contact::where('partner_id', $this->additionalData['partner_id'])->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
 

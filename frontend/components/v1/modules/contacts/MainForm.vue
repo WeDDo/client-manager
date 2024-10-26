@@ -1,9 +1,10 @@
 <script setup>
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
-import MainCheckbox from "~/components/v1/MainCheckbox.vue";
-import MainPasswordInput from "~/components/v1/MainPasswordInput.vue";
 import MainSelectInput from "~/components/v1/MainSelectInput.vue";
+import MainDateInput from "~/components/v1/MainDateInput.vue";
+import MainEditor from "~/components/v1/MainEditor.vue";
+import MainAutocompleteInput from "~/components/v1/MainAutocompleteInput.vue";
 
 const props = defineProps({
     tab: {
@@ -50,40 +51,112 @@ defineExpose({onSubmit});
 </script>
 
 <template>
-    <div>
+    <div class="p-2">
         <form>
             <div class="formgrid grid">
-                <!-- Contact Details -->
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
-                    <MainTextInput v-model:value="name" name="name" label="Name" :errors="form.errors" required />
-                    <MainTextInput v-model:value="companyName" name="company_name" label="Company Name" :errors="form.errors" />
-                    <MainTextInput v-model:value="position" name="position" label="Position" :errors="form.errors" />
-                    <MainTextInput v-model:value="phone1" name="phone1" label="Primary Phone" :errors="form.errors" />
-                    <MainTextInput v-model:value="phone2" name="phone2" label="Secondary Phone" :errors="form.errors" />
-                    <MainTextInput v-model:value="email1" name="email1" label="Primary Email" :errors="form.errors" />
-                    <MainTextInput v-model:value="email2" name="email2" label="Secondary Email" :errors="form.errors" />
-                    <MainTextInput v-model:value="birthday" name="birthday" label="Birthday" :errors="form.errors" />
+                    <MainTextInput
+                        v-model:value="name"
+                        name="name" label="Name"
+                        :errors="form.errors"
+                        required
+                    />
+                    <MainTextInput
+                        v-model:value="companyName"
+                        name="company_name"
+                        label="Company Name"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="position"
+                        name="position"
+                        label="Position"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="phone1"
+                        name="phone1"
+                        label="Primary Phone"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="phone2"
+                        name="phone2"
+                        label="Secondary Phone"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="email1"
+                        name="email1"
+                        label="Primary Email"
+                        :errors="form.errors" />
+                    <MainTextInput
+                        v-model:value="email2"
+                        name="email2"
+                        label="Secondary Email"
+                        :errors="form.errors"
+                    />
+                    <MainDateInput
+                        v-model:value="birthday"
+                        name="birthday"
+                        label="Birthday"
+                        :errors="form.errors"
+                    />
                 </div>
 
-                <!-- Address Information -->
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
-                    <MainTextInput v-model:value="address1" name="address1" label="Address Line 1" :errors="form.errors" />
-                    <MainTextInput v-model:value="address2" name="address2" label="Address Line 2" :errors="form.errors" />
-                    <MainTextInput v-model:value="city" name="city" label="City" :errors="form.errors" />
-                    <MainTextInput v-model:value="state" name="state" label="State" :errors="form.errors" />
-                    <MainTextInput v-model:value="postalCode" name="postal_code" label="Postal Code" :errors="form.errors" />
-                    <MainTextInput v-model:value="country" name="country" label="Country" :errors="form.errors" />
+                    <MainTextInput
+                        v-model:value="address1"
+                        name="address1"
+                        label="Address 1"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="address2"
+                        name="address2"
+                        label="Address 2"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="city"
+                        name="city"
+                        label="City"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="state"
+                        name="state"
+                        label="State"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="postalCode"
+                        name="postal_code"
+                        label="Postal Code"
+                        :errors="form.errors"
+                    />
+                    <MainTextInput
+                        v-model:value="country"
+                        name="country"
+                        label="Country"
+                        :errors="form.errors"
+                    />
                 </div>
 
-                <!-- Additional Information -->
                 <div class="col-12 sm:col-6 md:col-4 lg:col-3">
-                    <MainTextInput v-model:value="website" name="website" label="Website" :errors="form.errors" />
+                    <MainTextInput
+                        v-model:value="website"
+                        name="website"
+                        label="Website"
+                        :errors="form.errors"
+                    />
                     <MainSelectInput
                         v-model:value="preferredContactMethod"
                         name="preferred_contact_method"
                         label="Preferred Contact Method"
                         :errors="form.errors"
                         :options="['Email', 'Phone', 'Mail']"
+                        show-clear
                         simple-options
                     />
                     <MainSelectInput
@@ -92,16 +165,34 @@ defineExpose({onSubmit});
                         label="Status"
                         :errors="form.errors"
                         :options="['Active', 'Inactive', 'Prospect']"
+                        show-clear
                         simple-options
                     />
-                    <MainTextInput
+                    <MainDateInput
                         v-model:value="lastContactedAt"
                         name="last_contacted_at"
                         label="Last Contacted At"
+                        show-time
                         :errors="form.errors"
                     />
-<!--                    <MainCheckbox v-model:value="active" name="active" label="Active" :show-error="false" />-->
-                    <MainTextInput v-model:value="notes" name="notes" label="Notes" :errors="form.errors" />
+                </div>
+                <div class="col-12 sm:col-6 md:col-4 lg:col-3">
+                    <MainAutocompleteInput
+                        v-model:value="partnerId"
+                        name="partner_id"
+                        label="Partner ID"
+                        table="partners"
+                        :search-fields="['id_name', 'name']"
+                        :errors="form.errors"
+                    />
+                </div>
+
+                <div class="col-12">
+                    <MainEditor
+                        v-model:value="notes"
+                        name="notes"
+                        label="Notes"
+                    />
                 </div>
             </div>
         </form>

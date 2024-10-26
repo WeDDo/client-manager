@@ -68,7 +68,7 @@ const {
 });
 
 if (!error.value) {
-    form.setValues(data.value)
+    fetchHelper.handleResponseAutocompleteData(data.value, form)
 } else {
     fetchHelper.handleUseFetchError(error);
 }
@@ -82,7 +82,7 @@ async function handleUpdate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.contactId}`, {
         method: 'PUT',
-        body: form.values.item,
+        body: fetchHelper.getRequestBodyWithAutocompleteData(form),
         headers: {
             authorization: `Bearer ${token.value}`
         },
@@ -90,7 +90,7 @@ async function handleUpdate() {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Updated successfully', life: 2000});
                 store.lastSelection = response.item;
-                form.setValues(response._data);
+                fetchHelper.handleResponseAutocompleteData(response._data, form)
             } else {
                 fetchHelper.handleResponseError(response, form);
             }

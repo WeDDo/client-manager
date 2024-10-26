@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\AutocompleteService;
 use App\Traits\CreateUpdateUserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,38 @@ class Contact extends Model
         'last_contacted_at',
         'partner_id',
     ];
+
+    public function getAdditionalData(): array
+    {
+        return [
+            'autocomplete_data' => $this->getAutocompleteData(),
+        ];
+    }
+
+    public function getAutocompleteData(): array
+    {
+        $config = [
+            'partner_id' => [
+                'table' => 'partners',
+                'search_fields' => ['id_name', 'name'],
+            ]
+        ];
+
+        $autocompleteData = [];
+        foreach ($config as $key => $settings) {
+            $autocompleteData[$key] = [
+                'table' => $settings['table'],
+                'search_fields' => $settings['search_fields'],
+                'item' => (new AutocompleteService())->searchById(
+                    $settings['table'],
+                    $this->partner_id,
+                    $settings['search_fields']
+                ),
+            ];
+        }
+
+        return $autocompleteData;
+    }
 
     public function partner(): BelongsTo
     {

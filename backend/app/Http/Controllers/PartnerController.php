@@ -25,7 +25,7 @@ class PartnerController extends Controller
 
         return response()->json([
             'item' => $partner,
-//            'additional' => $partner->getAdditionalData(),
+            'additional' => $partner->getAdditionalData(),
         ]);
     }
 
@@ -35,7 +35,7 @@ class PartnerController extends Controller
 
         return response()->json([
             'item' => $partner,
-//            'additional' => $partner->getAdditionalData(),
+            'additional' => $partner->getAdditionalData(),
         ]);
     }
 
@@ -45,7 +45,7 @@ class PartnerController extends Controller
 
         return response()->json([
             'item' => $partner,
-//            'additional' => $partner->getAdditionalData(),
+            'additional' => $partner->getAdditionalData(),
         ]);
     }
 
