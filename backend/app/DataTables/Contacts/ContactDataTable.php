@@ -60,7 +60,6 @@ class ContactDataTable extends BaseDataTable
             ['name' => 'email1', 'header' => 'Primary Email', 'align' => 'left', 'min_width' => 150],
             ['name' => 'email2', 'header' => 'Secondary Email', 'align' => 'left', 'min_width' => 150],
             ['name' => 'birthday', 'header' => 'Birthday', 'align' => 'center', 'min_width' => 150],
-            ['name' => 'notes', 'header' => 'Notes', 'align' => 'left', 'min_width' => 150],
             ['name' => 'address1', 'header' => 'Address Line 1', 'align' => 'left', 'min_width' => 150],
             ['name' => 'address2', 'header' => 'Address Line 2', 'align' => 'left', 'min_width' => 150],
             ['name' => 'city', 'header' => 'City', 'align' => 'left', 'min_width' => 150],
