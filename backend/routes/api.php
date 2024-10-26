@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AutocompleteController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChatRoomController;
 use App\Http\Controllers\ContactController;
@@ -20,6 +21,9 @@ Route::get('sanctum/csrf-cookie', function () {
 });
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::post('autocomplete/search', [AutocompleteController::class, 'search']);
+    Route::post('autocomplete/search-by-id', [AutocompleteController::class, 'searchById']);
+
     Route::get('dashboard', [DashboardController::class, 'index']);
 
     Route::prefix('attachments')->group(function () {

@@ -1,11 +1,10 @@
 <script setup>
 import {useInsideFormValidation} from "~/composables/useInsideFormValidation.js";
 import MainTextInput from "~/components/v1/MainTextInput.vue";
-import MainCheckbox from "~/components/v1/MainCheckbox.vue";
-import MainPasswordInput from "~/components/v1/MainPasswordInput.vue";
 import MainSelectInput from "~/components/v1/MainSelectInput.vue";
 import MainDateInput from "~/components/v1/MainDateInput.vue";
 import MainEditor from "~/components/v1/MainEditor.vue";
+import MainAutocompleteInput from "~/components/v1/MainAutocompleteInput.vue";
 
 const props = defineProps({
     tab: {
@@ -48,6 +47,12 @@ const onSubmit = form.value.handleSubmit((values) => {
 });
 
 defineExpose({onSubmit});
+
+const items = ref([]);
+
+const search = (event) => {
+    items.value = [...Array(10).keys()].map((item) => event.query + '-' + item);
+}
 
 </script>
 
@@ -174,6 +179,16 @@ defineExpose({onSubmit});
                         name="last_contacted_at"
                         label="Last Contacted At"
                         show-time
+                        :errors="form.errors"
+                    />
+                </div>
+                <div class="col-12 sm:col-6 md:col-4 lg:col-3">
+                    <MainAutocompleteInput
+                        v-model:value="partnerId"
+                        name="partner_id"
+                        label="Partner ID"
+                        table="partners"
+                        :search-fields="['id_name', 'name']"
                         :errors="form.errors"
                     />
                 </div>
