@@ -86,7 +86,6 @@ async function handleCreate() {
     <div>
         <MainMenuBar/>
         <div class="m-2">
-            {{ store.additionalFormData }}
             <div class="flex justify-content-between text-lg px-2 line-height-4">
                 <div>
                     {{ store.singleName }} add

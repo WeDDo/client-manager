@@ -99,7 +99,7 @@ export function useFetchHelper() {
     }
 
     function getRequestBodyWithAutocompleteData(form) {
-        if (!form.values.additional?.autocomplete_data) return;
+        if (!form.values?.additional?.autocomplete_data) return form.values.item;
 
         const autocompleteData = form.values.additional.autocomplete_data;
         const autocompleteIds = Object.fromEntries(
