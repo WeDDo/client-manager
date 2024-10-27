@@ -26,6 +26,10 @@ class EmailSetting extends Model
         'active',
     ];
 
+    protected $casts = [
+        'active' => 'boolean',
+    ];
+
     public function getAdditionalData(): array
     {
         return [

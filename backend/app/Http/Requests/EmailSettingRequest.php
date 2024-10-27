@@ -29,7 +29,6 @@ class EmailSettingRequest extends FormRequest
             'username' => 'required',
             'password' => 'required',
             'protocol' => 'required',
-            'user_id' => 'nullable',
             'active' => 'nullable'
         ];
     }

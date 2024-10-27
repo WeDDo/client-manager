@@ -27,7 +27,6 @@ beforeEach(function () {
         'username' => 'abc',
         'password' => 'abc',
         'protocol' => 'smpt',
-        'user_id' => auth()->user()->id,
         'active' => false
     ];
 
