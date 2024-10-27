@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Contact;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ContactRequest extends FormRequest
@@ -47,13 +48,15 @@ class ContactRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge($this->extractAutocompleteIds([
-            'partner_id',
-        ]));
+        $this->merge($this->extractAutocompleteIds());
     }
 
-    protected function extractAutocompleteIds(array $fields): array
+    protected function extractAutocompleteIds(?array $fields = null): array
     {
+        if (!$fields) {
+            $fields = $this->getAutocompleteFieldNames();
+        }
+
         $data = $this->all();
         $formattedData = [];
 
@@ -64,5 +67,13 @@ class ContactRequest extends FormRequest
         }
 
         return array_merge($data, $formattedData);
+    }
+
+    protected function getAutocompleteFieldNames(): array
+    {
+        $model = new Contact();
+        $autocompleteData = $model?->getAutocompleteData();
+
+        return array_keys($autocompleteData ?? []);
     }
 }
