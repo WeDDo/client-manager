@@ -74,7 +74,7 @@ class EmailMessageService
         return DB::transaction(function () {
             $imapConfig = $this->emailSettingService->setImapEmailConfig();
 
-            $emailInboxSettings = EmailInboxSetting::where('user_id', auth()->id())->get();
+            $emailInboxSettings = EmailInboxSetting::where('created_by', auth()->id())->get();
             $allMessages = collect();
 
             foreach ($emailInboxSettings as $inboxSetting) {
@@ -111,7 +111,7 @@ class EmailMessageService
 
     protected function processEmails(Collection $messages): Collection
     {
-        $existingEmailMessages = EmailMessage::where('user_id', auth()->user()->id)->get();
+        $existingEmailMessages = EmailMessage::where('created_by', auth()->user()->id)->get();
         $existingEmailMessageIds = $existingEmailMessages->pluck('message_id');
 
         $createdEmailMessages = collect();
