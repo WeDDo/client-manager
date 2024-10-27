@@ -82,7 +82,7 @@ async function handleUpdate() {
 
     await $fetch(`${baseURL}/${store.apiRouteName}/${route.params.contactId}`, {
         method: 'PUT',
-        body: fetchHelper.getRequestBodyWithAutocompleteData(form),
+        body: form.values.item,
         headers: {
             authorization: `Bearer ${token.value}`
         },
