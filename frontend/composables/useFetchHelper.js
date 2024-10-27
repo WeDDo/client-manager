@@ -98,29 +98,11 @@ export function useFetchHelper() {
         form.setValues(mergedData);
     }
 
-    function getRequestBodyWithAutocompleteData(form) {
-        if (!form.values?.additional?.autocomplete_data) return form.values.item;
-
-        const autocompleteData = form.values.additional.autocomplete_data;
-        const autocompleteIds = Object.fromEntries(
-            Object.keys(autocompleteData).map(key => [
-                key,
-                form.values.item[key]?.id
-            ])
-        );
-
-        return {
-            ...form.values.item,
-            ...autocompleteIds,
-        };
-    }
-
     return {
         handleDownloadBlob,
         handleResponseError,
         handleUseFetchError,
 
         handleResponseAutocompleteData,
-        getRequestBodyWithAutocompleteData,
     };
 }

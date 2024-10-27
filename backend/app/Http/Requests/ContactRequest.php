@@ -44,4 +44,25 @@ class ContactRequest extends FormRequest
             'partner_id' => 'nullable',
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge($this->extractAutocompleteIds([
+            'partner_id',
+        ]));
+    }
+
+    protected function extractAutocompleteIds(array $fields): array
+    {
+        $data = $this->all();
+        $formattedData = [];
+
+        foreach ($fields as $field) {
+            if (isset($data[$field]['id']) && is_array($data[$field])) {
+                $formattedData[$field] = $data[$field]['id'];
+            }
+        }
+
+        return array_merge($data, $formattedData);
+    }
 }
