@@ -2,19 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Base\BaseRequest;
 use App\Models\Contact;
-use Illuminate\Foundation\Http\FormRequest;
 
-class ContactRequest extends FormRequest
+class ContactRequest extends BaseRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -46,34 +38,8 @@ class ContactRequest extends FormRequest
         ];
     }
 
-    protected function prepareForValidation(): void
+    protected function getModelInstance(): Contact
     {
-        $this->merge($this->extractAutocompleteIds());
-    }
-
-    protected function extractAutocompleteIds(?array $fields = null): array
-    {
-        if (!$fields) {
-            $fields = $this->getAutocompleteFieldNames();
-        }
-
-        $data = $this->all();
-        $formattedData = [];
-
-        foreach ($fields as $field) {
-            if (isset($data[$field]['id']) && is_array($data[$field])) {
-                $formattedData[$field] = $data[$field]['id'];
-            }
-        }
-
-        return array_merge($data, $formattedData);
-    }
-
-    protected function getAutocompleteFieldNames(): array
-    {
-        $model = new Contact();
-        $autocompleteData = $model?->getAutocompleteData();
-
-        return array_keys($autocompleteData ?? []);
+        return new Contact();
     }
 }

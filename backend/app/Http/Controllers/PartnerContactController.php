@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\Partners\Contacts\PartnerContactDataTable;
-use App\DataTables\Partners\PartnerDataTable;
-use App\Http\Requests\PartnerRequest;
 use App\Models\Partner;
 use App\Services\PartnerService;
 use Illuminate\Http\JsonResponse;
@@ -15,8 +13,10 @@ class PartnerContactController extends Controller
     {
     }
 
-    public function index(): JsonResponse
+    public function index(Partner $partner): JsonResponse
     {
-        return response()->json((new PartnerContactDataTable())->get());
+        return response()->json((new PartnerContactDataTable([
+            'partner_id' => $partner->id,
+        ]))->get());
     }
 }

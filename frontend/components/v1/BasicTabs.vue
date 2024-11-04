@@ -1,15 +1,31 @@
 <script setup>
+const route = useRoute();
+const mainStore = useMainStore();
 
 const props = defineProps({
     tabs: {
         type: Array,
         default: null,
     }
-})
+});
+
+
+const currentTab = ref(0);
+
+onMounted(() => {
+    const savedTabIndex = mainStore.getTabIndex(route.path);
+    if (savedTabIndex !== undefined) {
+        currentTab.value = savedTabIndex;
+    }
+});
+
+watch(currentTab, async (newValue) => {
+    mainStore.setTabIndex(route.path, newValue);
+});
 </script>
 
 <template>
-    <TabView>
+    <TabView v-model:activeIndex="currentTab">
         <TabPanel
             v-for="(tab, index) in props.tabs"
             :disabled="tab.disabled"

@@ -25,12 +25,12 @@ class SettingController extends Controller
         return response()->json(['items' => Setting::all()]);
     }
 
-    public function updateAll(SettingRequest $request): JsonResponse
-    {
-        $this->settingService->updateAll($request->validated());
-
-        return response()->json([
-            'item' => $this->settingService->index(),
-        ]);
-    }
+//    public function updateAll(SettingRequest $request): JsonResponse
+//    {
+//        $this->settingService->updateAll($request->validated());
+//
+//        return response()->json([
+//            'item' => $this->settingService->index(),
+//        ]);
+//    }
 }
