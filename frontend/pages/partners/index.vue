@@ -5,6 +5,7 @@ import {usePartnerStore} from "~/stores/modules/partner.js";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
+const route = useRoute();
 const router = useRouter();
 
 const store = usePartnerStore();

@@ -6,7 +6,8 @@ export const useMainStore = defineStore('main', {
         user: null,
         token: null,
 
-        tabIndices: {}
+        tabIndices: {},
+        pageIndices: {}
     }),
     actions: {
         async getSettings(baseURL, token) {
@@ -26,6 +27,12 @@ export const useMainStore = defineStore('main', {
         },
         getTabIndex(path) {
             return this.tabIndices[path];
+        },
+        setPage(path, index) {
+            this.pageIndices[path] = index;
+        },
+        getPage(path) {
+            return this.pageIndices[path];
         }
     },
     persist: true,

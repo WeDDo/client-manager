@@ -50,7 +50,7 @@ const {
     status,
     error,
     refresh
-} = await useFetch(`${baseURL}/${store.apiRouteName}/${route.params.partnerId}`, {
+} = await useFetch(`${baseURL}/${store.apiRouteName}/${route.params.partnerId}?page=${mainStore.getPage(route.path)}`, {
     headers: {
         authorization: `Bearer ${token.value}`
     },

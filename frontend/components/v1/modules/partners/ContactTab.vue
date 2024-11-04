@@ -2,6 +2,7 @@
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
 import {useContactStore} from "~/stores/modules/contact.js";
+import {usePartnerStore} from "~/stores/modules/partner.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -9,7 +10,9 @@ const route = useRoute();
 const router = useRouter();
 const token = useCookie('token');
 
+const mainStore = useMainStore();
 const store = useContactStore();
+const partnerStore = usePartnerStore();
 
 const dataTableData = ref();
 const mainDataTableRef = ref();
@@ -30,22 +33,42 @@ const emit = defineEmits([
 const form = defineModel('form');
 
 function goToCreate() {
-    console.log(form.value.values.item)
     store.setAdditionalFormData({ partner_id: form.value.values.item.id });
-    // Object.assign(store.additionalFormData, { partner_id: form.value.values.item.partner_id });
-    // store.additionalFormData = { partner_id: form.value.values.item.partner_id };
     router.push(`/${store.frontRouteName}/create`)
 }
+
+async function handleGetDataTableData(event) {
+    await $fetch(`${baseURL}/${partnerStore.apiRouteName}/${form.value.values.item.id}/${store.apiRouteName}?page=${event.page + 1}`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            if (response.ok) {
+                dataTableData.value = response._data;
+                mainStore.setPage(route.path,event.page + 1);
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    });
+}
+
+onMounted(() => {
+    dataTableData.value = form.value.values.additional.contacts_data_table;
+    mainStore.getPage(route.path);
+});
 </script>
 
 <template>
     <div>
         <MainDataTable
             ref="mainDataTableRef"
-            v-model:data="form.values.additional.contacts_data_table"
+            v-model:data="dataTableData"
             v-model:store="store"
             paginate
             scroll-height="calc(100vh - 18.3rem)"
+            @page="handleGetDataTableData"
         >
             <template #buttons>
                 <Button

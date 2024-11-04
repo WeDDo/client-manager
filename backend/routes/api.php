@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailInboxSettingController;
 use App\Http\Controllers\EmailMessageController;
 use App\Http\Controllers\EmailSettingController;
+use App\Http\Controllers\PartnerContactController;
 use App\Http\Controllers\PartnerController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         });
     });
 
+    Route::prefix('partners')->group(function () {
+        Route::prefix('{partner}')->group(function () {
+            Route::get('contacts', [PartnerContactController::class, 'index']);
+        });
+    });
     Route::apiResource('partners', PartnerController::class);
 
     Route::apiResource('contacts', ContactController::class);
