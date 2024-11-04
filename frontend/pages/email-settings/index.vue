@@ -39,7 +39,7 @@ function deleteTextTemplate(item) {
 async function handleGetDataTableData(event) {
     loadingStore.actionLoading = true;
 
-    await $fetch(`${baseURL}/${store.apiRouteName}?page=${event.page + 1}`, {
+    await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}`, event), {
         method: 'GET',
         headers: {
             authorization: `Bearer ${token.value}`
@@ -146,7 +146,7 @@ async function handleCopy() {
                     v-model:store="store"
                     paginate
                     :delete-text-template="deleteTextTemplate"
-                    @page="handleGetDataTableData"
+                    @refresh="handleGetDataTableData"
                 >
                     <template #active="slotProps">
                         <div class="flex align-items-center">

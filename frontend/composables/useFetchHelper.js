@@ -115,6 +115,10 @@ export function useFetchHelper() {
         router.push(routeName);
     }
 
+    function getDataTableUrl(url, event) {
+        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field}&sort_order=${event.sort_order}`
+    }
+
     return {
         handleDownloadBlob,
         handleResponseError,
@@ -123,5 +127,6 @@ export function useFetchHelper() {
         handleResponseAutocompleteData,
 
         handleRouteTo,
+        getDataTableUrl,
     };
 }

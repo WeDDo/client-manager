@@ -93,7 +93,7 @@ async function handleGetEmails() {
 async function handleGetDataTableData(event) {
     loadingStore.actionLoading = true;
 
-    await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}&page=${event.page + 1}`, {
+    await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, event), {
         method: 'GET',
         headers: {
             authorization: `Bearer ${token.value}`
@@ -189,7 +189,7 @@ async function handleGetDataTableData(event) {
                     v-model:data="dataTableData"
                     v-model:store="store"
                     paginate
-                    @page="handleGetDataTableData"
+                    @refresh="handleGetDataTableData"
                 >
                     <template #subject="slotProps">
                         <div class="flex justify-content-between">

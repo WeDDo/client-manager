@@ -56,10 +56,10 @@ class ContactDataTable extends BaseDataTable
             ['name' => 'name', 'header' => 'Name', 'align' => 'left', 'min_width' => 150],
             ['name' => 'company_name', 'header' => 'Company', 'align' => 'left', 'min_width' => 150],
             ['name' => 'position', 'header' => 'Position', 'align' => 'left', 'min_width' => 150],
-            ['name' => 'phone1', 'header' => 'Primary Phone', 'align' => 'left', 'min_width' => 150],
-            ['name' => 'phone2', 'header' => 'Secondary Phone', 'align' => 'left', 'min_width' => 150],
-            ['name' => 'email1', 'header' => 'Primary Email', 'align' => 'left', 'min_width' => 150],
-            ['name' => 'email2', 'header' => 'Secondary Email', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'phone1', 'header' => 'Phone 1', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'phone2', 'header' => 'Phone 2', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'email1', 'header' => 'Email 1', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'email2', 'header' => 'Email 2', 'align' => 'left', 'min_width' => 150],
             ['name' => 'birthday', 'header' => 'Birthday', 'align' => 'center', 'min_width' => 150],
             ['name' => 'address1', 'header' => 'Address 1', 'align' => 'left', 'min_width' => 150],
             ['name' => 'address2', 'header' => 'Address 2', 'align' => 'left', 'min_width' => 150],
@@ -68,7 +68,7 @@ class ContactDataTable extends BaseDataTable
             ['name' => 'postal_code', 'header' => 'Postal Code', 'align' => 'center', 'min_width' => 150],
             ['name' => 'country', 'header' => 'Country', 'align' => 'left', 'min_width' => 150],
             ['name' => 'website', 'header' => 'Website', 'align' => 'left', 'min_width' => 150],
-            ['name' => 'preferred_contact_method', 'header' => 'Preferred Contact', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'preferred_contact_method', 'header' => 'Preferred Contact', 'align' => 'left', 'min_width' => 200],
             ['name' => 'status', 'header' => 'Status', 'align' => 'center', 'min_width' => 150],
             ['name' => 'last_contacted_at', 'header' => 'Last Contacted', 'align' => 'right', 'min_width' => 200],
             ['name' => 'partner_id', 'header' => 'Partner ID', 'align' => 'center', 'min_width' => 150],
@@ -79,10 +79,12 @@ class ContactDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        $items = Contact::paginate($this->perPage);
+        $query = Contact::query();
+
+        $this->applyDefaultOrderBy($query);
+        $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
-
         $transformedItems = $items->getCollection()->map(function ($item) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {

@@ -41,7 +41,10 @@ class ChatRoomDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        $items = ChatRoom::paginate($this->perPage);
+        $query = ChatRoom::query();
+
+        $this->applyDefaultOrderBy($query);
+        $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
 

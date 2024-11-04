@@ -67,8 +67,7 @@ class EmailMessageDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        // Paginate the user's email messages
-        $emailMessages = auth()->user()->emailMessages()
+        $query = auth()->user()->emailMessages()
             ->select('email_messages.*')
             ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
             ->where(function ($query) {
@@ -79,11 +78,12 @@ class EmailMessageDataTable extends BaseDataTable
             ->when(request('selected_folder'), function ($query) {
                 $query->where('email_messages.folder', request('selected_folder'));
             })
-            ->orderByDesc('email_messages.date')
-            ->paginate($this->perPage); // Use pagination here
+            ->orderByDesc('email_messages.date');
 
-        // Apply transformations to the email messages collection
-        $emailMessages->getCollection()->transform(function ($email) {
+        $this->applyDefaultOrderBy($query);
+        $items = $query->paginate($this->perPage);
+
+        $items->getCollection()->transform(function ($email) {
             $unreadCount = 0;
             $currentEmail = $email;
 
@@ -108,7 +108,7 @@ class EmailMessageDataTable extends BaseDataTable
         $columns = $this->getColumnItemClosures();
 
         // Transform each email message into the format defined by the column closures
-        $transformedItems = $emailMessages->getCollection()->map(function ($emailMessage) use ($columns) {
+        $transformedItems = $items->getCollection()->map(function ($emailMessage) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
                 $rowData[$columnKey] = $getColumnValue($emailMessage);
@@ -117,10 +117,10 @@ class EmailMessageDataTable extends BaseDataTable
         });
 
         // Replace the original collection with the transformed items
-        $emailMessages->setCollection(collect($transformedItems));
+        $items->setCollection(collect($transformedItems));
 
         // Return the paginated object with transformed data
-        return $emailMessages;
+        return $items;
     }
 
 
