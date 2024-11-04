@@ -12,7 +12,7 @@ abstract class BaseDataTable
     protected array $columns = [];
     protected LengthAwarePaginator $items;
 
-    protected int $perPage = 1;
+    protected int $perPage = 500;
 
     public function __construct(?array $additionalData = null)
     {
