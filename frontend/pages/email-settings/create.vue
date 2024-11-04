@@ -57,7 +57,7 @@ async function handleCreate() {
             if (response.ok) {
                 toast.add({severity: 'success', summary: 'Created successfully', life: 2000});
                 store.lastSelection = response._data.item;
-                router.push(`/${store.frontRouteName}`);
+                fetchHelper.handleRouteTo(`/${store.frontRouteName}`, response);
             } else {
                 fetchHelper.handleResponseError(response, form);
             }

@@ -4,6 +4,8 @@ export function useFetchHelper() {
 
     const token = useCookie('token');
 
+    const mainStore = useMainStore();
+
     async function handleDownloadBlob(response, filename = 'filename.zip') {
         const url = window.URL.createObjectURL(new Blob([response._data]));
         const contentDisposition = response.headers.get('Content-Disposition')
@@ -98,11 +100,28 @@ export function useFetchHelper() {
         form.setValues(mergedData);
     }
 
+    function handleRouteTo(routeName, response = null, formType = 'create') {
+        if(mainStore.settings.on_create_go_to_edit_form && formType === 'create') {
+            if(response._data.item.id) {
+                router.push(`${routeName}/${response._data.item.id}`);
+                return;
+            }
+        }
+
+        if(formType === 'update') {
+
+        }
+
+        router.push(routeName);
+    }
+
     return {
         handleDownloadBlob,
         handleResponseError,
         handleUseFetchError,
 
         handleResponseAutocompleteData,
+
+        handleRouteTo,
     };
 }

@@ -11,9 +11,14 @@ class SettingService
         $settings = Setting::all();
 
         return $settings->mapWithKeys(function ($setting) {
-            if($setting->value === '0' || $setting->value === '1') {
-                $setting->value = !!$setting->value;
+            $toBoolSettings = [
+                'on_create_go_to_edit_form',
+            ];
+
+            if (in_array($setting->name, $toBoolSettings)) {
+                $setting->value = !!intval($setting->value);
             }
+
             return [$setting->name => $setting->value];
         })->toArray();
     }
@@ -28,21 +33,19 @@ class SettingService
         }
     }
 
-//    public function createInitialSettings(): void
-//    {
-//        $settingsData = [
-////            ['name' => 'currency', 'value' => '€'],
-////            ['name' => 'import_marks_visible', 'value' => false],
-////            ['name' => 'calendar_show_day_expenses', 'value' => false],
-//        ];
-//
-//        foreach ($settingsData as $settingData) {
-//            Setting::firstOrCreate(
-//                ['name' => $settingData['name']],
-//                ['value' => $settingData['value']]
-//            );
-//        }
-//    }
+    public function createInitialSettings(): void
+    {
+        $settingsData = [
+            ['name' => 'on_create_go_to_edit_form', 'value' => true],
+        ];
+
+        foreach ($settingsData as $settingData) {
+            Setting::firstOrCreate(
+                ['name' => $settingData['name']],
+                ['value' => $settingData['value']]
+            );
+        }
+    }
 }
 
 
