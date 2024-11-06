@@ -116,7 +116,20 @@ export function useFetchHelper() {
     }
 
     function getDataTableUrl(url, event) {
-        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field}&sort_order=${event.sort_order}`
+        const filterParams = (event?.filters || [])
+            .map(filter => {
+                if (!filter.value) return null;
+
+                const field = encodeURIComponent(filter.name);
+                const operator = encodeURIComponent(filter.operator || '=');
+                const value = encodeURIComponent(filter.value);
+
+                return `filters[${field}][name]=${field}&filters[${field}][operator]=${operator}&filters[${field}][value]=${value}`;
+            })
+            .filter(Boolean)
+            .join('&');
+
+        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field || ''}&sort_order=${event.sort_order || ''}&${filterParams}`;
     }
 
     return {

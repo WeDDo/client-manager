@@ -14,6 +14,7 @@ class EmailSettingDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'filters' => $this->getDefaultFilters(),
         ];
     }
 
@@ -66,6 +67,7 @@ class EmailSettingDataTable extends BaseDataTable
     {
         $query = auth()->user()->emailSettings();
 
+        $this->applyFilters($query);
         $this->applyDefaultOrderBy($query);
         $emailSettings = $query->paginate($this->perPage);
 

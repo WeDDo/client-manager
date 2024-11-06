@@ -15,6 +15,7 @@ class PartnerDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'filters' => $this->getDefaultFilters(),
         ];
     }
 
@@ -56,11 +57,24 @@ class PartnerDataTable extends BaseDataTable
             ['name' => 'phone', 'header' => 'Phone', 'align' => 'left'],
         ];
     }
+//
+//    public function getDefaultFilters(): array
+//    {
+//        return array_merge(parent::getDefaultFilters(), [
+//            [
+//                'name' => 'name',
+//                'label' => 'Name',
+//                'operator' => '=',
+//                'value' => null,
+//            ],
+//        ]);
+//    }
 
     public function getItems(): LengthAwarePaginator
     {
         $query = Partner::query();
 
+        $this->applyFilters($query);
         $this->applyDefaultOrderBy($query);
         $items = $query->paginate($this->perPage);
 
