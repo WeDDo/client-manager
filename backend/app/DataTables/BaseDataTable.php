@@ -64,7 +64,6 @@ abstract class BaseDataTable
 
             if(!$value || $value === 'null') continue;
 
-            // Apply the filter based on the operator
             switch ($operator) {
                 case '=':
                     $query->where($field, '=', $value);
