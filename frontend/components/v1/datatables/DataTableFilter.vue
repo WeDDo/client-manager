@@ -40,9 +40,6 @@ function handleFilterClick() {
                 </div>
             </template>
             <div>
-                <!--                <div>-->
-                <!--                    {{ data }}-->
-                <!--                </div>-->
                 <div v-for="(filter, index) in data?.filters" :key="index">
                     <div class="formgrid grid">
                         <div class="col-6 col-10">

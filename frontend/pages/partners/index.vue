@@ -39,7 +39,6 @@ function deleteTextTemplate(item) {
 
 async function handleGetDataTableData(event) {
     loadingStore.actionLoading = true;
-    console.log(event)
 
     await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}`, event), {
         method: 'GET',
