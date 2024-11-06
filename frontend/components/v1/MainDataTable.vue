@@ -113,12 +113,6 @@ function toggleSort(field) {
         sortOrder.value = 'asc';
     }
 
-    // emit('refresh', {
-    //     page: 0,
-    //     sort_field: sortField.value,
-    //     sort_order: sortOrder.value,
-    // });
-
     emit('refresh', getRefreshEventData(0));
 
     sortLoading.value = false;
