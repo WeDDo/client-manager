@@ -83,7 +83,6 @@ abstract class BaseDataTable
                 case '>=':
                     $query->where($field, '>=', $value);
                     break;
-                // Add additional operators as needed
                 default:
                     throw new \InvalidArgumentException("Unsupported operator: {$operator}");
             }
