@@ -2,7 +2,6 @@
 
 namespace App\DataTables;
 
-use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class BaseDataTable
@@ -32,8 +31,63 @@ abstract class BaseDataTable
 
     public function applyDefaultOrderBy($query): void
     {
-        if ((request('sort_field') !== 'null' && request('sort_field')) && (request('sort_order') !== 'null' && request('sort_order'))) {
+        if ((request('sort_field') !== 'null' && request('sort_field') !== 'undefined' && request('sort_field')) && (request('sort_order') !== 'null' && request('sort_order') !== 'undefined' && request('sort_order'))) {
             $query->orderBy(request('sort_field'), request('sort_order'));
+        }
+    }
+
+    public function getDefaultFilters(): array
+    {
+        $columns = array_keys($this->getColumnItemClosures());
+
+        $defaultFilters = [];
+        foreach ($columns as $column) {
+            $defaultFilters[] = [
+                'name' => $column,
+                'label' => ucfirst(str_replace('_', ' ', $column)),
+                'operator' => '=',
+                'value' => null,
+            ];
+        }
+
+        return $defaultFilters;
+    }
+
+    protected function applyFilters($query): void
+    {
+        $filters = request('filters') ?? [];
+
+        foreach ($filters as $filter) {
+            $field = $filter['name'];
+            $operator = $filter['operator'] ?? '=';
+            $value = $filter['value'];
+
+            if(!$value || $value === 'null') continue;
+
+            // Apply the filter based on the operator
+            switch ($operator) {
+                case '=':
+                    $query->where($field, '=', $value);
+                    break;
+                case '<':
+                    $query->where($field, '<', $value);
+                    break;
+                case '>':
+                    $query->where($field, '>', $value);
+                    break;
+                case 'like':
+                    $query->where($field, 'like', "%$value%");
+                    break;
+                case '<=':
+                    $query->where($field, '<=', $value);
+                    break;
+                case '>=':
+                    $query->where($field, '>=', $value);
+                    break;
+                // Add additional operators as needed
+                default:
+                    throw new \InvalidArgumentException("Unsupported operator: {$operator}");
+            }
         }
     }
 }

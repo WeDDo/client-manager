@@ -15,6 +15,7 @@ class AttachmentDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'filters' => $this->getDefaultFilters(),
         ];
     }
 

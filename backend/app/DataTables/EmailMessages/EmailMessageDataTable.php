@@ -15,12 +15,14 @@ class EmailMessageDataTable extends BaseDataTable
         $columns = array_keys($this->getColumnItemClosures());
         $items = $this->getItems();
         $additionalData = (new EmailMessageService())->getAdditionalData();
+        $filters = $this->getDefaultFilters();
 
         return [
             'active_columns' => $activeColumns,
             'columns' => $columns,
             'items' => $items,
             'additional_data' => $additionalData,
+            'filters' => $filters,
         ];
     }
 
@@ -65,6 +67,16 @@ class EmailMessageDataTable extends BaseDataTable
         ];
     }
 
+    public function getDefaultFilters(): array
+    {
+        return array_merge(parent::getDefaultFilters(), [
+            [
+                'name' => 'subject',
+                'label' => 'Subject'
+            ],
+        ]);
+    }
+
     public function getItems(): LengthAwarePaginator
     {
         $query = auth()->user()->emailMessages()
@@ -80,6 +92,7 @@ class EmailMessageDataTable extends BaseDataTable
             })
             ->orderByDesc('email_messages.date');
 
+        $this->applyFilters($query);
         $this->applyDefaultOrderBy($query);
         $items = $query->paginate($this->perPage);
 

@@ -86,6 +86,15 @@ onMounted(() => {
     }
 });
 
+function getRefreshEventData(page = 0) {
+    return {
+        page,
+        sort_field: sortField.value,
+        sort_order: sortOrder.value,
+        filters: data?.value?.filters,
+    };
+}
+
 function toggleSort(field) {
     sortLoading.value = true;
 
@@ -104,11 +113,13 @@ function toggleSort(field) {
         sortOrder.value = 'asc';
     }
 
-    emit('refresh', {
-        page: 0,
-        sort_field: sortField.value,
-        sort_order: sortOrder.value,
-    });
+    // emit('refresh', {
+    //     page: 0,
+    //     sort_field: sortField.value,
+    //     sort_order: sortOrder.value,
+    // });
+
+    emit('refresh', getRefreshEventData(0));
 
     sortLoading.value = false;
 }
@@ -166,8 +177,10 @@ function getSortIconClass(columnName) {
                     <div class="flex justify-content-between w-full">
                         <div class="flex">
                             <DataTableFilter
+                                v-if="data?.filters"
+                                v-model:data="data"
                                 class="mx-2"
-                            />
+                                @refresh="emit('refresh', getRefreshEventData(0))"                            />
                         </div>
                         <div>
                             <slot name="buttons"/>

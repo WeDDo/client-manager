@@ -16,6 +16,7 @@ class ContactDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'filters' => $this->getDefaultFilters(),
         ];
     }
 
@@ -81,6 +82,7 @@ class ContactDataTable extends BaseDataTable
     {
         $query = Contact::query();
 
+        $this->applyFilters($query);
         $this->applyDefaultOrderBy($query);
         $items = $query->paginate($this->perPage);
 

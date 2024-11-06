@@ -16,6 +16,7 @@ class ChatRoomDataTable extends BaseDataTable
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
+            'filters' => $this->getDefaultFilters(),
             'additional_data' => (new EmailMessageService())->getAdditionalData(),
         ];
     }
@@ -43,6 +44,7 @@ class ChatRoomDataTable extends BaseDataTable
     {
         $query = ChatRoom::query();
 
+        $this->applyFilters($query);
         $this->applyDefaultOrderBy($query);
         $items = $query->paginate($this->perPage);
 

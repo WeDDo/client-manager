@@ -115,8 +115,29 @@ export function useFetchHelper() {
         router.push(routeName);
     }
 
+    // function getDataTableUrl(url, event) {
+    //     const filterParams = (event.filters || [])
+    //         .map(filter => `filters[${encodeURIComponent(filter.name)}]=${encodeURIComponent(filter.value)}`)
+    //         .join('&');
+    //
+    //     return `${url}?page=${event.page + 1}&sort_field=${event.sort_field}&sort_order=${event.sort_order}&${filterParams}`;
+    // }
+
     function getDataTableUrl(url, event) {
-        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field}&sort_order=${event.sort_order}`
+        const filterParams = (event?.filters || [])
+            .map(filter => {
+                if (!filter.value) return null; // Return null if value is empty to skip this filter
+
+                const field = encodeURIComponent(filter.name);
+                const operator = encodeURIComponent(filter.operator || '=');
+                const value = encodeURIComponent(filter.value);
+
+                return `filters[${field}][name]=${field}&filters[${field}][operator]=${operator}&filters[${field}][value]=${value}`;
+            })
+            .filter(Boolean) // Remove any null entries from the array
+            .join('&');
+
+        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field || ''}&sort_order=${event.sort_order || ''}&${filterParams}`;
     }
 
     return {
