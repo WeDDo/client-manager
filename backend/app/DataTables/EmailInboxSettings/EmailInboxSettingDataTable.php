@@ -38,7 +38,10 @@ class EmailInboxSettingDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        $items = auth()->user()->emailInboxSettings()->paginate($this->perPage);
+        $query = auth()->user()->emailInboxSettings();
+
+        $this->applyDefaultOrderBy($query);
+        $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
 

@@ -2,6 +2,7 @@
 
 namespace App\DataTables;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class BaseDataTable
@@ -28,4 +29,11 @@ abstract class BaseDataTable
     public abstract function getActiveColumns(): array;
 
     public abstract function getItems(): LengthAwarePaginator;
+
+    public function applyDefaultOrderBy($query): void
+    {
+        if ((request('sort_field') !== 'null' && request('sort_field')) && (request('sort_order') !== 'null' && request('sort_order'))) {
+            $query->orderBy(request('sort_field'), request('sort_order'));
+        }
+    }
 }

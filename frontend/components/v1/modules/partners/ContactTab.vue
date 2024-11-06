@@ -33,12 +33,12 @@ const emit = defineEmits([
 const form = defineModel('form');
 
 function goToCreate() {
-    store.setAdditionalFormData({ partner_id: form.value.values.item.id });
+    store.setAdditionalFormData({partner_id: form.value.values.item.id});
     router.push(`/${store.frontRouteName}/create`)
 }
 
 async function handleGetDataTableData(event) {
-    await $fetch(`${baseURL}/${partnerStore.apiRouteName}/${form.value.values.item.id}/${store.apiRouteName}?page=${event.page + 1}`, {
+    await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${partnerStore.apiRouteName}/${form.value.values.item.id}/${store.apiRouteName}`, event), {
         method: 'GET',
         headers: {
             authorization: `Bearer ${token.value}`
@@ -46,7 +46,7 @@ async function handleGetDataTableData(event) {
         onResponse({response}) {
             if (response.ok) {
                 dataTableData.value = response._data;
-                mainStore.setPage(route.path,event.page + 1);
+                mainStore.setPage(route.path, event.page + 1);
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -68,7 +68,7 @@ onMounted(() => {
             v-model:store="store"
             paginate
             scroll-height="calc(100vh - 18.3rem)"
-            @page="handleGetDataTableData"
+            @refresh="handleGetDataTableData"
         >
             <template #buttons>
                 <Button

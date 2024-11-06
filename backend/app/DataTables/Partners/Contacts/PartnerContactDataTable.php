@@ -79,7 +79,11 @@ class PartnerContactDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        $items = Contact::where('partner_id', $this->additionalData['partner_id'])->paginate($this->perPage);
+        $query = Contact::query()
+            ->where('partner_id', $this->additionalData['partner_id']);
+
+        $this->applyDefaultOrderBy($query);
+        $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
 

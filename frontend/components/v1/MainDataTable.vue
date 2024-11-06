@@ -3,7 +3,7 @@ import ConfirmDeleteDialog from "~/components/v1/ConfirmDeleteDialog.vue";
 import DataTableFilter from "~/components/v1/datatables/DataTableFilter.vue";
 import DataTableSort from "~/components/v1/datatables/DataTableSort.vue";
 
-const { public: { baseURL } } = useRuntimeConfig();
+const {public: {baseURL}} = useRuntimeConfig();
 
 const router = useRouter();
 const token = useCookie('token');
@@ -53,13 +53,17 @@ const data = defineModel('data');
 
 const dataTableRef = ref();
 const selection = ref(store?.value?.lastSelection);
-const filters = ref({global: { value: null},});
+const filters = ref({global: {value: null},});
 const confirmDeleteDialogRef = ref();
+
+const sortField = ref();
+const sortOrder = ref();
+const sortLoading = ref(false);
 
 defineExpose({confirmDeleteDialogRef, selection, store});
 
 function handleDataTableClick(event) {
-    if(store.value) {
+    if (store.value) {
         store.value.lastSelection = event.data;
     }
 }
@@ -81,6 +85,44 @@ onMounted(() => {
         dataTableWrapper.style.height = props.scrollHeight;
     }
 });
+
+function toggleSort(field) {
+    sortLoading.value = true;
+
+    if (sortField.value === field) {
+        if (sortOrder.value === 'asc') {
+            sortOrder.value = 'desc';
+        } else if (sortOrder.value === 'desc') {
+            sortOrder.value = null;
+            sortField.value = null;
+        } else {
+            sortOrder.value = 'asc';
+            sortField.value = field;
+        }
+    } else {
+        sortField.value = field;
+        sortOrder.value = 'asc';
+    }
+
+    emit('refresh', {
+        page: 0,
+        sort_field: sortField.value,
+        sort_order: sortOrder.value,
+    });
+
+    sortLoading.value = false;
+}
+
+function getSortIconClass(columnName) {
+    if (sortField.value === columnName) {
+        if (sortOrder.value === 'asc') {
+            return 'pi pi-sort-amount-up-alt';
+        } else if (sortOrder.value === 'desc') {
+            return 'pi pi-sort-amount-down-alt';
+        }
+    }
+    return 'pi pi-sort-alt';
+}
 </script>
 
 <template>
@@ -106,7 +148,7 @@ onMounted(() => {
                             icon-position="left"
                         >
                             <InputIcon>
-                                <i class="pi pi-search" />
+                                <i class="pi pi-search"/>
                             </InputIcon>
                             <InputText
                                 v-model="filters['global'].value"
@@ -116,7 +158,8 @@ onMounted(() => {
                             />
                         </IconField>
                     </div>
-                    <div v-if="props.header" class="text-xl text-900 font-bold flex justify-content-center align-items-center">
+                    <div v-if="props.header"
+                         class="text-xl text-900 font-bold flex justify-content-center align-items-center">
                         {{ props.header }}
                     </div>
 
@@ -125,10 +168,9 @@ onMounted(() => {
                             <DataTableFilter
                                 class="mx-2"
                             />
-<!--                            <DataTableSort />-->
                         </div>
                         <div>
-                            <slot name="buttons" />
+                            <slot name="buttons"/>
                         </div>
                     </div>
                 </div>
@@ -141,7 +183,7 @@ onMounted(() => {
             >
                 <template #header>
                     <div
-                        class="pr-4 w-full text-sm"
+                        class="pr-4 w-full text-sm cursor-pointer"
                         :class="{
                             'text-right': column.align === 'right',
                             'pr-4': column.align === 'right',
@@ -149,9 +191,21 @@ onMounted(() => {
                         :style="{
                             minWidth: column.min_width ? column.min_width + 'px' : undefined,
                             maxWidth: column.max_width ? column.max_width + 'px' : undefined
-                        }"
+                           }"
+                        @click="toggleSort(column.name)"
                     >
-                        {{ column.header }}
+                        <div class="flex justify-content-between">
+                            <div>
+                                {{ column.header }}
+                            </div>
+                            <div>
+                                <i
+                                    :class="getSortIconClass(column.name)"
+                                    class="ml-1"
+                                    style="font-size: 0.85em"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </template>
                 <template #body="slotProps">
@@ -188,12 +242,15 @@ onMounted(() => {
                 :rows="data?.items?.per_page ?? 0"
                 :total-records="data?.items?.total ?? 0"
                 :first="((data?.items?.current_page ?? 0) - 1) * (data?.items?.per_page ?? 0)"
-                @page="emit('page', $event)"
+                @page="emit('refresh', $event)"
             >
                 <template #start="slotProps">
                     <div class="text-sm">
                         <div v-if="(data?.items?.total ?? 0) > 0">
-                            {{ slotProps.state.first + 1 }}-{{ slotProps.state.first + Math.min(slotProps.state.rows, data.items.total) }} of {{data.items.total}}
+                            {{
+                                slotProps.state.first + 1
+                            }}-{{ slotProps.state.first + Math.min(slotProps.state.rows, data.items.total) }} of
+                            {{ data.items.total }}
                         </div>
                         <div v-else>
                             No entries

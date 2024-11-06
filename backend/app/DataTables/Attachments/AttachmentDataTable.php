@@ -40,7 +40,8 @@ class AttachmentDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        $attachments = Attachment::where('related_name', request('related_name'))
+        $attachments = Attachment::query()
+            ->where('related_name', request('related_name'))
             ->where('related_id', request('related_id'))
             ->get();
         $columns = $this->getColumnItemClosures();

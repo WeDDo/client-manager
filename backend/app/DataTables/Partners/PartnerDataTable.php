@@ -59,7 +59,10 @@ class PartnerDataTable extends BaseDataTable
 
     public function getItems(): LengthAwarePaginator
     {
-        $items = Partner::paginate($this->perPage);
+        $query = Partner::query();
+
+        $this->applyDefaultOrderBy($query);
+        $items = $query->paginate($this->perPage);
 
         // Get the column closures
         $columns = $this->getColumnItemClosures();
