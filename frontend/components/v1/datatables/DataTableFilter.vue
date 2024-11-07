@@ -1,6 +1,7 @@
 <script setup>
 import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainSelectInput from "~/components/v1/MainSelectInput.vue";
+import MainDateInput from "~/components/v1/MainDateInput.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -45,11 +46,18 @@ function handleFilterClick() {
                     <div class="formgrid grid">
                         <div class="col-6 md:col-10">
                             <MainTextInput
+                                v-if="filter?.field_type === 'text'"
                                 v-model:value="filter.value"
                                 :name="filter.name"
                                 :label="filter.label"
                             />
-                            {{filter.value}}
+
+                            <MainDateInput
+                                v-if="filter?.field_type === 'date'"
+                                v-model:value="filter.value"
+                                :name="filter.name"
+                                :label="filter.label"
+                            />
                         </div>
                         <div class="col-6 md:col-2">
                             <MainSelectInput

@@ -36,7 +36,7 @@ abstract class BaseDataTable
         }
     }
 
-    public function getDefaultFilters(): array
+    public function getDefaultFilters(array $fieldTypes = []): array
     {
         $columns = array_keys($this->getColumnItemClosures());
 
@@ -47,6 +47,7 @@ abstract class BaseDataTable
                 'label' => ucfirst(str_replace('_', ' ', $column)),
                 'operator' => '=',
                 'value' => null,
+                'field_type' => $fieldTypes[$column] ?? 'text',
             ];
         }
 
