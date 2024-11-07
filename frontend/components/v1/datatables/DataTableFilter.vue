@@ -1,5 +1,6 @@
 <script setup>
 import MainTextInput from "~/components/v1/MainTextInput.vue";
+import MainSelectInput from "~/components/v1/MainSelectInput.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -40,19 +41,23 @@ function handleFilterClick() {
                 </div>
             </template>
             <div>
-                <div v-for="(filter, index) in data?.filters" :key="index">
+                <div v-for="(filter, index) in data?.filters ?? []" :key="index">
                     <div class="formgrid grid">
-                        <div class="col-6 col-10">
+                        <div class="col-6 md:col-10">
                             <MainTextInput
                                 v-model:value="filter.value"
                                 :name="filter.name"
                                 :label="filter.label"
                             />
+                            {{filter.value}}
                         </div>
                         <div class="col-6 md:col-2">
-                            <MainTextInput
+                            <MainSelectInput
                                 v-model:value="filter.operator"
+                                name="operator"
                                 label="Operator"
+                                :options="['=', '<', '>', 'like', '<=', '>=']"
+                                simple-options
                             />
                         </div>
                     </div>
