@@ -13,6 +13,8 @@ const props = defineProps({});
 const emit = defineEmits([]);
 const visible = ref(false);
 
+const filterData = ref([]);
+
 const data = defineModel('data');
 
 defineExpose({visible});
@@ -20,6 +22,15 @@ defineExpose({visible});
 function handleFilterClick() {
     visible.value = !visible.value;
 }
+
+onMounted(() => {
+    filterData.value = data.value.filters;
+});
+
+watch(data, () => {
+    data.value.filters = filterData.value;
+    filterData.value = data.value.filters;
+});
 </script>
 
 <template>
