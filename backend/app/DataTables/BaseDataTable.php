@@ -37,12 +37,16 @@ abstract class BaseDataTable
         }
     }
 
-    public function getDefaultFilters(array $fieldTypes = [], string $name = self::class): array
+    public function getDefaultFilters(array $fieldTypes = [], string $name = null): array
     {
+        if(!$name) {
+            $name = static::class;
+        }
+
         $columns = array_keys($this->getColumnItemClosures());
 
         $dataTableFilters = DataTable::query()
-            ->where('name', $name)
+            ->where('name', $name ?? static::class)
             ->first()?->filters;
 
         $filters = json_decode($dataTableFilters, true);
@@ -68,8 +72,12 @@ abstract class BaseDataTable
     }
 
 
-    protected function applyFilters($query, string $name): void
+    protected function applyFilters($query, string $name = null): void
     {
+        if(!$name) {
+            $name = static::class;
+        }
+
         $dataTableFilters = DataTable::query()->where('name', $name)->first()?->filters;
         if (request('update_filter')) {
             DataTable::query()->updateOrCreate([
@@ -105,6 +113,9 @@ abstract class BaseDataTable
                     break;
                 case 'like':
                     $query->where($field, 'like', "%$value%");
+                    break;
+                case 'ilike':
+                    $query->where($field, 'ilike', "%$value%");
                     break;
                 case '<=':
                     $query->where($field, '<=', $value);

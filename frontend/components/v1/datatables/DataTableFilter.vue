@@ -12,7 +12,9 @@ const props = defineProps({});
 
 const mainStore = useMainStore();
 
-const emit = defineEmits([]);
+const emit = defineEmits([
+    'refresh',
+]);
 const visible = ref(false);
 
 const filterData = ref([]);
@@ -25,23 +27,30 @@ function handleFilterClick() {
     visible.value = !visible.value;
 }
 
-onMounted(() => {
+watch(data, () => {
     filterData.value = data.value.filters;
 });
 
-watch(data, () => {
+watch(filterData, () => {
     data.value.filters = filterData.value;
-    filterData.value = data.value.filters;
 });
+
+onMounted(() => {
+    filterData.value = data.value?.filters ? JSON.parse(JSON.stringify(data.value.filters)) : [];
+});
+
+const areFiltersEmpty = computed(() => {
+    return filterData.value.every(filter => (!filter.value || filter.value === ''));
+});
+
 </script>
 
 <template>
     <div>
-        {{data.value?.filters}}
         <Button
             size="small"
             icon="pi pi-filter"
-            severity="secondary"
+            :severity="areFiltersEmpty ? 'secondary' : 'primary'"
             text
             @click="handleFilterClick"
         />
@@ -56,7 +65,7 @@ watch(data, () => {
                 </div>
             </template>
             <div>
-                <div v-for="(filter, index) in data?.filters ?? []" :key="index">
+                <div v-for="(filter, index) in filterData ?? []" :key="index">
                     <div class="formgrid grid">
                         <div class="col-6 md:col-10">
                             <MainTextInput
@@ -78,7 +87,7 @@ watch(data, () => {
                                 v-model:value="filter.operator"
                                 name="operator"
                                 label="Operator"
-                                :options="['=', '<', '>', 'like', '<=', '>=']"
+                                :options="['=', '<', '>', 'like', 'ilike', '<=', '>=']"
                                 simple-options
                             />
                         </div>

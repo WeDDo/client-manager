@@ -38,7 +38,6 @@ function goToCreate() {
 }
 
 async function handleGetDataTableData(event) {
-    console.log('event', event)
     await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${partnerStore.apiRouteName}/${form.value.values.item.id}/${store.apiRouteName}`, event), {
         method: 'GET',
         headers: {
