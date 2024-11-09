@@ -197,8 +197,17 @@ function removeAllFiles() {
                                         :show-upload-button="false"
                                         :show-cancel-button="false"
                                         custom-upload
+
                                         @uploader="uploadFile($event)"
                                     >
+                                        <template #header="{ chooseCallback }">
+                                            <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
+                                                <div class="flex gap-2">
+                                                    <Button @click="chooseCallback" icon="pi pi-images" rounded outlined></Button>
+                                                    <Button @click="removeAllFiles()" icon="pi pi-times" rounded outlined severity="danger" :disabled="!files || files.length === 0"></Button>
+                                                </div>
+                                            </div>
+                                        </template>
                                         <template #empty>
                                             <div class="mt-2">
                                                 Drag and drop files to here to send
@@ -209,10 +218,31 @@ function removeAllFiles() {
                                                 <div
                                                     v-for="(file, index) in files"
                                                     :key="file.name"
-                                                    class="surface-100 p-2 border-round flex flex-column align-items-center justify-content-between w-6rem h-6rem"
+                                                    class="p-2 border-round flex flex-column align-items-center justify-content-between w-6rem h-6rem"
                                                 >
                                                     <div v-if="file.type.startsWith('image/')" v-tooltip.right="file.name" class="w-full h-full flex align-items-center justify-content-center overflow-hidden border-round mb-1">
-                                                        <img :src="file.objectURL" :alt="file.name" class="w-full h-full object-cover" />
+
+                                                        <Image alt="Image" preview>
+                                                            <template #indicatoricon>
+                                                                <i class="pi pi-search"></i>
+                                                            </template>
+                                                            <template #image>
+                                                                <img
+                                                                    :src="file.objectURL"
+                                                                    :alt="file.name"
+                                                                    class="w-full h-full object-cover"
+                                                                />
+                                                            </template>
+                                                            <template #preview="slotProps">
+                                                                <img
+                                                                    :src="file.objectURL"
+                                                                    alt="preview"
+                                                                    :style="slotProps.style"
+                                                                    @click="slotProps.onClick"
+                                                                />
+                                                            </template>
+                                                        </Image>
+
                                                     </div>
                                                     <div v-else class="w-full mb-1">
                                                         <div v-tooltip.right="file.name" class="text-sm text-center text-ellipsis overflow-hidden white-space-nowrap" style="max-width: 5rem;">
@@ -221,23 +251,13 @@ function removeAllFiles() {
                                                     </div>
 
                                                     <Button
-                                                        label="Clear"
+                                                        label="Remove"
                                                         icon="pi pi-times"
                                                         class="p-button-danger p-button-text mt-auto"
                                                         size="small"
                                                         @click="removeFile(index)"
                                                     />
                                                 </div>
-                                            </div>
-
-                                            <div v-if="files.length" class="mt-3">
-                                                <Button
-                                                    label="Clear All"
-                                                    icon="pi pi-times"
-                                                    class="p-button-danger p-button-text"
-                                                    size="small"
-                                                    @click="removeAllFiles"
-                                                />
                                             </div>
                                         </template>
                                     </FileUpload>
@@ -257,5 +277,6 @@ function removeAllFiles() {
     </div>
 </template>
 
-<style scoped>
+<style>
+
 </style>
