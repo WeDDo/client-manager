@@ -88,7 +88,6 @@ class PartnerContactDataTable extends BaseDataTable
         $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
-
         $transformedItems = $items->getCollection()->map(function ($item) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {

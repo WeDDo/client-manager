@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export function useFetchHelper() {
     const toast = useToast();
     const router = useRouter();
@@ -122,14 +124,20 @@ export function useFetchHelper() {
 
                 const field = encodeURIComponent(filter.name);
                 const operator = encodeURIComponent(filter.operator || '=');
-                const value = encodeURIComponent(filter.value);
+
+                let value;
+                if (filter.field_type === 'date') {
+                    value = encodeURIComponent(moment(filter.value).format('YYYY-MM-DD'))
+                } else {
+                    value = encodeURIComponent(filter.value);
+                }
 
                 return `filters[${field}][name]=${field}&filters[${field}][operator]=${operator}&filters[${field}][value]=${value}`;
             })
             .filter(Boolean)
             .join('&');
 
-        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field || ''}&sort_order=${event.sort_order || ''}&${filterParams}`;
+        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field || ''}&sort_order=${event.sort_order || ''}${filterParams ? `&${filterParams}` : ''}${event?.update_filter ? `&update_filter=1` : ''}`;
     }
 
     return {

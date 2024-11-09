@@ -1,5 +1,7 @@
 <script setup>
 
+import moment from "moment";
+
 const props = defineProps({
     name: {
         type: String,
@@ -47,6 +49,12 @@ const dateFormat = computed(() => {
 });
 
 const value = defineModel('value');
+
+watch(value, (newValue) => {
+    if (newValue && moment(value.value).isValid()) {
+        value.value = moment(value.value).format(props.showTime ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD');
+    }
+})
 </script>
 
 <template>

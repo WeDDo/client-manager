@@ -7,7 +7,7 @@ export const useMainStore = defineStore('main', {
         token: null,
 
         tabIndices: {},
-        pageIndices: {}
+        pageIndices: {},
     }),
     actions: {
         async getSettings(baseURL, token) {
@@ -22,18 +22,20 @@ export const useMainStore = defineStore('main', {
                 this.settings = response.item;
             })
         },
+
         setTabIndex(path, index) {
             this.tabIndices[path] = index;
         },
         getTabIndex(path) {
             return this.tabIndices[path];
         },
+
         setPage(path, index) {
             this.pageIndices[path] = index;
         },
         getPage(path) {
             return this.pageIndices[path];
-        }
+        },
     },
     persist: true,
 });

@@ -67,15 +67,15 @@ class EmailMessageDataTable extends BaseDataTable
         ];
     }
 
-    public function getDefaultFilters(): array
-    {
-        return array_merge(parent::getDefaultFilters(), [
-            [
-                'name' => 'subject',
-                'label' => 'Subject'
-            ],
-        ]);
-    }
+//    public function getDefaultFilters(): array
+//    {
+//        return array_merge(parent::getDefaultFilters(), [
+//            [
+//                'name' => 'subject',
+//                'label' => 'Subject'
+//            ],
+//        ]);
+//    }
 
     public function getItems(): LengthAwarePaginator
     {
