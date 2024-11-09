@@ -67,60 +67,49 @@ class EmailMessageDataTable extends BaseDataTable
         ];
     }
 
-//    public function getDefaultFilters(): array
-//    {
-//        return array_merge(parent::getDefaultFilters(), [
-//            [
-//                'name' => 'subject',
-//                'label' => 'Subject'
-//            ],
-//        ]);
-//    }
-
     public function getItems(): LengthAwarePaginator
     {
-        $query = auth()->user()->emailMessages()
-            ->select('email_messages.*')
-            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
-            ->where(function ($query) {
-                // Select emails without further replies, including emails that aren't part of a thread
-                $query->whereNull('replies.id')
-                    ->orWhereNull('email_messages.reply_to_email_message_id');
-            })
-            ->when(request('selected_folder'), function ($query) {
-                $query->where('email_messages.folder', request('selected_folder'));
-            })
-            ->orderByDesc('email_messages.date');
+        $query = auth()->user()->emailMessages();
+//            ->select('email_messages.*')
+//            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
+//            ->where(function ($query) {
+//                // Select emails without further replies, including emails that aren't part of a thread
+//                $query->whereNull('replies.id')
+//                    ->orWhereNull('email_messages.reply_to_email_message_id');
+//            })
+//            ->when(request('selected_folder'), function ($query) {
+//                $query->where('email_messages.folder', request('selected_folder'));
+//            })
+//            ->orderByDesc('email_messages.date');
 
         $this->applyFilters($query);
         $this->applyDefaultOrderBy($query);
         $items = $query->paginate($this->perPage);
 
-        $items->getCollection()->transform(function ($email) {
-            $unreadCount = 0;
-            $currentEmail = $email;
+//        dd($items);
+//
+//        $items->getCollection()->transform(function ($email) {
+//            $unreadCount = 0;
+//            $currentEmail = $email;
+//
+//            // Calculate unread count
+//            if (!$currentEmail->is_seen) {
+//                $unreadCount++;
+//            }
+//
+//            while ($currentEmail->replyToEmailMessage) {
+//                if (!$currentEmail->replyToEmailMessage->is_seen) {
+//                    $unreadCount++;
+//                    break;
+//                }
+//                $currentEmail = $currentEmail->replyToEmailMessage;
+//            }
+//
+//            $email->unread_count = $unreadCount;
+//            return $email;
+//        });
 
-            // Calculate unread count
-            if (!$currentEmail->is_seen) {
-                $unreadCount++;
-            }
-
-            while ($currentEmail->replyToEmailMessage) {
-                if (!$currentEmail->replyToEmailMessage->is_seen) {
-                    $unreadCount++;
-                    break;
-                }
-                $currentEmail = $currentEmail->replyToEmailMessage;
-            }
-
-            $email->unread_count = $unreadCount;
-            return $email;
-        });
-
-        // Get the column closures for transformation
         $columns = $this->getColumnItemClosures();
-
-        // Transform each email message into the format defined by the column closures
         $transformedItems = $items->getCollection()->map(function ($emailMessage) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
@@ -129,10 +118,8 @@ class EmailMessageDataTable extends BaseDataTable
             return $rowData;
         });
 
-        // Replace the original collection with the transformed items
         $items->setCollection(collect($transformedItems));
 
-        // Return the paginated object with transformed data
         return $items;
     }
 

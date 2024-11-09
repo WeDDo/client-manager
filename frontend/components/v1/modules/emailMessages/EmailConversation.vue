@@ -1,6 +1,10 @@
 <script setup>
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 
+const {public: {baseURL}} = useRuntimeConfig();
+
+const token = useCookie('token');
+
 const fetchHelper = useFetchHelper();
 
 const props = defineProps({

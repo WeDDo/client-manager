@@ -196,9 +196,9 @@ async function handleGetDataTableData(event) {
                             <div>
                                 {{ slotProps.data.subject }}
                             </div>
-                            <div v-tooltip.bottom="'Unread count'">
-                                ({{ slotProps.data.unread_count }})
-                            </div>
+<!--                            <div v-tooltip.bottom="'Unread count'">-->
+<!--                                ({{ slotProps.data.unread_count }})-->
+<!--                            </div>-->
                         </div>
                     </template>
                     <template #is_flagged="slotProps">
