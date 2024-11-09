@@ -2,6 +2,7 @@
 
 namespace App\DataTables;
 
+use App\Models\DataTable;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class BaseDataTable
@@ -36,17 +37,29 @@ abstract class BaseDataTable
         }
     }
 
-    public function getDefaultFilters(array $fieldTypes = []): array
+    public function getDefaultFilters(array $fieldTypes = [], string $name = self::class): array
     {
         $columns = array_keys($this->getColumnItemClosures());
 
+        $dataTableFilters = DataTable::query()
+            ->where('name', $name)
+            ->first()?->filters;
+
+        $filters = json_decode($dataTableFilters, true);
+
         $defaultFilters = [];
         foreach ($columns as $column) {
+            $columnValue = null;
+
+            if (isset($filters[$column])) {
+                $columnValue = $filters[$column]['value'] ?? null;
+            }
+
             $defaultFilters[] = [
                 'name' => $column,
                 'label' => ucfirst(str_replace('_', ' ', $column)),
-                'operator' => '=',
-                'value' => null,
+                'operator' => $filters[$column]['operator'] ?? '=',
+                'value' => $columnValue,
                 'field_type' => $fieldTypes[$column] ?? 'text',
             ];
         }
@@ -54,16 +67,31 @@ abstract class BaseDataTable
         return $defaultFilters;
     }
 
-    protected function applyFilters($query): void
-    {
-        $filters = request('filters') ?? [];
 
-        foreach ($filters as $filter) {
-            $field = $filter['name'];
+    protected function applyFilters($query, string $name): void
+    {
+        $dataTableFilters = DataTable::query()->where('name', $name)->first()?->filters;
+        if (request('update_filter')) {
+            DataTable::query()->updateOrCreate([
+                'name' => $name,
+            ], ['filters' => json_encode(request('filters'))]);
+        }
+
+        $filters = [];
+        if (request('filters')) {
+            $filters = request('filters');
+        } else if (!$filters || count($filters) === 0) {
+            $filters = ($dataTableFilters ? json_decode($dataTableFilters, true) : []);
+        }
+
+        if (!is_array($filters)) return;
+
+        foreach ($filters as $key => $filter) {
+            $field = $filter['name'] ?? $filter[$key];
             $operator = $filter['operator'] ?? '=';
             $value = $filter['value'];
 
-            if(!$value || $value === 'null') continue;
+            if (!$value || $value === 'null') continue;
 
             switch ($operator) {
                 case '=':

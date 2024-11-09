@@ -6,6 +6,7 @@ import {useContactStore} from "~/stores/modules/contact.js";
 const { public: { baseURL } } = useRuntimeConfig();
 
 const router = useRouter();
+const route = useRoute();
 
 const store = useContactStore();
 const mainStore = useMainStore();
@@ -20,7 +21,7 @@ const mainDataTableRef = ref();
 
 const fetchHelper = useFetchHelper();
 
-const { data, status, error, refresh } = await useFetch(`${baseURL}/${store.apiRouteName}?page=1`, {
+const { data, status, error, refresh } = await useFetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}`, {page: 0}), {
     headers: {
         authorization: `Bearer ${token.value}`
     },
@@ -47,6 +48,7 @@ async function handleGetDataTableData(event) {
         onResponse({response}) {
             if (response.ok) {
                 dataTableData.value = response._data;
+                mainStore.setPage(route.path, event.page + 1);
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -86,6 +88,7 @@ async function handleGetDataTableData(event) {
                 <div>
                     {{ store.multiName }}
                 </div>
+
                 <div>
                     <Button
                         label="Add"

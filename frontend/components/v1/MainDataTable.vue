@@ -45,6 +45,7 @@ const emit = defineEmits([
     'row-dblclick',
     'item-deleted',
     'page',
+    'refresh',
 ]);
 
 const store = defineModel('store');
@@ -86,12 +87,13 @@ onMounted(() => {
     }
 });
 
-function getRefreshEventData(page = 0) {
+function getRefreshEventData(page = 0, updateFilter = false) {
     return {
         page,
         sort_field: sortField.value,
         sort_order: sortOrder.value,
         filters: data?.value?.filters,
+        update_filter: updateFilter,
     };
 }
 
@@ -174,7 +176,7 @@ function getSortIconClass(columnName) {
                                 v-if="data?.filters"
                                 v-model:data="data"
                                 class="mx-2"
-                                @refresh="emit('refresh', getRefreshEventData(0))"                            />
+                                @refresh="emit('refresh', getRefreshEventData(0, true))"                            />
                         </div>
                         <div>
                             <slot name="buttons"/>

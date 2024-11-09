@@ -22,10 +22,11 @@ class ContactDataTable extends BaseDataTable
     public function get(): array
     {
         return [
+            'name' => 'ContactDataTable',
             'active_columns' => $this->getActiveColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
-            'filters' => $this->getDefaultFilters($this->filterFieldTypes),
+            'filters' => $this->getDefaultFilters($this->filterFieldTypes, self::class),
         ];
     }
 
@@ -91,7 +92,7 @@ class ContactDataTable extends BaseDataTable
     {
         $query = Contact::query();
 
-        $this->applyFilters($query);
+        $this->applyFilters($query, self::class);
         $this->applyDefaultOrderBy($query);
         $items = $query->paginate($this->perPage);
 

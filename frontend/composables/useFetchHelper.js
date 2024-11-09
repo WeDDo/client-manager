@@ -137,7 +137,7 @@ export function useFetchHelper() {
             .filter(Boolean)
             .join('&');
 
-        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field || ''}&sort_order=${event.sort_order || ''}&${filterParams}`;
+        return `${url}?page=${event.page + 1}&sort_field=${event.sort_field || ''}&sort_order=${event.sort_order || ''}${filterParams ? `&${filterParams}` : ''}${event?.update_filter ? `&update_filter=1` : ''}`;
     }
 
     return {

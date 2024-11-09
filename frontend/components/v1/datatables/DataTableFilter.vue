@@ -10,6 +10,8 @@ const token = useCookie('token');
 
 const props = defineProps({});
 
+const mainStore = useMainStore();
+
 const emit = defineEmits([]);
 const visible = ref(false);
 
@@ -35,6 +37,7 @@ watch(data, () => {
 
 <template>
     <div>
+        {{data.value?.filters}}
         <Button
             size="small"
             icon="pi pi-filter"
