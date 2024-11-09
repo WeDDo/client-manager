@@ -15,6 +15,8 @@ abstract class BaseDataTable
 
     protected int $perPage = 500;
 
+    protected array $fieldMappings = [];
+
     public function __construct(?array $additionalData = null)
     {
         $this->additionalData = $additionalData;
@@ -60,7 +62,7 @@ abstract class BaseDataTable
             }
 
             $defaultFilters[] = [
-                'name' => $column,
+                'name' => "$column",
                 'label' => ucfirst(str_replace('_', ' ', $column)),
                 'operator' => $filters[$column]['operator'] ?? '=',
                 'value' => $columnValue,
@@ -95,7 +97,8 @@ abstract class BaseDataTable
         if (!is_array($filters)) return;
 
         foreach ($filters as $key => $filter) {
-            $field = $filter['name'] ?? $filter[$key];
+            $fieldKey = $filter['name'];
+            $field = $this->fieldMappings[$fieldKey] ?? $fieldKey;
             $operator = $filter['operator'] ?? '=';
             $value = $filter['value'];
 
