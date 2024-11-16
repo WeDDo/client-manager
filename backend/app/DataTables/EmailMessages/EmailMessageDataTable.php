@@ -75,19 +75,4 @@ class EmailMessageDataTable extends BaseDataTable
 
         return $items;
     }
-
-
-    public function getItem(mixed $id): array
-    {
-        $emailMessage = auth()->user()->emailMessages()->where('id', $id)->first();
-
-        $columns = $this->getColumnItemClosures();
-
-        $rowData = [];
-        foreach ($columns as $columnKey => $getColumnValue) {
-            $rowData[$columnKey] = $getColumnValue($emailMessage);
-        }
-
-        return $rowData;
-    }
 }

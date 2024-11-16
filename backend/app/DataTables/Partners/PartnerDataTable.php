@@ -47,18 +47,6 @@ class PartnerDataTable extends BaseDataTable
             ['name' => 'phone', 'header' => 'Phone', 'align' => 'left'],
         ];
     }
-//
-//    public function getDefaultFilters(): array
-//    {
-//        return array_merge(parent::getDefaultFilters(), [
-//            [
-//                'name' => 'name',
-//                'label' => 'Name',
-//                'operator' => '=',
-//                'value' => null,
-//            ],
-//        ]);
-//    }
 
     public function getItems(): LengthAwarePaginator
     {
@@ -68,10 +56,7 @@ class PartnerDataTable extends BaseDataTable
         $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
-        // Get the column closures
         $columns = $this->getColumnItemClosures();
-
-        // Map through each paginated item and apply the closures
         $transformedItems = $items->getCollection()->map(function ($item) use ($columns) {
             $rowData = [];
             foreach ($columns as $columnKey => $getColumnValue) {
@@ -79,25 +64,8 @@ class PartnerDataTable extends BaseDataTable
             }
             return $rowData;
         });
-
-        // Replace the original items collection with the transformed data
         $items->setCollection(collect($transformedItems));
 
-        // Return the paginated object with transformed items
         return $items;
-    }
-
-    public function getItem(mixed $id): array
-    {
-        $item = Partner::where('id', $id)->first();
-
-        $columns = $this->getColumnItemClosures();
-
-        $rowData = [];
-        foreach ($columns as $columnKey => $getColumnValue) {
-            $rowData[$columnKey] = $getColumnValue($item);
-        }
-
-        return $rowData;
     }
 }

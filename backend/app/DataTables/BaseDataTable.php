@@ -55,13 +55,6 @@ abstract class BaseDataTable
         ]);
     }
 
-//    public function applyDefaultOrderBy($query): void
-//    {
-//        if ((request('sort_field') !== 'null' && request('sort_field') !== 'undefined' && request('sort_field')) && (request('sort_order') !== 'null' && request('sort_order') !== 'undefined' && request('sort_order'))) {
-//            $query->orderBy(request('sort_field'), request('sort_order'));
-//        }
-//    }
-
     public function getDefaultSorting(string $name = null): array
     {
         if (!$name) {

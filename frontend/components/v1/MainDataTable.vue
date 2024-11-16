@@ -61,8 +61,6 @@ const sortField = ref();
 const sortOrder = ref();
 const sortLoading = ref(false);
 
-defineExpose({confirmDeleteDialogRef, selection, store});
-
 function handleDataTableClick(event) {
     if (store.value) {
         store.value.lastSelection = event.data;
@@ -136,6 +134,13 @@ function getSortIconClass(columnName) {
     }
     return 'pi pi-sort-alt';
 }
+
+function refreshData() {
+    emit('refresh', getRefreshEventData(0));
+}
+
+defineExpose({confirmDeleteDialogRef, selection, store, refreshData});
+
 </script>
 
 <template>

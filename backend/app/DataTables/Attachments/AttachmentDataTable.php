@@ -48,18 +48,4 @@ class AttachmentDataTable extends BaseDataTable
 
         return $data;
     }
-
-//    public function getItem(mixed $id): array
-//    {
-//        $emailSetting = auth()->user()->emailSettings()->where('id', $id)->first();
-//
-//        $columns = $this->getColumnItemClosures();
-//
-//        $rowData = [];
-//        foreach ($columns as $columnKey => $getColumnValue) {
-//            $rowData[$columnKey] = $getColumnValue($emailSetting);
-//        }
-//
-//        return $rowData;
-//    }
 }
