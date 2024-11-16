@@ -75,7 +75,7 @@ class PartnerDataTable extends BaseDataTable
         $query = Partner::query();
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
+        $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
         // Get the column closures

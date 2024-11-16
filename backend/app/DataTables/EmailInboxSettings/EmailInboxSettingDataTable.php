@@ -42,7 +42,7 @@ class EmailInboxSettingDataTable extends BaseDataTable
         $query = auth()->user()->emailInboxSettings();
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
+        $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();

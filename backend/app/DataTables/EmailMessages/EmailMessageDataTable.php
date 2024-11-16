@@ -83,7 +83,7 @@ class EmailMessageDataTable extends BaseDataTable
 //            ->orderByDesc('email_messages.date');
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
+        $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
 //        dd($items);

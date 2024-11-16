@@ -84,7 +84,7 @@ class PartnerContactDataTable extends BaseDataTable
             ->where('partner_id', $this->additionalData['partner_id']);
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
+        $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();

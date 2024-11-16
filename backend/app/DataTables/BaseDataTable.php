@@ -41,7 +41,7 @@ abstract class BaseDataTable
 
     public function getDefaultFilters(array $fieldTypes = [], string $name = null): array
     {
-        if(!$name) {
+        if (!$name) {
             $name = static::class;
         }
 
@@ -73,18 +73,42 @@ abstract class BaseDataTable
         return $defaultFilters;
     }
 
+    protected function applySorting($query, string $name = null): void
+    {
+        if (!$name) {
+            $name = static::class;
+        }
+
+        $dataTableSorting = json_decode(DataTable::query()->where('name', $name)->first()?->sorting, true);
+        if (request('update_sorting')) {
+            DataTable::query()?->updateOrCreate([
+                'name' => $name,
+            ], [
+                'sorting' => json_encode([
+                    'sort_field' => request('sort_field'),
+                    'sort_order' => request('sort_order'),
+                ])
+            ]);
+        }
+
+            if ($dataTableSorting && (($dataTableSorting['sort_field'] ?? null) && ($dataTableSorting['sort_order'] ?? null))) {
+                $query->orderBy($dataTableSorting['sort_field'], $dataTableSorting['sort_order']);
+            }
+    }
 
     protected function applyFilters($query, string $name = null): void
     {
-        if(!$name) {
+        if (!$name) {
             $name = static::class;
         }
 
         $dataTableFilters = DataTable::query()->where('name', $name)->first()?->filters;
         if (request('update_filter')) {
-            DataTable::query()->updateOrCreate([
+            DataTable::query()?->updateOrCreate([
                 'name' => $name,
-            ], ['filters' => json_encode(request('filters'))]);
+            ], [
+                'filters' => json_encode(request('filters')),
+            ]);
         }
 
         $filters = [];

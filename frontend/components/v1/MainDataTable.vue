@@ -87,13 +87,14 @@ onMounted(() => {
     }
 });
 
-function getRefreshEventData(page = 0, updateFilter = false) {
+function getRefreshEventData(page = 0, updateFilter = false, updateSorting = false) {
     return {
         page,
         sort_field: sortField.value,
         sort_order: sortOrder.value,
         filters: data?.value?.filters,
         update_filter: updateFilter,
+        update_sorting: updateSorting,
     };
 }
 
@@ -115,7 +116,7 @@ function toggleSort(field) {
         sortOrder.value = 'asc';
     }
 
-    emit('refresh', getRefreshEventData(0));
+    emit('refresh', getRefreshEventData(0, undefined, true));
 
     sortLoading.value = false;
 }
