@@ -201,6 +201,11 @@ async function handleGetDataTableData(event) {
 <!--                            </div>-->
                         </div>
                     </template>
+                    <template #is_seen="slotProps">
+                        <div class="flex align-items-center">
+                            <i :class="`pi ${slotProps.data.is_seen ? 'pi-check-square' : 'pi-stop'}`" />
+                        </div>
+                    </template>
                     <template #is_flagged="slotProps">
                         <div class="flex align-items-center">
                             <i :class="`pi ${slotProps.data.is_flagged ? 'pi-check-square' : 'pi-stop'}`" />

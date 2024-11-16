@@ -62,6 +62,7 @@ class EmailMessageDataTable extends BaseDataTable
             ['name' => 'subject', 'header' => 'Subject', 'align' => 'left', 'min_width' => 300],
             ['name' => 'from', 'header' => 'From', 'align' => 'left', 'min_width' => 125],
             ['name' => 'date', 'header' => 'Date', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'is_seen', 'header' => 'Is seen', 'align' => 'left', 'min_width' => 125],
             ['name' => 'is_flagged', 'header' => 'Is flagged', 'align' => 'left', 'min_width' => 125],
             ['name' => 'is_answered', 'header' => 'Is answered', 'align' => 'left', 'min_width' => 125],
         ];
