@@ -149,13 +149,23 @@ abstract class BaseDataTable
 
         if (!is_array($filters)) return;
 
+//        dd($filters);
+
         foreach ($filters as $key => $filter) {
             $fieldKey = $filter['name'];
             $field = $fieldKey;
             $operator = $filter['operator'] ?? '=';
             $value = $filter['value'];
 
-            if (!$value || $value === 'null') continue;
+            if ($value === 'true') {
+                $value = true;
+            }
+
+            if ($value === 'false') {
+                $value = false;
+            }
+
+            if ($value === null || $value === 'null') continue;
 
             switch ($operator) {
                 case '=':

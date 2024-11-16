@@ -33,7 +33,6 @@ class EmailSetting extends Model
     public function getAdditionalData(): array
     {
         return [
-//            'data_table_item' => (new EmailSettingDataTable())->getItem($this->id),
         ];
     }
 }

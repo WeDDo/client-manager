@@ -35,9 +35,9 @@ if (!error.value) {
     fetchHelper.handleUseFetchError(error);
 }
 
-watch(data, () => {
-    dataTableData.value = data.value;
-});
+// watch(data, () => {
+//     dataTableData.value = data.value;
+// });
 
 async function fetchEmails() {
     await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, {
@@ -80,7 +80,7 @@ async function handleGetEmails() {
         },
         onResponse({ response }) {
             if (response.ok) {
-                fetchEmails();
+                mainDataTableRef.value.refreshData();
                 toast.add({ severity: 'success', summary: 'Emails created successfully', life: 2000 });
             } else {
                 fetchHelper.handleResponseError(response);
@@ -93,7 +93,7 @@ async function handleGetEmails() {
 async function handleGetDataTableData(event) {
     loadingStore.actionLoading = true;
 
-    await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, event), {
+    await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}`, event, `&selected_folder=${store.selectedFolder}`), {
         method: 'GET',
         headers: {
             authorization: `Bearer ${token.value}`

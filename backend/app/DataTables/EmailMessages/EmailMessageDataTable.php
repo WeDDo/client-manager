@@ -7,6 +7,13 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailMessageDataTable extends BaseDataTable
 {
+    protected function setFilterFieldTypes(): array
+    {
+        return [
+            'is_seen' => self::$boolFieldType,
+        ];
+    }
+
     public function getColumnItemClosures(): array
     {
         return [
@@ -54,11 +61,11 @@ class EmailMessageDataTable extends BaseDataTable
         $query = auth()->user()->emailMessages();
 
         $this->applyFilters($query);
-        $this->applySorting($query);
-
         $query->when(request('selected_folder'), function ($query) {
             $query->where('folder', request('selected_folder'));
         });
+
+        $this->applySorting($query);
 
         $items = $query->paginate($this->perPage);
 
