@@ -35,6 +35,59 @@ abstract class BaseDataTable
 
     public abstract function getItems(): LengthAwarePaginator;
 
+    protected function getSelectableColumns(string $name = null): array
+    {
+        $selectableColumns = [
+            [],
+            [],
+        ];
+
+        if (!$name) {
+            $name = static::class;
+        }
+
+        // todo refactor logic to only take names to save of selected and take out all other and move to not selected but available
+
+        if (request('update_selectable_columns')) {
+            DataTable::query()?->updateOrCreate([
+                'name' => $name,
+                'user_id' => auth()->id(),
+            ], [
+                'selectable_columns' => json_encode($selectableColumns)
+            ]);
+        } else {
+            $dataTableSelectedColumns = DataTable::query()
+                ->where('name', $name)
+                ->where('user_id', auth()->id())
+                ->first()?->selected_columns;
+
+            if (!$dataTableSelectedColumns) {
+                $columns = array_keys($this->getColumnItemClosures());
+
+                foreach ($columns as $key => $column) {
+                    $selectableColumns[0][] = [
+                        'id' => $key,
+                        'name' => $column,
+                    ];
+                }
+
+                DataTable::query()?->updateOrCreate([
+                    'name' => $name,
+                    'user_id' => auth()->id(),
+                ], [
+                    'selected_columns' => json_encode($selectableColumns)
+                ]);
+            }
+        }
+
+        return $selectableColumns;
+    }
+
+    protected function getSelectedColumns(): array
+    {
+        return []; //todo implement after saving
+    }
+
     protected function setFilterFieldTypes(): array
     {
         return [];
@@ -47,6 +100,7 @@ abstract class BaseDataTable
         return array_merge([
             'name' => static::class,
             'active_columns' => $this->getActiveColumns(),
+            'selectable_columns' => $this->getSelectableColumns(),
             'columns' => array_keys($this->getColumnItemClosures()),
             'items' => $this->getItems(),
             'filters' => $this->getDefaultFilters($this->filterFieldTypes),
@@ -63,6 +117,7 @@ abstract class BaseDataTable
 
         $dataTableSorting = DataTable::query()
             ->where('name', $name ?? static::class)
+            ->where('user_id', auth()->id())
             ->first()?->sorting;
 
         return $dataTableSorting ? json_decode($dataTableSorting, true) : [];
@@ -78,6 +133,7 @@ abstract class BaseDataTable
 
         $dataTableFilters = DataTable::query()
             ->where('name', $name ?? static::class)
+            ->where('user_id', auth()->id())
             ->first()?->filters;
 
         $filters = json_decode($dataTableFilters, true);
@@ -91,7 +147,7 @@ abstract class BaseDataTable
             }
 
             $defaultFilters[] = [
-                'name' => "$column",
+                'name' => $column,
                 'label' => ucfirst(str_replace('_', ' ', $column)),
                 'operator' => $filters[$column]['operator'] ?? '=',
                 'value' => $columnValue,
@@ -108,10 +164,10 @@ abstract class BaseDataTable
             $name = static::class;
         }
 
-        $dataTableSorting = json_decode(DataTable::query()->where('name', $name)->first()?->sorting, true);
         if (request('update_sorting')) {
             DataTable::query()?->updateOrCreate([
                 'name' => $name,
+                'user_id' => auth()->id(),
             ], [
                 'sorting' => json_encode([
                     'sort_field' => request('sort_field'),
@@ -120,6 +176,7 @@ abstract class BaseDataTable
             ]);
         }
 
+        $dataTableSorting = json_decode(DataTable::query()->where('name', $name)->first()?->sorting, true);
         if ($dataTableSorting && (($dataTableSorting['sort_field'] ?? null) && ($dataTableSorting['sort_order'] ?? null))) {
             $query->orderBy($dataTableSorting['sort_field'], $dataTableSorting['sort_order']);
         }
@@ -135,6 +192,7 @@ abstract class BaseDataTable
         if (request('update_filter')) {
             DataTable::query()?->updateOrCreate([
                 'name' => $name,
+                'user_id' => auth()->id(),
             ], [
                 'filters' => json_encode(request('filters')),
             ]);

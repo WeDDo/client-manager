@@ -2,6 +2,7 @@
 import ConfirmDeleteDialog from "~/components/v1/ConfirmDeleteDialog.vue";
 import DataTableFilter from "~/components/v1/datatables/DataTableFilter.vue";
 import DataTableSort from "~/components/v1/datatables/DataTableSort.vue";
+import DataTableColumnSelect from "~/components/v1/datatables/DataTableColumnSelect.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -85,7 +86,7 @@ onMounted(() => {
     }
 });
 
-function getRefreshEventData(page = 0, updateFilter = false, updateSorting = false) {
+function getRefreshEventData(page = 0, updateFilter = false, updateSorting = false, updateSelectedColumns = false) {
     return {
         page,
         sort_field: sortField.value,
@@ -93,6 +94,7 @@ function getRefreshEventData(page = 0, updateFilter = false, updateSorting = fal
         filters: data?.value?.filters,
         update_filter: updateFilter,
         update_sorting: updateSorting,
+        update_selected_columns: updateSelectedColumns,
     };
 }
 
@@ -187,7 +189,12 @@ defineExpose({confirmDeleteDialogRef, selection, store, refreshData});
                                 v-if="data?.filters"
                                 v-model:data="data"
                                 class="mx-2"
-                                @refresh="emit('refresh', getRefreshEventData(0, true))"                            />
+                                @refresh="emit('refresh', getRefreshEventData(0, true))"
+                            />
+                            <DataTableColumnSelect
+                                v-model:data="data"
+                                @refresh="emit('refresh', getRefreshEventData(0, false, false, true))"
+                            />
                         </div>
                         <div>
                             <slot name="buttons"/>
