@@ -149,8 +149,6 @@ abstract class BaseDataTable
 
         if (!is_array($filters)) return;
 
-//        dd($filters);
-
         foreach ($filters as $key => $filter) {
             $fieldKey = $filter['name'];
             $field = $fieldKey;
