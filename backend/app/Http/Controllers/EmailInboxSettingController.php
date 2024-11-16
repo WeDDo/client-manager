@@ -16,6 +16,7 @@ class EmailInboxSettingController extends Controller
 
     public function index(): JsonResponse
     {
+//        $this->emailInboxSettingService->getInboxesImap();
         return response()->json((new EmailInboxSettingDataTable())->get());
     }
 
@@ -48,5 +49,16 @@ class EmailInboxSettingController extends Controller
     {
         $this->emailInboxSettingService->destroy($emailInboxSetting);
         return response()->json([], 204);
+    }
+
+    public function getInboxesImap(): JsonResponse
+    {
+        return response()->json($this->emailInboxSettingService->getInboxesImap());
+    }
+
+    public function createInboxes(): JsonResponse
+    {
+        $this->emailInboxSettingService->createInboxes(request()->all());
+        return response()->json([], 201);
     }
 }

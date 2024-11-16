@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Models\EmailInboxSetting;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Webklex\IMAP\Facades\Client;
+use Webklex\PHPIMAP\Support\FolderCollection;
 
 class EmailInboxSettingService
 {
@@ -44,6 +48,61 @@ class EmailInboxSettingService
         }
 
         $emailInboxSetting->delete();
+    }
+
+    public function getInboxesImap(): array
+    {
+        $imapConfig = (new EmailSettingService())->setImapEmailConfig();
+
+        $client = Client::make($imapConfig);
+        $client->connect();
+
+        $folderNames = $this->extractMailboxNames($client->getFolders());
+
+        $formattedFolders = [
+            [],
+            [],
+        ];
+
+        $emailInboxSettingNames = auth()->user()->emailInboxSettings()->pluck('name');
+
+        foreach ($folderNames as $key => $folderName) {
+            if (!$emailInboxSettingNames->contains($folderName)) {
+                $formattedFolders[0][] = [
+                    'id' => $key,
+                    'name' => $folderName,
+                ];
+            }
+
+        }
+
+        return $formattedFolders;
+    }
+
+    protected function extractMailboxNames(FolderCollection $folders): array
+    {
+        $mailboxNames = [];
+
+        foreach ($folders as $folder) {
+            if ($folder->name && $folder->name !== '[Gmail]') {
+                $mailboxNames[] = $folder->name;
+            }
+
+            if ($folder->hasChildren()) {
+                $mailboxNames = array_merge($mailboxNames, $this->extractMailboxNames($folder->children));
+            }
+        }
+
+        return $mailboxNames;
+    }
+
+    public function createInboxes(array $data): void
+    {
+        DB::transaction(function () use ($data) {
+            foreach ($data[1] as $inbox) {
+                $emailSettingInbox = $this->store(['name' => $inbox['name']]);
+            }
+        });
     }
 }
 
