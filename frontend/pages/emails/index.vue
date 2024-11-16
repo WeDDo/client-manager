@@ -70,7 +70,7 @@ function changeFolder() {
     }
 }
 
-async function handleGetEmails() {
+async function handleGetEmailsUsingImap() {
     loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}/get-emails-using-imap`, {
@@ -139,7 +139,7 @@ async function handleGetDataTableData(event) {
                         raised
                         :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"
                         :loading="loadingStore.actionLoading"
-                        @click="handleGetEmails"
+                        @click="handleGetEmailsUsingImap"
                     />
                     <Button
                         label="Inbox settings"

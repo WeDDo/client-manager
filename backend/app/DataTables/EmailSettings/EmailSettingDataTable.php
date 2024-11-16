@@ -8,6 +8,13 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailSettingDataTable extends BaseDataTable
 {
+    protected function setFilterFieldTypes(): array
+    {
+        return [
+            'active' => self::$boolFieldType,
+        ];
+    }
+
     public function getColumnItemClosures(): array
     {
         return [
