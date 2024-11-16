@@ -4,6 +4,7 @@ import {useEmailSettingStore} from "~/stores/modules/emailSetting.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
 import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
+import EmailCreateInboxes from "~/components/v1/modules/emailInboxSettings/EmailCreateInboxes.vue";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
@@ -89,7 +90,11 @@ async function handleGetDataTableData(event) {
                 <div>
                     {{ store.singleName }}
                 </div>
-                <div>
+                <div class="flex">
+                    <EmailCreateInboxes
+                        class="mr-8"
+                        @refresh-data-table="mainDataTableRef.refreshData()"
+                    />
                     <Button
                         label="Add"
                         size="small"
