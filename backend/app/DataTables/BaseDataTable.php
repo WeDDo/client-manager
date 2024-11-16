@@ -7,15 +7,18 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class BaseDataTable
 {
+    protected int $perPage = 500;
+
     protected ?array $additionalData = null;
 
     protected array $activeColumns = [];
     protected array $columns = [];
     protected LengthAwarePaginator $items;
 
-    protected int $perPage = 500;
-
-    protected array $fieldMappings = [];
+    protected array $filterFieldTypes = [];
+    protected static string $textFieldType = 'text';
+    protected static string $dateFieldType = 'date';
+    protected static string $boolFieldType = 'bool';
 
     public function __construct(?array $additionalData = null)
     {
@@ -32,11 +35,44 @@ abstract class BaseDataTable
 
     public abstract function getItems(): LengthAwarePaginator;
 
-    public function applyDefaultOrderBy($query): void
+    protected function setFilterFieldTypes(): array
     {
-        if ((request('sort_field') !== 'null' && request('sort_field') !== 'undefined' && request('sort_field')) && (request('sort_order') !== 'null' && request('sort_order') !== 'undefined' && request('sort_order'))) {
-            $query->orderBy(request('sort_field'), request('sort_order'));
+        return [];
+    }
+
+    public function get(): array
+    {
+        $this->filterFieldTypes = $this->setFilterFieldTypes();
+
+        return array_merge([
+            'name' => static::class,
+            'active_columns' => $this->getActiveColumns(),
+            'columns' => array_keys($this->getColumnItemClosures()),
+            'items' => $this->getItems(),
+            'filters' => $this->getDefaultFilters($this->filterFieldTypes),
+            'sorting' => $this->getDefaultSorting(),
+            'additional_data' => $this->additionalData
+        ]);
+    }
+
+//    public function applyDefaultOrderBy($query): void
+//    {
+//        if ((request('sort_field') !== 'null' && request('sort_field') !== 'undefined' && request('sort_field')) && (request('sort_order') !== 'null' && request('sort_order') !== 'undefined' && request('sort_order'))) {
+//            $query->orderBy(request('sort_field'), request('sort_order'));
+//        }
+//    }
+
+    public function getDefaultSorting(string $name = null): array
+    {
+        if (!$name) {
+            $name = static::class;
         }
+
+        $dataTableSorting = DataTable::query()
+            ->where('name', $name ?? static::class)
+            ->first()?->sorting;
+
+        return json_decode($dataTableSorting, true);
     }
 
     public function getDefaultFilters(array $fieldTypes = [], string $name = null): array
@@ -66,7 +102,7 @@ abstract class BaseDataTable
                 'label' => ucfirst(str_replace('_', ' ', $column)),
                 'operator' => $filters[$column]['operator'] ?? '=',
                 'value' => $columnValue,
-                'field_type' => $fieldTypes[$column] ?? 'text',
+                'field_type' => $fieldTypes[$column] ?? self::$textFieldType,
             ];
         }
 
@@ -91,9 +127,9 @@ abstract class BaseDataTable
             ]);
         }
 
-            if ($dataTableSorting && (($dataTableSorting['sort_field'] ?? null) && ($dataTableSorting['sort_order'] ?? null))) {
-                $query->orderBy($dataTableSorting['sort_field'], $dataTableSorting['sort_order']);
-            }
+        if ($dataTableSorting && (($dataTableSorting['sort_field'] ?? null) && ($dataTableSorting['sort_order'] ?? null))) {
+            $query->orderBy($dataTableSorting['sort_field'], $dataTableSorting['sort_order']);
+        }
     }
 
     protected function applyFilters($query, string $name = null): void
@@ -122,7 +158,7 @@ abstract class BaseDataTable
 
         foreach ($filters as $key => $filter) {
             $fieldKey = $filter['name'];
-            $field = $this->fieldMappings[$fieldKey] ?? $fieldKey;
+            $field = $fieldKey;
             $operator = $filter['operator'] ?? '=';
             $value = $filter['value'];
 

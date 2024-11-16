@@ -10,23 +10,15 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ContactDataTable extends BaseDataTable
 {
-    protected array $filterFieldTypes = [
-        'birthday' => 'date',
-        'last_contacted_at' => 'date',
-        'created_by' => 'date',
-        'updated_by' => 'date',
-        'created_at' => 'date',
-        'updated_at' => 'date',
-    ];
-
-    public function get(): array
+    protected function setFilterFieldTypes(): array
     {
         return [
-            'name' => 'ContactDataTable',
-            'active_columns' => $this->getActiveColumns(),
-            'columns' => array_keys($this->getColumnItemClosures()),
-            'items' => $this->getItems(),
-            'filters' => $this->getDefaultFilters($this->filterFieldTypes),
+            'birthday' => self::$dateFieldType,
+            'last_contacted_at' => self::$dateFieldType,
+            'created_by' => self::$dateFieldType,
+            'updated_by' => self::$dateFieldType,
+            'created_at' => self::$dateFieldType,
+            'updated_at' => self::$dateFieldType,
         ];
     }
 

@@ -18,7 +18,7 @@ class EmailMessageController extends Controller
 
     public function index(): JsonResponse
     {
-        return response()->json((new EmailMessageDataTable())->get());
+        return response()->json((new EmailMessageDataTable((new EmailMessageService())->getAdditionalData()))->get());
     }
 
     public function show(EmailMessage $emailMessage): JsonResponse

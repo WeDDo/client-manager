@@ -3,29 +3,10 @@
 namespace App\DataTables\EmailMessages;
 
 use App\DataTables\BaseDataTable;
-use App\Models\EmailSetting;
-use App\Services\EmailMessageService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailMessageDataTable extends BaseDataTable
 {
-    public function get(): array
-    {
-        $activeColumns = $this->getActiveColumns();
-        $columns = array_keys($this->getColumnItemClosures());
-        $items = $this->getItems();
-        $additionalData = (new EmailMessageService())->getAdditionalData();
-        $filters = $this->getDefaultFilters();
-
-        return [
-            'active_columns' => $activeColumns,
-            'columns' => $columns,
-            'items' => $items,
-            'additional_data' => $additionalData,
-            'filters' => $filters,
-        ];
-    }
-
     public function getColumnItemClosures(): array
     {
         return [
@@ -71,44 +52,10 @@ class EmailMessageDataTable extends BaseDataTable
     public function getItems(): LengthAwarePaginator
     {
         $query = auth()->user()->emailMessages();
-//            ->select('email_messages.*')
-//            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
-//            ->where(function ($query) {
-//                // Select emails without further replies, including emails that aren't part of a thread
-//                $query->whereNull('replies.id')
-//                    ->orWhereNull('email_messages.reply_to_email_message_id');
-//            })
-//            ->when(request('selected_folder'), function ($query) {
-//                $query->where('email_messages.folder', request('selected_folder'));
-//            })
-//            ->orderByDesc('email_messages.date');
 
         $this->applyFilters($query);
         $this->applySorting($query);
         $items = $query->paginate($this->perPage);
-
-//        dd($items);
-//
-//        $items->getCollection()->transform(function ($email) {
-//            $unreadCount = 0;
-//            $currentEmail = $email;
-//
-//            // Calculate unread count
-//            if (!$currentEmail->is_seen) {
-//                $unreadCount++;
-//            }
-//
-//            while ($currentEmail->replyToEmailMessage) {
-//                if (!$currentEmail->replyToEmailMessage->is_seen) {
-//                    $unreadCount++;
-//                    break;
-//                }
-//                $currentEmail = $currentEmail->replyToEmailMessage;
-//            }
-//
-//            $email->unread_count = $unreadCount;
-//            return $email;
-//        });
 
         $columns = $this->getColumnItemClosures();
         $transformedItems = $items->getCollection()->map(function ($emailMessage) use ($columns) {

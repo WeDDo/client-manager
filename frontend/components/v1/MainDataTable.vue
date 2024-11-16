@@ -121,6 +121,11 @@ function toggleSort(field) {
     sortLoading.value = false;
 }
 
+watch(data, () => {
+    sortField.value = data.value.sorting?.sort_field;
+    sortOrder.value = data.value.sorting?.sort_order;
+}, {immediate: true});
+
 function getSortIconClass(columnName) {
     if (sortField.value === columnName) {
         if (sortOrder.value === 'asc') {
