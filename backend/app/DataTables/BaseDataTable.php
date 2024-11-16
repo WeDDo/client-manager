@@ -72,7 +72,7 @@ abstract class BaseDataTable
             ->where('name', $name ?? static::class)
             ->first()?->sorting;
 
-        return json_decode($dataTableSorting, true);
+        return $dataTableSorting ? json_decode($dataTableSorting, true) : [];
     }
 
     public function getDefaultFilters(array $fieldTypes = [], string $name = null): array

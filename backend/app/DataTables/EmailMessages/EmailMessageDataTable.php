@@ -55,6 +55,11 @@ class EmailMessageDataTable extends BaseDataTable
 
         $this->applyFilters($query);
         $this->applySorting($query);
+
+        $query->when(request('selected_folder'), function ($query) {
+            $query->where('folder', request('selected_folder'));
+        });
+
         $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
