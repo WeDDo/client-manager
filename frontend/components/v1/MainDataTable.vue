@@ -129,9 +129,9 @@ watch(data, () => {
 function getSortIconClass(columnName) {
     if (sortField.value === columnName) {
         if (sortOrder.value === 'asc') {
-            return 'pi pi-sort-amount-up-alt';
-        } else if (sortOrder.value === 'desc') {
             return 'pi pi-sort-amount-down-alt';
+        } else if (sortOrder.value === 'desc') {
+            return 'pi pi-sort-amount-up-alt';
         }
     }
     return 'pi pi-sort-alt';

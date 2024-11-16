@@ -10,16 +10,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class PartnerContactDataTable extends BaseDataTable
 {
-    public function get(): array
-    {
-        return [
-            'active_columns' => $this->getActiveColumns(),
-            'columns' => array_keys($this->getColumnItemClosures()),
-            'items' => $this->getItems(),
-            'filters' => $this->getDefaultFilters(),
-        ];
-    }
-
     public function getColumnItemClosures(): array
     {
         return [
