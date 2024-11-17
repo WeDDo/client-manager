@@ -139,7 +139,6 @@ export function useFetchHelper() {
 
         // const selectedColumnsParams = []; todo finish implementation only send names of selected columns and write logic to update it
 
-        console.log('event', event)
         return `${url}?page=${event.page + 1}&sort_field=${event.sort_field || ''}&sort_order=${event.sort_order || ''}${filterParams ? `&${filterParams}` : ''}${event?.update_filter ? `&update_filter=1` : ''}${event?.update_sorting ? `&update_sorting=1` : ''}${additionalUrlParams ? additionalUrlParams : ''}`;
     }
 

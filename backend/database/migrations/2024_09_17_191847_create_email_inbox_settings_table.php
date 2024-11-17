@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('name');
+            $table->boolean('auto_set_is_seen')->default(false);
 
             $table->foreignId('created_by')
                 ->nullable()

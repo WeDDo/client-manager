@@ -152,7 +152,13 @@ async function handleGetDataTableData(event) {
                     paginate
                     :delete-text-template="deleteTextTemplate"
                     @refresh="handleGetDataTableData"
-                />
+                >
+                    <template #auto_set_is_seen="slotProps">
+                        <div class="flex align-items-center">
+                            <i :class="`pi ${slotProps.data.auto_set_is_seen ? 'pi-check-square' : 'pi-stop'}`" />
+                        </div>
+                    </template>
+                </MainDataTable>
             </div>
         </div>
     </div>

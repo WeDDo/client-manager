@@ -26,7 +26,7 @@ const emit = defineEmits([
 const fetchHelper = useFetchHelper();
 
 const visible = ref(false);
-const data = ref();
+const data = ref([[], []]);
 
 defineExpose({visible});
 
@@ -100,7 +100,6 @@ onMounted(() => {
                 </div>
             </template>
             <div>
-                {{data}}
                 <PickList v-model="data" listStyle="height:342px" dataKey="id" breakpoint="1400px">
                     <template #sourceheader>
                         Available

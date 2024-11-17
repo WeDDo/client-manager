@@ -13,7 +13,7 @@ class EmailInboxSettingService
 {
     public function store(array $data): EmailInboxSetting
     {
-        if (strtoupper($data['name']) === 'INBOX') {
+        if (strtoupper($data['name']) === 'INBOX' && EmailInboxSetting::where('name', $data['name'])->exists()) {
             throw new HttpResponseException(
                 response()->json([
                     'error' => 'INBOX is already created!',

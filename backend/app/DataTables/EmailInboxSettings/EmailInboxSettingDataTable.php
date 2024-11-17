@@ -8,6 +8,13 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailInboxSettingDataTable extends BaseDataTable
 {
+    protected function setFilterFieldTypes(): array
+    {
+        return [
+            'auto_set_is_seen' => self::$boolFieldType,
+        ];
+    }
+
     public function getColumnItemClosures(): array
     {
         return [
@@ -17,6 +24,9 @@ class EmailInboxSettingDataTable extends BaseDataTable
             'name' => function ($rowData) {
                 return $rowData['name'];
             },
+            'auto_set_is_seen' => function ($rowData) {
+                return $rowData['auto_set_is_seen'];
+            },
         ];
     }
 
@@ -24,6 +34,7 @@ class EmailInboxSettingDataTable extends BaseDataTable
     {
         return [
             ['name' => 'name', 'header' => 'Name', 'align' => 'left'],
+            ['name' => 'auto_set_is_seen', 'header' => 'Auto set is seen', 'align' => 'left'],
         ];
     }
 

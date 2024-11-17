@@ -25,6 +25,7 @@ const form = useForm({
     initialValues: {
         item: {
             name: null,
+            auto_set_is_seen: false,
         }
     }
 });
