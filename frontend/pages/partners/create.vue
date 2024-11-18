@@ -33,6 +33,7 @@ const form = useForm({
 const mainFormRef = ref();
 let tabs = reactive([
     {name: "Main", ref: mainFormRef, errors: {}},
+    {name: 'Contacts', ref: null, errors: {}, disabled: true},
 ]);
 
 const formHelper = useFormHelper(tabs);

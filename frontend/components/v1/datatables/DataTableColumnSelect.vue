@@ -88,8 +88,8 @@ watch(data, () => {
                     label="Save"
                     size="small"
                     icon="pi pi-save"
-                    class="w-full"
-                    severity="secondary"
+                    class="w-full mt-2"
+                    severity="primary"
                     @click="emit('refresh')"
                 />
             </div>

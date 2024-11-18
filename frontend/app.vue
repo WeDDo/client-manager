@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import 'primevue/resources/themes/aura-light-green/theme.css'
+import 'primevue/resources/themes/aura-light-indigo/theme.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
 import {useAuthHelper} from "~/composables/useAuthHelper.js";

@@ -105,14 +105,24 @@ const areFiltersEmpty = computed(() => {
                     </div>
                 </div>
 
-                <Button
-                    label="Filter"
-                    size="small"
-                    icon="pi pi-filter"
-                    class="mr-2 w-full"
-                    severity="secondary"
-                    @click="emit('refresh')"
-                />
+                <div class="flex gap-2">
+                    <Button
+                        label="Filter"
+                        size="small"
+                        icon="pi pi-filter"
+                        class="w-full"
+                        severity="primary"
+                        @click="emit('refresh')"
+                    />
+                    <Button
+                        label="Clear"
+                        size="small"
+                        icon="pi pi-filter-slash"
+                        class="w-full"
+                        severity="secondary"
+                        @click="emit('refresh')"
+                    />
+                </div>
             </div>
         </Dialog>
     </div>
