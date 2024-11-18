@@ -4,6 +4,7 @@ import {useEmailSettingStore} from "~/stores/modules/emailSetting.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
 import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
+import EmailCreateInboxes from "~/components/v1/modules/emailInboxSettings/EmailCreateInboxes.vue";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
@@ -89,7 +90,11 @@ async function handleGetDataTableData(event) {
                 <div>
                     {{ store.singleName }}
                 </div>
-                <div>
+                <div class="flex">
+                    <EmailCreateInboxes
+                        class="mr-8"
+                        @refresh-data-table="mainDataTableRef.refreshData()"
+                    />
                     <Button
                         label="Add"
                         size="small"
@@ -147,7 +152,13 @@ async function handleGetDataTableData(event) {
                     paginate
                     :delete-text-template="deleteTextTemplate"
                     @refresh="handleGetDataTableData"
-                />
+                >
+                    <template #auto_set_is_seen="slotProps">
+                        <div class="flex align-items-center">
+                            <i :class="`pi ${slotProps.data.auto_set_is_seen ? 'pi-check-square' : 'pi-stop'}`" />
+                        </div>
+                    </template>
+                </MainDataTable>
             </div>
         </div>
     </div>

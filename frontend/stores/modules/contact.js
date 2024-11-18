@@ -17,7 +17,7 @@ export const useContactStore = defineStore('contact', {
             this.additionalFormData = null;
             return additionalFormData;
         },
-        async setAdditionalFormData(data) {
+        setAdditionalFormData(data) {
             this.additionalFormData = data;
         }
     }

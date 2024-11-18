@@ -35,9 +35,9 @@ if (!error.value) {
     fetchHelper.handleUseFetchError(error);
 }
 
-watch(data, () => {
-    dataTableData.value = data.value;
-});
+// watch(data, () => {
+//     dataTableData.value = data.value;
+// });
 
 async function fetchEmails() {
     await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, {
@@ -70,7 +70,7 @@ function changeFolder() {
     }
 }
 
-async function handleGetEmails() {
+async function handleGetEmailsUsingImap() {
     loadingStore.actionLoading = true;
 
     await $fetch(`${baseURL}/${store.apiRouteName}/get-emails-using-imap`, {
@@ -80,7 +80,7 @@ async function handleGetEmails() {
         },
         onResponse({ response }) {
             if (response.ok) {
-                fetchEmails();
+                mainDataTableRef.value.refreshData();
                 toast.add({ severity: 'success', summary: 'Emails created successfully', life: 2000 });
             } else {
                 fetchHelper.handleResponseError(response);
@@ -93,7 +93,7 @@ async function handleGetEmails() {
 async function handleGetDataTableData(event) {
     loadingStore.actionLoading = true;
 
-    await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, event), {
+    await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${store.apiRouteName}`, event, `&selected_folder=${store.selectedFolder}`), {
         method: 'GET',
         headers: {
             authorization: `Bearer ${token.value}`
@@ -139,7 +139,7 @@ async function handleGetDataTableData(event) {
                         raised
                         :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"
                         :loading="loadingStore.actionLoading"
-                        @click="handleGetEmails"
+                        @click="handleGetEmailsUsingImap"
                     />
                     <Button
                         label="Inbox settings"
@@ -199,6 +199,11 @@ async function handleGetDataTableData(event) {
 <!--                            <div v-tooltip.bottom="'Unread count'">-->
 <!--                                ({{ slotProps.data.unread_count }})-->
 <!--                            </div>-->
+                        </div>
+                    </template>
+                    <template #is_seen="slotProps">
+                        <div class="flex align-items-center">
+                            <i :class="`pi ${slotProps.data.is_seen ? 'pi-check-square' : 'pi-stop'}`" />
                         </div>
                     </template>
                     <template #is_flagged="slotProps">

@@ -17,6 +17,11 @@ return new class extends Migration
             $table->string('name');
             $table->json('filters')->nullable();
             $table->json('sorting')->nullable();
+            $table->json('selected_columns')->nullable();
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('cascade');
 
             $table->timestamps();
         });

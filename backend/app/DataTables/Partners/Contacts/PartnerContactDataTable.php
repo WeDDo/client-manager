@@ -10,16 +10,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class PartnerContactDataTable extends BaseDataTable
 {
-    public function get(): array
-    {
-        return [
-            'active_columns' => $this->getActiveColumns(),
-            'columns' => array_keys($this->getColumnItemClosures()),
-            'items' => $this->getItems(),
-            'filters' => $this->getDefaultFilters(),
-        ];
-    }
-
     public function getColumnItemClosures(): array
     {
         return [
@@ -84,7 +74,7 @@ class PartnerContactDataTable extends BaseDataTable
             ->where('partner_id', $this->additionalData['partner_id']);
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
+        $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();

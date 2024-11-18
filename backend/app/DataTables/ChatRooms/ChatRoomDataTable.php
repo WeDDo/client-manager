@@ -45,7 +45,7 @@ class ChatRoomDataTable extends BaseDataTable
         $query = ChatRoom::query();
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
+        $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();

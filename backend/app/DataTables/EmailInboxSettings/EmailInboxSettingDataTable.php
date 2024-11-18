@@ -8,13 +8,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailInboxSettingDataTable extends BaseDataTable
 {
-    public function get(): array
+    protected function setFilterFieldTypes(): array
     {
         return [
-            'active_columns' => $this->getActiveColumns(),
-            'columns' => array_keys($this->getColumnItemClosures()),
-            'items' => $this->getItems(),
-            'filters' => $this->getDefaultFilters(),
+            'auto_set_is_seen' => self::$boolFieldType,
         ];
     }
 
@@ -27,6 +24,9 @@ class EmailInboxSettingDataTable extends BaseDataTable
             'name' => function ($rowData) {
                 return $rowData['name'];
             },
+            'auto_set_is_seen' => function ($rowData) {
+                return $rowData['auto_set_is_seen'];
+            },
         ];
     }
 
@@ -34,6 +34,7 @@ class EmailInboxSettingDataTable extends BaseDataTable
     {
         return [
             ['name' => 'name', 'header' => 'Name', 'align' => 'left'],
+            ['name' => 'auto_set_is_seen', 'header' => 'Auto set is seen', 'align' => 'left'],
         ];
     }
 
@@ -42,7 +43,7 @@ class EmailInboxSettingDataTable extends BaseDataTable
         $query = auth()->user()->emailInboxSettings();
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
+        $this->applySorting($query);
         $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();

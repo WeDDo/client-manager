@@ -9,16 +9,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class AttachmentDataTable extends BaseDataTable
 {
-    public function get(): array
-    {
-        return [
-            'active_columns' => $this->getActiveColumns(),
-            'columns' => array_keys($this->getColumnItemClosures()),
-            'items' => $this->getItems(),
-            'filters' => $this->getDefaultFilters(),
-        ];
-    }
-
     public function getColumnItemClosures(): array
     {
         return [
@@ -58,18 +48,4 @@ class AttachmentDataTable extends BaseDataTable
 
         return $data;
     }
-
-//    public function getItem(mixed $id): array
-//    {
-//        $emailSetting = auth()->user()->emailSettings()->where('id', $id)->first();
-//
-//        $columns = $this->getColumnItemClosures();
-//
-//        $rowData = [];
-//        foreach ($columns as $columnKey => $getColumnValue) {
-//            $rowData[$columnKey] = $getColumnValue($emailSetting);
-//        }
-//
-//        return $rowData;
-//    }
 }

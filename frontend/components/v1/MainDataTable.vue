@@ -2,6 +2,7 @@
 import ConfirmDeleteDialog from "~/components/v1/ConfirmDeleteDialog.vue";
 import DataTableFilter from "~/components/v1/datatables/DataTableFilter.vue";
 import DataTableSort from "~/components/v1/datatables/DataTableSort.vue";
+import DataTableColumnSelect from "~/components/v1/datatables/DataTableColumnSelect.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -61,8 +62,6 @@ const sortField = ref();
 const sortOrder = ref();
 const sortLoading = ref(false);
 
-defineExpose({confirmDeleteDialogRef, selection, store});
-
 function handleDataTableClick(event) {
     if (store.value) {
         store.value.lastSelection = event.data;
@@ -87,13 +86,15 @@ onMounted(() => {
     }
 });
 
-function getRefreshEventData(page = 0, updateFilter = false) {
+function getRefreshEventData(page = 0, updateFilter = false, updateSorting = false, updateSelectedColumns = false) {
     return {
         page,
         sort_field: sortField.value,
         sort_order: sortOrder.value,
         filters: data?.value?.filters,
         update_filter: updateFilter,
+        update_sorting: updateSorting,
+        update_selected_columns: updateSelectedColumns,
     };
 }
 
@@ -115,21 +116,33 @@ function toggleSort(field) {
         sortOrder.value = 'asc';
     }
 
-    emit('refresh', getRefreshEventData(0));
+    emit('refresh', getRefreshEventData(0, undefined, true));
 
     sortLoading.value = false;
 }
 
+watch(data, () => {
+    sortField.value = data.value.sorting?.sort_field;
+    sortOrder.value = data.value.sorting?.sort_order;
+}, {immediate: true});
+
 function getSortIconClass(columnName) {
     if (sortField.value === columnName) {
         if (sortOrder.value === 'asc') {
-            return 'pi pi-sort-amount-up-alt';
-        } else if (sortOrder.value === 'desc') {
             return 'pi pi-sort-amount-down-alt';
+        } else if (sortOrder.value === 'desc') {
+            return 'pi pi-sort-amount-up-alt';
         }
     }
     return 'pi pi-sort-alt';
 }
+
+function refreshData() {
+    emit('refresh', getRefreshEventData(0));
+}
+
+defineExpose({confirmDeleteDialogRef, selection, store, refreshData});
+
 </script>
 
 <template>
@@ -176,7 +189,12 @@ function getSortIconClass(columnName) {
                                 v-if="data?.filters"
                                 v-model:data="data"
                                 class="mx-2"
-                                @refresh="emit('refresh', getRefreshEventData(0, true))"                            />
+                                @refresh="emit('refresh', getRefreshEventData(0, true))"
+                            />
+                            <DataTableColumnSelect
+                                v-model:data="data"
+                                @refresh="emit('refresh', getRefreshEventData(0, false, false, true))"
+                            />
                         </div>
                         <div>
                             <slot name="buttons"/>

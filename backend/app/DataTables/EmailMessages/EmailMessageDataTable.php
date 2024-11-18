@@ -3,26 +3,14 @@
 namespace App\DataTables\EmailMessages;
 
 use App\DataTables\BaseDataTable;
-use App\Models\EmailSetting;
-use App\Services\EmailMessageService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmailMessageDataTable extends BaseDataTable
 {
-    public function get(): array
+    protected function setFilterFieldTypes(): array
     {
-        $activeColumns = $this->getActiveColumns();
-        $columns = array_keys($this->getColumnItemClosures());
-        $items = $this->getItems();
-        $additionalData = (new EmailMessageService())->getAdditionalData();
-        $filters = $this->getDefaultFilters();
-
         return [
-            'active_columns' => $activeColumns,
-            'columns' => $columns,
-            'items' => $items,
-            'additional_data' => $additionalData,
-            'filters' => $filters,
+            'is_seen' => self::$boolFieldType,
         ];
     }
 
@@ -62,6 +50,7 @@ class EmailMessageDataTable extends BaseDataTable
             ['name' => 'subject', 'header' => 'Subject', 'align' => 'left', 'min_width' => 300],
             ['name' => 'from', 'header' => 'From', 'align' => 'left', 'min_width' => 125],
             ['name' => 'date', 'header' => 'Date', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'is_seen', 'header' => 'Is seen', 'align' => 'left', 'min_width' => 125],
             ['name' => 'is_flagged', 'header' => 'Is flagged', 'align' => 'left', 'min_width' => 125],
             ['name' => 'is_answered', 'header' => 'Is answered', 'align' => 'left', 'min_width' => 125],
         ];
@@ -70,44 +59,15 @@ class EmailMessageDataTable extends BaseDataTable
     public function getItems(): LengthAwarePaginator
     {
         $query = auth()->user()->emailMessages();
-//            ->select('email_messages.*')
-//            ->leftJoin('email_messages as replies', 'email_messages.id', '=', 'replies.reply_to_email_message_id')
-//            ->where(function ($query) {
-//                // Select emails without further replies, including emails that aren't part of a thread
-//                $query->whereNull('replies.id')
-//                    ->orWhereNull('email_messages.reply_to_email_message_id');
-//            })
-//            ->when(request('selected_folder'), function ($query) {
-//                $query->where('email_messages.folder', request('selected_folder'));
-//            })
-//            ->orderByDesc('email_messages.date');
 
         $this->applyFilters($query);
-        $this->applyDefaultOrderBy($query);
-        $items = $query->paginate($this->perPage);
+        $query->when(request('selected_folder'), function ($query) {
+            $query->where('folder', request('selected_folder'));
+        });
 
-//        dd($items);
-//
-//        $items->getCollection()->transform(function ($email) {
-//            $unreadCount = 0;
-//            $currentEmail = $email;
-//
-//            // Calculate unread count
-//            if (!$currentEmail->is_seen) {
-//                $unreadCount++;
-//            }
-//
-//            while ($currentEmail->replyToEmailMessage) {
-//                if (!$currentEmail->replyToEmailMessage->is_seen) {
-//                    $unreadCount++;
-//                    break;
-//                }
-//                $currentEmail = $currentEmail->replyToEmailMessage;
-//            }
-//
-//            $email->unread_count = $unreadCount;
-//            return $email;
-//        });
+        $this->applySorting($query);
+
+        $items = $query->paginate($this->perPage);
 
         $columns = $this->getColumnItemClosures();
         $transformedItems = $items->getCollection()->map(function ($emailMessage) use ($columns) {
@@ -121,20 +81,5 @@ class EmailMessageDataTable extends BaseDataTable
         $items->setCollection(collect($transformedItems));
 
         return $items;
-    }
-
-
-    public function getItem(mixed $id): array
-    {
-        $emailMessage = auth()->user()->emailMessages()->where('id', $id)->first();
-
-        $columns = $this->getColumnItemClosures();
-
-        $rowData = [];
-        foreach ($columns as $columnKey => $getColumnValue) {
-            $rowData[$columnKey] = $getColumnValue($emailMessage);
-        }
-
-        return $rowData;
     }
 }

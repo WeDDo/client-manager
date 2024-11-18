@@ -186,7 +186,7 @@ class EmailMessageService
             $inReplyTo = $message->getInReplyTo()?->get()[0] ?? null;
             $inReplyTo = $inReplyTo ? trim($inReplyTo, '<>') : null;
 
-            if ($inReplyTo && isset($emailMessageMap[$inReplyTo])) {
+            if ($inReplyTo && isset($emailMessageMap[$inReplyTo]) && isset($emailMessageMap[$messageId])) {
                 $emailMessageMap[$messageId]->update([
                     'reply_to_email_message_id' => $emailMessageMap[$inReplyTo]->id,
                 ]);

@@ -84,5 +84,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::apiResource('email-messages', EmailMessageController::class);
 
+    Route::prefix('email-inbox-settings')->group(function () {
+        Route::get('get-inboxes-imap', [EmailInboxSettingController::class, 'getInboxesImap']);
+        Route::post('create-inboxes', [EmailInboxSettingController::class, 'createInboxes']);
+    });
     Route::apiResource('email-inbox-settings', EmailInboxSettingController::class);
 });

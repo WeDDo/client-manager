@@ -23,6 +23,7 @@ class EmailInboxSettingRequest extends FormRequest
     {
         return [
             'name' => 'required',
+            'auto_set_is_seen' => 'required',
         ];
     }
 }

@@ -12,5 +12,6 @@ class EmailInboxSetting extends Model
 
     protected $fillable = [
         'name',
+        'auto_set_is_seen',
     ];
 }

@@ -66,8 +66,8 @@ async function handleCopy() {
         onResponse({response}) {
             if (response.ok) {
                 toast.add({ severity: 'success', summary: 'Copied successfully', life: 2000 });
-                dataTableData.value.items.push(response._data.additional?.data_table_item ?? response._data.item);
-                mainDataTableRef.value.selection = response._data.additional?.data_table_item ?? response._data.item;
+                mainDataTableRef.value.refreshData();
+                mainDataTableRef.value.selection = response._data.item;
             } else {
                 fetchHelper.handleResponseError(response);
             }
