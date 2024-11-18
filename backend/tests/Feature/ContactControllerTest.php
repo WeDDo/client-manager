@@ -35,7 +35,7 @@ beforeEach(function () {
         'website' => $faker->url,
         'preferred_contact_method' => null,
         'status' => null,
-        'last_contacted_at' => $faker->dateTimeThisYear()->format('Y-m-d H:i:s'),
+        'last_contacted_at' => null,
         'partner_id' => null
     ];
 
