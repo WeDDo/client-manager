@@ -3,19 +3,15 @@
 namespace Tests\Feature;
 
 use App\Services\AuthService;
+use App\Services\Tests\TestService;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     DB::beginTransaction();
 
-    $data = (new AuthService())->registration([
-        'name' => 'test',
-        'email' => 'test@test.test',
-        'password' => 'test',
-        'confirm_password' => 'test',
-    ]);
+    $this->testService = new TestService();
+    $this->actingAs($this->testService->getUser());
 
-    $this->user = $data['item'];
     $this->apiUrl = '/api/login';
 });
 

@@ -3,7 +3,8 @@
 namespace Tests\Feature;
 
 use App\Services\AuthService;
-use App\Services\ChatRoomService;
+use App\Services\ContactService;
+use App\Services\EmailInboxSettingService;
 use App\Services\Tests\TestService;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +14,10 @@ beforeEach(function () {
     $this->testService = new TestService();
     $this->actingAs($this->testService->getUser());
 
-    $this->apiUrl = '/api/dashboard';
+    $this->requestData = [];
+
+    $this->item = null;
+    $this->apiUrl = '/api/contacts';
 });
 
 afterEach(function () {

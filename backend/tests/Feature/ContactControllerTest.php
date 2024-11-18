@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Services\AuthService;
+use App\Services\ContactService;
 use App\Services\EmailInboxSettingService;
 use App\Services\Tests\TestService;
 use Illuminate\Support\Facades\DB;
@@ -13,13 +14,33 @@ beforeEach(function () {
     $this->testService = new TestService();
     $this->actingAs($this->testService->getUser());
 
+    $faker = fake();
+
     $this->requestData = [
-        'name' => 'setting',
-        'auto_set_is_seen' => false,
+        'name' => $faker->name,
+        'company_name' => $faker->company,
+        'position' => $faker->jobTitle,
+        'phone1' => $faker->phoneNumber,
+        'phone2' => $faker->phoneNumber,
+        'email1' => $faker->safeEmail,
+        'email2' => $faker->safeEmail,
+        'birthday' => $faker->date('Y-m-d'),
+        'notes' => $faker->sentence,
+        'address1' => $faker->streetAddress,
+        'address2' => $faker->streetAddress,
+        'city' => $faker->city,
+        'state' => null,
+        'postal_code' => $faker->postcode,
+        'country' => $faker->country,
+        'website' => $faker->url,
+        'preferred_contact_method' => null,
+        'status' => null,
+        'last_contacted_at' => $faker->dateTimeThisYear()->format('Y-m-d H:i:s'),
+        'partner_id' => null
     ];
 
-    $this->item = (new EmailInboxSettingService())->store($this->requestData);
-    $this->apiUrl = '/api/email-inbox-settings';
+    $this->item = (new ContactService())->store($this->requestData);
+    $this->apiUrl = '/api/contacts';
 });
 
 afterEach(function () {

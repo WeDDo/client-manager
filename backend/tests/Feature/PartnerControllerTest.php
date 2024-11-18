@@ -5,19 +5,15 @@ namespace Tests\Feature;
 use App\Services\AuthService;
 use App\Services\EmailInboxSettingService;
 use App\Services\PartnerService;
+use App\Services\Tests\TestService;
+use Faker\Factory;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     DB::beginTransaction();
 
-    $data = (new AuthService())->registration([
-        'name' => 'test',
-        'email' => 'test@test.test',
-        'password' => 'test',
-        'confirm_password' => 'test',
-    ]);
-    $this->user = $data['item'];
-    $this->actingAs($this->user);
+    $this->testService = new TestService();
+    $this->actingAs($this->testService->getUser());
 
     $this->requestData = [
         'id_name' => 'TEST_STOCK_' . time(),
