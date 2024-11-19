@@ -3,13 +3,19 @@ import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainSelectInput from "~/components/v1/MainSelectInput.vue";
 import MainDateInput from "~/components/v1/MainDateInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
+import {useFetchHelper} from "~/composables/useFetchHelper.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
 const router = useRouter();
 const token = useCookie('token');
 
-const props = defineProps({});
+const props = defineProps({
+    name: {
+        type: String,
+        default: null,
+    },
+});
 
 const mainStore = useMainStore();
 
@@ -19,8 +25,11 @@ const emit = defineEmits([
 const visible = ref(false);
 
 const filterData = ref([]);
+const clearFilterLoading = ref(false);
 
 const data = defineModel('data');
+
+const fetchHelper = useFetchHelper();
 
 defineExpose({visible});
 
@@ -43,6 +52,32 @@ onMounted(() => {
 const areFiltersEmpty = computed(() => {
     return filterData.value.every(filter => (!filter.value || filter.value === ''));
 });
+
+function filter() {
+    emit('refresh', { update_filter: true });
+}
+
+async function clearFilter() {
+    clearFilterLoading.value = true;
+
+    await $fetch(`${baseURL}/data-tables/clear-filter`, {
+        method: 'POST',
+        body: {
+            name: props.name,
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            clearFilterLoading.value = false;
+            if (response.ok) {
+                emit('refresh', { update_filter: false });
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    })
+}
 
 </script>
 
@@ -112,7 +147,7 @@ const areFiltersEmpty = computed(() => {
                         icon="pi pi-filter"
                         class="w-full"
                         severity="primary"
-                        @click="emit('refresh')"
+                        @click="filter"
                     />
                     <Button
                         label="Clear"
@@ -120,7 +155,8 @@ const areFiltersEmpty = computed(() => {
                         icon="pi pi-filter-slash"
                         class="w-full"
                         severity="secondary"
-                        @click="emit('refresh')"
+                        :loading="clearFilterLoading"
+                        @click="clearFilter"
                     />
                 </div>
             </div>

@@ -10,6 +10,10 @@ const router = useRouter();
 const token = useCookie('token');
 
 const props = defineProps({
+    name: {
+        type: String,
+        default: null,
+    },
     header: {
         type: String,
         default: null,
@@ -188,8 +192,9 @@ defineExpose({confirmDeleteDialogRef, selection, store, refreshData});
                             <DataTableFilter
                                 v-if="data?.filters"
                                 v-model:data="data"
+                                :name="props.name"
                                 class="mx-2"
-                                @refresh="emit('refresh', getRefreshEventData(0, true))"
+                                @refresh="emit('refresh', getRefreshEventData(0, $event.update_filter))"
                             />
                             <DataTableColumnSelect
                                 v-model:data="data"
