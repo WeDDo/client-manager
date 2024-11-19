@@ -48,10 +48,7 @@ class EmailMessageService
         array         $files = [],
     ): void
     {
-        $emailSetting = auth()->user()->emailSettings()
-            ->where('protocol', EmailSetting::$smtpProtocol)
-            ->where('active', true)
-            ->first();
+        $emailSetting = auth()->user()->activeSmtpEmailSetting()->first();
 
         $this->emailSettingService->setSmtpEmailConfig($emailSetting);
 

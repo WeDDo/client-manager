@@ -109,10 +109,7 @@ class EmailSettingService
     {
         $user = auth()->user();
         if (!$emailSetting) {
-            $emailSetting = $user->emailSettings()
-                ->where('protocol', EmailSetting::$imapProtocol)
-                ->where('active', true)
-                ->first();
+            $emailSetting = $user->setImapEmailConfig()->first();
         }
 
         config([
@@ -134,10 +131,7 @@ class EmailSettingService
     {
         $user = auth()->user();
         if (!$emailSetting) {
-            $emailSetting = $user->emailSettings()
-                ->where('protocol', EmailSetting::$smtpProtocol)
-                ->where('active', true)
-                ->first();
+            $emailSetting = $user->activeImapEmailSetting()->first();
         }
 
         $config = [
