@@ -35,10 +35,6 @@ if (!error.value) {
     fetchHelper.handleUseFetchError(error);
 }
 
-// watch(data, () => {
-//     dataTableData.value = data.value;
-// });
-
 async function fetchEmails() {
     await $fetch(`${baseURL}/${store.apiRouteName}?selected_folder=${store.selectedFolder}`, {
         method: 'GET',
@@ -186,6 +182,7 @@ async function handleGetDataTableData(event) {
             <div class="mt-2">
                 <MainDataTable
                     ref="mainDataTableRef"
+                    name="EmailMessages\EmailMessageDataTable"
                     v-model:data="dataTableData"
                     v-model:store="store"
                     paginate

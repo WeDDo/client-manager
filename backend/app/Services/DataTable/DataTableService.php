@@ -14,7 +14,7 @@ class DataTableService
             ->where('name', $dataTableName)
             ->first();
 
-        $dataTable->update([
+        $dataTable?->update([
             'filters' => null,
         ]);
     }
