@@ -147,6 +147,7 @@ async function handleGetDataTableData(event) {
             <div class="mt-2">
                 <MainDataTable
                     ref="mainDataTableRef"
+                    name="EmailInboxSettings\EmailInboxSettingDataTable"
                     v-model:data="dataTableData"
                     v-model:store="store"
                     paginate

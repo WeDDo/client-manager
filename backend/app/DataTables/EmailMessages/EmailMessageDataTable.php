@@ -10,7 +10,11 @@ class EmailMessageDataTable extends BaseDataTable
     protected function setFilterFieldTypes(): array
     {
         return [
+            'date' => self::$dateFieldType,
+            'from' => self::$dateFieldType,
             'is_seen' => self::$boolFieldType,
+            'is_flagged' => self::$boolFieldType,
+            'is_answered' => self::$boolFieldType,
         ];
     }
 
@@ -37,9 +41,6 @@ class EmailMessageDataTable extends BaseDataTable
             },
             'is_answered' => function ($rowData) {
                 return $rowData['is_answered'];
-            },
-            'unread_count' => function ($rowData) {
-                return $rowData['unread_count'];
             },
         ];
     }

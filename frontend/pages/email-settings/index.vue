@@ -142,6 +142,7 @@ async function handleCopy() {
             <div class="mt-2">
                 <MainDataTable
                     ref="mainDataTableRef"
+                    name="EmailSettings\EmailSettingDataTable"
                     v-model:data="dataTableData"
                     v-model:store="store"
                     paginate

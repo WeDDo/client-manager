@@ -64,6 +64,7 @@ onMounted(() => {
     <div>
         <MainDataTable
             ref="mainDataTableRef"
+            name="Partners\Contacts\PartnerContactDataTable"
             v-model:data="dataTableData"
             v-model:store="store"
             paginate

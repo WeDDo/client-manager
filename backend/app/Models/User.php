@@ -38,6 +38,20 @@ class User extends Authenticatable
         return $this->hasMany(EmailSetting::class, 'created_by');
     }
 
+    public function activeSmtpEmailSetting(): HasMany
+    {
+        return $this->hasMany(EmailSetting::class, 'created_by')
+            ->where('protocol', EmailSetting::$smtpProtocol)
+            ->where('active', true);
+    }
+
+    public function activeImapEmailSetting(): HasMany
+    {
+        return $this->hasMany(EmailSetting::class, 'created_by')
+            ->where('protocol', EmailSetting::$imapProtocol)
+            ->where('active', true);
+    }
+
     public function emailMessages(): HasMany
     {
         return $this->hasMany(EmailMessage::class, 'created_by');

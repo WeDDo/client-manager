@@ -52,6 +52,10 @@ class EmailInboxSettingService
 
     public function getInboxesImap(): array
     {
+        if (!auth()->user()->activeImapEmailSetting()->first()) {
+            return [[], []];
+        }
+
         $imapConfig = (new EmailSettingService())->setImapEmailConfig();
 
         $client = Client::make($imapConfig);

@@ -7,6 +7,7 @@ use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChatRoomController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DataTableController;
 use App\Http\Controllers\EmailInboxSettingController;
 use App\Http\Controllers\EmailMessageController;
 use App\Http\Controllers\EmailSettingController;
@@ -33,6 +34,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         });
     });
     Route::apiResource('attachments', AttachmentController::class);
+
+    Route::prefix('data-tables')->group(function () {
+        Route::post('clear-filter', [DataTableController::class, 'clearFilter']);
+    });
 
     Route::prefix('users')->group(function () {
         Route::prefix('{user}')->group(function () {

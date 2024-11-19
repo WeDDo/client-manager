@@ -199,10 +199,10 @@ abstract class BaseDataTable
         }
 
         $filters = [];
-        if (request('filters')) {
-            $filters = request('filters');
-        } else if (!$filters || count($filters) === 0) {
+        if (!$filters || count($filters) === 0) {
             $filters = ($dataTableFilters ? json_decode($dataTableFilters, true) : []);
+        } else if (request('filters')) {
+            $filters = request('filters');
         }
 
         if (!is_array($filters)) return;
