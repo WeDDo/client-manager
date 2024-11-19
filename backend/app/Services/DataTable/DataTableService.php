@@ -3,7 +3,6 @@
 namespace App\Services\DataTable;
 
 use App\Models\DataTable;
-use App\Models\EmailInboxSetting;
 
 class DataTableService
 {
