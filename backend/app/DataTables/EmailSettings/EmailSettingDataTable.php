@@ -51,12 +51,12 @@ class EmailSettingDataTable extends BaseDataTable
     public function getColumns(): array
     {
         return [
-            ['name' => 'host', 'header' => 'Host', 'align' => 'left'],
-            ['name' => 'port', 'header' => 'Port', 'align' => 'right'],
-            ['name' => 'encryption', 'header' => 'Encryption', 'align' => 'left'],
-            ['name' => 'username', 'header' => 'Username', 'align' => 'left'],
-            ['name' => 'protocol', 'header' => 'Protocol', 'align' => 'left'],
-            ['name' => 'active', 'header' => 'Active', 'align' => 'left'],
+            ['name' => 'host', 'header' => 'Host', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'port', 'header' => 'Port', 'align' => 'right', 'min_width' => 150],
+            ['name' => 'encryption', 'header' => 'Encryption', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'username', 'header' => 'Username', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'protocol', 'header' => 'Protocol', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'active', 'header' => 'Active', 'align' => 'left', 'min_width' => 150],
         ];
     }
 

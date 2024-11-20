@@ -33,8 +33,8 @@ class EmailInboxSettingDataTable extends BaseDataTable
     public function getColumns(): array
     {
         return [
-            ['name' => 'name', 'header' => 'Name', 'align' => 'left'],
-            ['name' => 'auto_set_is_seen', 'header' => 'Auto set is seen', 'align' => 'left'],
+            ['name' => 'name', 'header' => 'Name', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'auto_set_is_seen', 'header' => 'Auto set is seen', 'align' => 'left', 'min_width' => 150],
         ];
     }
 
