@@ -3,7 +3,6 @@
 namespace App\DataTables\Partners;
 
 use App\DataTables\BaseDataTable;
-use App\Models\EmailSetting;
 use App\Models\Partner;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -36,7 +35,7 @@ class PartnerDataTable extends BaseDataTable
         ];
     }
 
-    public function getActiveColumns(): array
+    public function getColumns(): array
     {
         return [
             ['name' => 'id_name', 'header' => 'ID name', 'align' => 'left'],

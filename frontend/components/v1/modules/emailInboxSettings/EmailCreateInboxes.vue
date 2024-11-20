@@ -118,7 +118,7 @@ onMounted(() => {
                     label="Save"
                     size="small"
                     icon="pi pi-save"
-                    class="mr-2 w-full"
+                    class="mt-2 mr-2 w-full"
                     severity="primary"
                     :disabled="data[1].length === 0"
                     @click="createInboxes"

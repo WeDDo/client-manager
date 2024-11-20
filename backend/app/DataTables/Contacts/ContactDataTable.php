@@ -53,7 +53,7 @@ class ContactDataTable extends BaseDataTable
         ];
     }
 
-    public function getActiveColumns(): array
+    public function getColumns(): array
     {
         return [
             ['name' => 'name', 'header' => 'Name', 'align' => 'left', 'min_width' => 150],

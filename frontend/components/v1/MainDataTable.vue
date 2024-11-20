@@ -10,10 +10,6 @@ const router = useRouter();
 const token = useCookie('token');
 
 const props = defineProps({
-    name: {
-        type: String,
-        default: null,
-    },
     header: {
         type: String,
         default: null,
@@ -126,8 +122,8 @@ function toggleSort(field) {
 }
 
 watch(data, () => {
-    sortField.value = data.value.sorting?.sort_field;
-    sortOrder.value = data.value.sorting?.sort_order;
+    sortField.value = data.value?.sorting?.sort_field;
+    sortOrder.value = data.value?.sorting?.sort_order;
 }, {immediate: true});
 
 function getSortIconClass(columnName) {
@@ -192,7 +188,6 @@ defineExpose({confirmDeleteDialogRef, selection, store, refreshData});
                             <DataTableFilter
                                 v-if="data?.filters"
                                 v-model:data="data"
-                                :name="props.name"
                                 class="mx-2"
                                 @refresh="emit('refresh', getRefreshEventData(0, $event.update_filter))"
                             />
@@ -256,7 +251,7 @@ defineExpose({confirmDeleteDialogRef, selection, store, refreshData});
                             :name="column.name"
                             :data="slotProps.data"
                         >
-                            {{ slotProps.data?.[column.name] }}
+                            {{ slotProps.data?.[column.name] ?? '&nbsp;' }}
                         </slot>
                     </div>
                 </template>

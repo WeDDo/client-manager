@@ -21,7 +21,7 @@ class AttachmentDataTable extends BaseDataTable
         ];
     }
 
-    public function getActiveColumns(): array
+    public function getColumns(): array
     {
         return [
             ['name' => 'id', 'header' => 'Id', 'align' => 'left'],
