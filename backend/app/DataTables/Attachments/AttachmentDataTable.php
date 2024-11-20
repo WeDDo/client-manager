@@ -24,8 +24,8 @@ class AttachmentDataTable extends BaseDataTable
     public function getColumns(): array
     {
         return [
-            ['name' => 'id', 'header' => 'Id', 'align' => 'left'],
-            ['name' => 'filename', 'header' => 'Filename', 'align' => 'left'],
+            ['name' => 'id', 'header' => 'Id', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'filename', 'header' => 'Filename', 'align' => 'left', 'min_width' => 150],
         ];
     }
 

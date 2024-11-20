@@ -38,12 +38,12 @@ class PartnerDataTable extends BaseDataTable
     public function getColumns(): array
     {
         return [
-            ['name' => 'id_name', 'header' => 'ID name', 'align' => 'left'],
-            ['name' => 'name', 'header' => 'Name', 'align' => 'left'],
-            ['name' => 'name2', 'header' => 'Name 2', 'align' => 'left'],
-            ['name' => 'legal_status', 'header' => 'Legal status', 'align' => 'left'],
-            ['name' => 'email', 'header' => 'Email', 'align' => 'left'],
-            ['name' => 'phone', 'header' => 'Phone', 'align' => 'left'],
+            ['name' => 'id_name', 'header' => 'ID name', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'name', 'header' => 'Name', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'name2', 'header' => 'Name 2', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'legal_status', 'header' => 'Legal status', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'email', 'header' => 'Email', 'align' => 'left', 'min_width' => 150],
+            ['name' => 'phone', 'header' => 'Phone', 'align' => 'left', 'min_width' => 150],
         ];
     }
 

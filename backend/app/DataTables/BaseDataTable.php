@@ -27,7 +27,7 @@ abstract class BaseDataTable
         $this->additionalData = $additionalData;
 
         $this->activeColumns = $this->getActiveColumns();
-        $this->columns = array_keys($this->getColumnItemClosures());
+        $this->columns = array_keys($this->getColumns());
 //        $this->columns = $this->getSelectedColumns();
         $this->items = $this->getItems();
     }
