@@ -45,7 +45,7 @@ class EmailMessageDataTable extends BaseDataTable
         ];
     }
 
-    public function getActiveColumns(): array
+    public function getColumns(): array
     {
         return [
             ['name' => 'subject', 'header' => 'Subject', 'align' => 'left', 'min_width' => 300],

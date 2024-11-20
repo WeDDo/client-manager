@@ -28,12 +28,48 @@ abstract class BaseDataTable
 
         $this->activeColumns = $this->getActiveColumns();
         $this->columns = array_keys($this->getColumnItemClosures());
+//        $this->columns = $this->getSelectedColumns();
         $this->items = $this->getItems();
     }
 
     public abstract function getColumnItemClosures(): array;
 
-    public abstract function getActiveColumns(): array;
+    public abstract function getColumns(): array;
+//    public abstract function getActiveColumns(): array;
+
+    public function getActiveColumns(): array
+    {
+        // Fetch the DataTable record for the current name and user
+        $dataTable = DataTable::query()
+            ->where('name', $this->name)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        // Decode the selected_columns or use the default active columns as fallback
+        $selectedColumns = $dataTable ? json_decode($dataTable->selected_columns, true) : null;
+
+        // Default columns structure
+        $columns = $this->getColumns();
+
+//        dd($columns, $selectedColumns);
+
+        // Filter the default columns by the selected columns
+        if ($selectedColumns) {
+            $filteredColumns = [];
+
+            foreach ($selectedColumns[0] as $selectedColumn) { // Accessing the first array in $selectedColumns
+                foreach ($columns as $column) {
+                    if ($column['name'] === ($selectedColumn['name'] ?? null)) {
+                        $filteredColumns[] = $column;
+                    }
+                }
+            }
+
+            return $filteredColumns;
+        }
+
+        return $columns;
+    }
 
     public abstract function getItems(): LengthAwarePaginator;
 
@@ -44,47 +80,89 @@ abstract class BaseDataTable
             [],
         ];
 
-        // todo refactor logic to only take names to save of selected and take out all other and move to not selected but available
+        $dataTable = DataTable::query()
+            ->where('name', $this->name)
+            ->where('user_id', auth()->id())
+            ->first();
 
-        if (request('update_selectable_columns')) {
-            DataTable::query()?->updateOrCreate([
-                'name' => $this->name,
-                'user_id' => auth()->id(),
-            ], [
-                'selectable_columns' => json_encode($selectableColumns)
-            ]);
+        if ($dataTable && $dataTable->selected_columns) {
+            $selectableColumns = json_decode($dataTable->selected_columns, true);
         } else {
-            $dataTableSelectedColumns = DataTable::query()
-                ->where('name', $this->name)
-                ->where('user_id', auth()->id())
-                ->first()?->selected_columns;
+            // Generate default selectable columns
+            foreach ($this->getColumnItemClosures() as $key => $closure) {
+                $selectableColumns[0][] = [
+                    'id' => $key,
+                    'name' => $key,
+                ];
+            }
 
-            if (!$dataTableSelectedColumns) {
-                $columns = array_keys($this->getColumnItemClosures());
-
-                foreach ($columns as $key => $column) {
-                    $selectableColumns[0][] = [
-                        'id' => $key,
-                        'name' => $column,
-                    ];
-                }
-
-                DataTable::query()?->updateOrCreate([
+            DataTable::query()->updateOrCreate(
+                [
                     'name' => $this->name,
                     'user_id' => auth()->id(),
-                ], [
-                    'selected_columns' => json_encode($selectableColumns)
-                ]);
-            }
+                ],
+                [
+                    'selected_columns' => json_encode($selectableColumns),
+                ]
+            );
         }
 
         return $selectableColumns;
     }
 
-    protected function getSelectedColumns(): array
-    {
-        return []; //todo implement after saving
-    }
+//    protected function getSelectedColumns(): array
+//    {
+//        $dataTable = DataTable::where([
+//            'name' => $this->name,
+//            'user_id' => auth()->id(),
+//        ])->first();
+//
+//        $selectedColumns = json_decode($dataTable->selected_columns, true);
+//        if (!$selectedColumns) return;
+//
+//        foreach ($this->getColumnItemClosures() as $key => $value) {
+//
+//        }
+//
+//        return []; //todo implement after saving
+//    }
+//    protected function getSelectedColumns(): array
+//    {
+//        // Fetch the DataTable record for the current user and DataTable name
+//        $dataTable = DataTable::where([
+//            'name' => $this->name,
+//            'user_id' => auth()->id(),
+//        ])->first();
+//
+//        // Decode the saved selected columns if available
+//        $selectedColumns = $dataTable ? json_decode($dataTable->selected_columns, true) : null;
+//
+//        // If no selected columns are saved, return the default active columns
+//        if (!$selectedColumns || empty($selectedColumns)) {
+//            return $this->getActiveColumns();
+//        }
+//
+//        // Fetch closures for all defined columns
+//        $columnClosures = $this->getColumnItemClosures();
+//
+//        // Filter the column closures to only include those saved as selected
+//        $filteredColumns = [];
+//        foreach ($selectedColumns as $selectedColumn) {
+//            $columnKey = $selectedColumn['id'] ?? $selectedColumn['name'];
+//
+//            if (isset($columnClosures[$columnKey])) {
+//                $filteredColumns[$columnKey] = $columnClosures[$columnKey];
+//            }
+//        }
+//
+//        // If no valid columns are selected, return the default active columns as a failsafe
+//        if (empty($filteredColumns)) {
+//            return $this->getActiveColumns();
+//        }
+//
+//        return $filteredColumns;
+//    }
+////
 
     protected function setFilterFieldTypes(): array
     {

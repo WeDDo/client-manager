@@ -3,6 +3,7 @@ import MainTextInput from "~/components/v1/MainTextInput.vue";
 import MainSelectInput from "~/components/v1/MainSelectInput.vue";
 import MainDateInput from "~/components/v1/MainDateInput.vue";
 import MainCheckbox from "~/components/v1/MainCheckbox.vue";
+import {useFetchHelper} from "~/composables/useFetchHelper.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -18,14 +19,7 @@ const emit = defineEmits([
 ]);
 const visible = ref(false);
 
-// const columns = ref([]);
-const selectedColumns = ref([
-    [
-        {id: 1, name: '1'},
-        {id: 2, name: '2'},
-    ],
-    []
-]);
+const fetchHelper = useFetchHelper();
 
 const data = defineModel('data');
 
@@ -35,22 +29,28 @@ function handleClickColumnSelect() {
     visible.value = !visible.value;
 }
 
-watch(data, () => {
-    selectedColumns.value = data.value.selectable_columns;
-    console.log('data', data.value.selectable_columns)
-}, {immediate: true});
-//
-// watch(filterData, () => {
-//     data.value.filters = filterData.value;
-// });
-//
-// onMounted(() => {
-//     filterData.value = data.value?.filters ? JSON.parse(JSON.stringify(data.value.filters)) : [];
-// });
+async function updateColumns() {
+    // clearFilterLoading.value = true;
 
-// const areFiltersEmpty = computed(() => {
-//     return filterData.value.every(filter => (!filter.value || filter.value === ''));
-// });
+    await $fetch(`${baseURL}/data-tables/update-active-columns`, {
+        method: 'POST',
+        body: {
+            name: data.value.name,
+            selectable_columns: data.value.selectable_columns,
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            // clearFilterLoading.value = false;
+            if (response.ok) {
+                emit('refresh');
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    })
+}
 
 </script>
 
@@ -63,10 +63,11 @@ watch(data, () => {
             text
             @click="handleClickColumnSelect"
         />
+
         <Dialog
             v-model:visible="visible"
             :style="{ width: '50vw' }"
-            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+            :breakpoints="{ '1199px': '80vw', '575px': '90vw' }"
         >
             <template #header>
                 <div class="text-lg font-medium">
@@ -74,9 +75,17 @@ watch(data, () => {
                 </div>
             </template>
             <div>
-                <PickList v-model="selectedColumns" listStyle="height:342px" dataKey="id" breakpoint="1400px">
-                    <template #sourceheader> Available </template>
-                    <template #targetheader> Selected </template>
+                <PickList
+                    v-model="data.selectable_columns"
+                    listStyle="height:200px"
+                    dataKey="id"
+                >
+                    <template #sourceheader>
+                        Available
+                    </template>
+                    <template #targetheader>
+                        Selected
+                    </template>
                     <template #item="slotProps">
                         <div>
                             {{slotProps.item.name}}
@@ -90,7 +99,7 @@ watch(data, () => {
                     icon="pi pi-save"
                     class="w-full mt-2"
                     severity="primary"
-                    @click="emit('refresh')"
+                    @click="updateColumns"
                 />
             </div>
         </Dialog>

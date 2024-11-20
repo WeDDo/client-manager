@@ -12,6 +12,18 @@ class DataTableController extends Controller
     {
     }
 
+    // todo needs to be refactored to here for simpler handling
+    public function applySorting(): JsonResponse
+    {
+        return response()->json([]);
+    }
+
+    public function updateActiveColumns(Request $request): JsonResponse
+    {
+        $this->dataTableService->updateActiveColumns($request->all());
+        return response()->json([]);
+    }
+
     public function clearFilter(Request $request): JsonResponse
     {
         $this->dataTableService->clearFilter($request->all());

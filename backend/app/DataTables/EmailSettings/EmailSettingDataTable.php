@@ -48,7 +48,7 @@ class EmailSettingDataTable extends BaseDataTable
         ];
     }
 
-    public function getActiveColumns(): array
+    public function getColumns(): array
     {
         return [
             ['name' => 'host', 'header' => 'Host', 'align' => 'left'],

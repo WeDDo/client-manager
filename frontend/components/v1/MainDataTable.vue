@@ -122,8 +122,8 @@ function toggleSort(field) {
 }
 
 watch(data, () => {
-    sortField.value = data.value.sorting?.sort_field;
-    sortOrder.value = data.value.sorting?.sort_order;
+    sortField.value = data.value?.sorting?.sort_field;
+    sortOrder.value = data.value?.sorting?.sort_order;
 }, {immediate: true});
 
 function getSortIconClass(columnName) {
@@ -251,7 +251,7 @@ defineExpose({confirmDeleteDialogRef, selection, store, refreshData});
                             :name="column.name"
                             :data="slotProps.data"
                         >
-                            {{ slotProps.data?.[column.name] }}
+                            {{ slotProps.data?.[column.name] ?? '&nbsp;' }}
                         </slot>
                     </div>
                 </template>

@@ -6,9 +6,27 @@ use App\Models\DataTable;
 
 class DataTableService
 {
+    public function updateActiveColumns(array $data): array
+    {
+        $dataTable = DataTable::query()->where([
+            'name' => $data['name'],
+            'user_id' => auth()->id(),
+        ])->first();
+
+        $dataTable->where([
+            'name' => $data['name'],
+            'user_id' => auth()->id(),
+        ])?->update([
+            'selected_columns' => json_encode($data['selectable_columns'] ?? null)
+        ]);
+
+        return [];
+    }
+
     public function clearFilter(array $data): void
     {
-        $dataTable = DataTable::where('user_id', auth()->id())
+        $dataTable = DataTable::query()
+            ->where('user_id', auth()->id())
             ->where('name', $data['name'])
             ->first();
 
