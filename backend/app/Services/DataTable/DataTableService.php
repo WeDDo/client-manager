@@ -8,10 +8,8 @@ class DataTableService
 {
     public function clearFilter(array $data): void
     {
-        $dataTableName = "App\DataTables\\{$data['name']}";
-
         $dataTable = DataTable::where('user_id', auth()->id())
-            ->where('name', $dataTableName)
+            ->where('name', $data['name'])
             ->first();
 
         $dataTable?->update([

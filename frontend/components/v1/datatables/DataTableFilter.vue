@@ -11,10 +11,6 @@ const router = useRouter();
 const token = useCookie('token');
 
 const props = defineProps({
-    name: {
-        type: String,
-        default: null,
-    },
 });
 
 const mainStore = useMainStore();
@@ -63,7 +59,7 @@ async function clearFilter() {
     await $fetch(`${baseURL}/data-tables/clear-filter`, {
         method: 'POST',
         body: {
-            name: props.name,
+            name: data.value.name,
         },
         headers: {
             authorization: `Bearer ${token.value}`
