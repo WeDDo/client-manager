@@ -14,6 +14,7 @@ const emit = defineEmits([
     'refresh',
 ]);
 const visible = ref(false);
+const resetColumnsLoading = ref(false);
 
 const fetchHelper = useFetchHelper();
 
@@ -49,7 +50,7 @@ async function updateColumns() {
 }
 
 async function resetColumns() {
-    // clearFilterLoading.value = true;
+    resetColumnsLoading.value = true;
 
     await $fetch(`${baseURL}/data-tables/reset-columns`, {
         method: 'POST',
@@ -60,9 +61,9 @@ async function resetColumns() {
             authorization: `Bearer ${token.value}`
         },
         onResponse({response}) {
-            // clearFilterLoading.value = false;
+            resetColumnsLoading.value = false;
             if (response.ok) {
-                emit('refresh', { update_filter: false });
+                emit('refresh');
             } else {
                 fetchHelper.handleResponseError(response);
             }
@@ -118,6 +119,7 @@ async function resetColumns() {
                         icon="pi pi-refresh"
                         class="w-full"
                         severity="secondary"
+                        :loading="resetColumnsLoading"
                         @click="resetColumns"
                     />
                     <Button
