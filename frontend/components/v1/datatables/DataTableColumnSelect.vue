@@ -32,7 +32,7 @@ async function updateColumns() {
         method: 'POST',
         body: {
             name: data.value.name,
-            selectable_columns: data.value.selectable_columns,
+            selected_columns: data.value.selected_columns,
         },
         headers: {
             authorization: `Bearer ${token.value}`
@@ -92,9 +92,9 @@ async function resetColumns() {
                     Column select
                 </div>
             </template>
-            <div v-if="data.selectable_columns">
+            <div v-if="data.selected_columns">
                 <PickList
-                    v-model="data.selectable_columns"
+                    v-model="data.selected_columns"
                     listStyle="height:200px"
                     dataKey="id"
                 >

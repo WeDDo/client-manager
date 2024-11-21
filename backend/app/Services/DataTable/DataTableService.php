@@ -17,7 +17,7 @@ class DataTableService
             'name' => $data['name'],
             'user_id' => auth()->id(),
         ])?->update([
-            'selected_columns' => json_encode($data['selectable_columns'] ?? null)
+            'selected_columns' => json_encode($data['selected_columns'] ?? null)
         ]);
 
         return [];
