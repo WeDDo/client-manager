@@ -48,6 +48,28 @@ async function updateColumns() {
     })
 }
 
+async function resetColumns() {
+    // clearFilterLoading.value = true;
+
+    await $fetch(`${baseURL}/data-tables/reset-columns`, {
+        method: 'POST',
+        body: {
+            name: data.value.name,
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            // clearFilterLoading.value = false;
+            if (response.ok) {
+                emit('refresh', { update_filter: false });
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    })
+}
+
 </script>
 
 <template>
@@ -77,10 +99,10 @@ async function updateColumns() {
                     dataKey="id"
                 >
                     <template #sourceheader>
-                        Available
+                        Active
                     </template>
                     <template #targetheader>
-                        Selected
+                        Inactive
                     </template>
                     <template #item="slotProps">
                         <div>
@@ -89,14 +111,24 @@ async function updateColumns() {
                     </template>
                 </PickList>
 
-                <Button
-                    label="Save"
-                    size="small"
-                    icon="pi pi-save"
-                    class="w-full mt-2"
-                    severity="primary"
-                    @click="updateColumns"
-                />
+                <div class="flex gap-2">
+                    <Button
+                        label="Reset"
+                        size="small"
+                        icon="pi pi-refresh"
+                        class="w-full"
+                        severity="secondary"
+                        @click="resetColumns"
+                    />
+                    <Button
+                        label="Save"
+                        size="small"
+                        icon="pi pi-save"
+                        class="w-full mt-2"
+                        severity="primary"
+                        @click="updateColumns"
+                    />
+                </div>
             </div>
         </Dialog>
     </div>

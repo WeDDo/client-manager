@@ -138,14 +138,6 @@ async function clearFilter() {
 
                 <div class="flex gap-2">
                     <Button
-                        label="Filter"
-                        size="small"
-                        icon="pi pi-filter"
-                        class="w-full"
-                        severity="primary"
-                        @click="filter"
-                    />
-                    <Button
                         label="Clear"
                         size="small"
                         icon="pi pi-filter-slash"
@@ -153,6 +145,14 @@ async function clearFilter() {
                         severity="secondary"
                         :loading="clearFilterLoading"
                         @click="clearFilter"
+                    />
+                    <Button
+                        label="Filter"
+                        size="small"
+                        icon="pi pi-filter"
+                        class="w-full"
+                        severity="primary"
+                        @click="filter"
                     />
                 </div>
             </div>

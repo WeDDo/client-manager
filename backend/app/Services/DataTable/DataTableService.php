@@ -34,6 +34,18 @@ class DataTableService
             'filters' => null,
         ]);
     }
+
+    public function resetColumns(array $data): void
+    {
+        $dataTable = DataTable::query()
+            ->where('user_id', auth()->id())
+            ->where('name', $data['name'])
+            ->first();
+
+        $dataTable?->update([
+            'selected_columns' => null,
+        ]);
+    }
 }
 
 
