@@ -55,7 +55,7 @@ async function handleGetDataTableData(event) {
 }
 
 onMounted(() => {
-    dataTableData.value = form.value.values.additional.contacts_data_table;
+    dataTableData.value = { ...form.value.values.additional.contacts_data_table };
     mainStore.getPage(route.path);
 });
 </script>

@@ -1,8 +1,4 @@
 <script setup>
-import MainTextInput from "~/components/v1/MainTextInput.vue";
-import MainSelectInput from "~/components/v1/MainSelectInput.vue";
-import MainDateInput from "~/components/v1/MainDateInput.vue";
-import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
@@ -74,7 +70,7 @@ async function updateColumns() {
                     Column select
                 </div>
             </template>
-            <div>
+            <div v-if="data.selectable_columns">
                 <PickList
                     v-model="data.selectable_columns"
                     listStyle="height:200px"
