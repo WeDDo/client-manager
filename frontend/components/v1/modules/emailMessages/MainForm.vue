@@ -179,15 +179,19 @@ function removeAllFiles() {
                             >
                                 <template #header>
                                     <div>
-                                        <div>Reply</div>
+                                        Reply
                                     </div>
                                 </template>
                                 <div>
                                     <MainEditor
                                         v-model:value="replyHtml"
                                         name="reply_html"
-                                        label="Reply HTML"
+                                        label="Reply text"
                                     />
+
+                                    <label>
+                                        Reply files
+                                    </label>
                                     <FileUpload
                                         name="files[]"
                                         choose-label="Change"
@@ -197,7 +201,6 @@ function removeAllFiles() {
                                         :show-upload-button="false"
                                         :show-cancel-button="false"
                                         custom-upload
-
                                         @uploader="uploadFile($event)"
                                     >
                                         <template #header="{ chooseCallback }">

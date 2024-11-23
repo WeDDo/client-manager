@@ -1,8 +1,4 @@
 <script setup>
-import MainTextInput from "~/components/v1/MainTextInput.vue";
-import MainSelectInput from "~/components/v1/MainSelectInput.vue";
-import MainDateInput from "~/components/v1/MainDateInput.vue";
-import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 
 const {public: {baseURL}} = useRuntimeConfig();
@@ -18,6 +14,7 @@ const emit = defineEmits([
     'refresh',
 ]);
 const visible = ref(false);
+const resetColumnsLoading = ref(false);
 
 const fetchHelper = useFetchHelper();
 
@@ -36,13 +33,35 @@ async function updateColumns() {
         method: 'POST',
         body: {
             name: data.value.name,
-            selectable_columns: data.value.selectable_columns,
+            selected_columns: data.value.selected_columns,
         },
         headers: {
             authorization: `Bearer ${token.value}`
         },
         onResponse({response}) {
             // clearFilterLoading.value = false;
+            if (response.ok) {
+                emit('refresh');
+            } else {
+                fetchHelper.handleResponseError(response);
+            }
+        },
+    })
+}
+
+async function resetColumns() {
+    resetColumnsLoading.value = true;
+
+    await $fetch(`${baseURL}/data-tables/reset-columns`, {
+        method: 'POST',
+        body: {
+            name: data.value.name,
+        },
+        headers: {
+            authorization: `Bearer ${token.value}`
+        },
+        onResponse({response}) {
+            resetColumnsLoading.value = false;
             if (response.ok) {
                 emit('refresh');
             } else {
@@ -74,17 +93,17 @@ async function updateColumns() {
                     Column select
                 </div>
             </template>
-            <div>
+            <div v-if="data.selected_columns">
                 <PickList
-                    v-model="data.selectable_columns"
+                    v-model="data.selected_columns"
                     listStyle="height:200px"
                     dataKey="id"
                 >
                     <template #sourceheader>
-                        Available
+                        Active
                     </template>
                     <template #targetheader>
-                        Selected
+                        Inactive
                     </template>
                     <template #item="slotProps">
                         <div>
@@ -93,14 +112,25 @@ async function updateColumns() {
                     </template>
                 </PickList>
 
-                <Button
-                    label="Save"
-                    size="small"
-                    icon="pi pi-save"
-                    class="w-full mt-2"
-                    severity="primary"
-                    @click="updateColumns"
-                />
+                <div class="flex gap-2">
+                    <Button
+                        label="Reset"
+                        size="small"
+                        icon="pi pi-refresh"
+                        class="w-full"
+                        severity="secondary"
+                        :loading="resetColumnsLoading"
+                        @click="resetColumns"
+                    />
+                    <Button
+                        label="Save"
+                        size="small"
+                        icon="pi pi-save"
+                        class="w-full mt-2"
+                        severity="primary"
+                        @click="updateColumns"
+                    />
+                </div>
             </div>
         </Dialog>
     </div>

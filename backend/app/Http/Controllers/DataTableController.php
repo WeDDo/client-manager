@@ -24,6 +24,13 @@ class DataTableController extends Controller
         return response()->json([]);
     }
 
+    public function resetColumns(Request $request): JsonResponse
+    {
+        $this->dataTableService->resetColumns($request->all());
+        return response()->json([]);
+    }
+
+
     public function clearFilter(Request $request): JsonResponse
     {
         $this->dataTableService->clearFilter($request->all());

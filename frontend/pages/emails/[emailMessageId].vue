@@ -8,6 +8,7 @@ import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {useEmailMessageStore} from "~/stores/modules/emailMessage.js";
 import {useConfirm} from "primevue/useconfirm";
 import {emailMessageSchema} from "~/schemas/emailMessageSchema.js";
+import ActionButtonsButton from "~/components/v1/ActionButtonsButton.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -75,6 +76,7 @@ if (!error.value) {
 }
 
 async function handleUpdate() {
+    console.log(123);
     if (!await formHelper.validateForm(formHelper.errors)) {
         return;
     }
@@ -149,6 +151,27 @@ function confirmReply() {
         reject: () => {}
     });
 }
+
+const actions = computed(() => {
+    return [
+        {
+            label: 'Actions',
+            items: [
+                {
+                    label: 'Save',
+                    icon: 'pi pi-save',
+                    command: handleUpdate
+                },
+                {
+                    label: 'Reply',
+                    icon: 'pi pi-reply',
+                    disabled: form.values?.item?.folder !== 'INBOX' || !replyHtml.value,
+                    command: confirmReply
+                },
+            ]
+        }
+    ]
+});
 </script>
 
 <template>
@@ -159,30 +182,10 @@ function confirmReply() {
                 <div>
                     {{ store.singleName }}
                 </div>
-                <div>
-                    <Button
-                        v-if="form.values?.item?.folder === 'INBOX'"
-                        label="Reply"
-                        size="small"
-                        icon="pi pi-reply"
+                <div class="flex justify-content-center">
+                    <ActionButtonsButton
                         class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        :disabled="!replyHtml"
-                        :loading="loadingStore.actionLoading"
-                        @click="confirmReply"
-                    />
-                    <Button
-                        label="Save"
-                        size="small"
-                        icon="pi pi-save"
-                        class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        :loading="loadingStore.actionLoading"
-                        @click="handleUpdate"
+                        :actions="actions"
                     />
                     <Button
                         icon="pi pi-times"

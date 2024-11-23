@@ -109,7 +109,7 @@ class EmailSettingService
     {
         $user = auth()->user();
         if (!$emailSetting) {
-            $emailSetting = $user->setImapEmailConfig()->first();
+            $emailSetting = $user->activeImapEmailSetting()->first();
         }
 
         config([

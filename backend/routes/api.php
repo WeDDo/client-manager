@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::prefix('data-tables')->group(function () {
         Route::post('clear-filter', [DataTableController::class, 'clearFilter']);
+        Route::post('reset-columns', [DataTableController::class, 'resetColumns']);
         Route::post('update-active-columns', [DataTableController::class, 'updateActiveColumns']);
     });
 

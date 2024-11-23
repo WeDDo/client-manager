@@ -1,8 +1,4 @@
 <script setup>
-import MainTextInput from "~/components/v1/MainTextInput.vue";
-import MainSelectInput from "~/components/v1/MainSelectInput.vue";
-import MainDateInput from "~/components/v1/MainDateInput.vue";
-import MainCheckbox from "~/components/v1/MainCheckbox.vue";
 import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
 
@@ -27,8 +23,6 @@ const fetchHelper = useFetchHelper();
 
 const visible = ref(false);
 const data = ref([[], []]);
-
-defineExpose({visible});
 
 function handleClickGetInboxes() {
     getInboxes();
@@ -71,23 +65,12 @@ async function createInboxes() {
     })
 }
 
-onMounted(() => {
-    getInboxes();
-});
-
+defineExpose({visible, handleClickGetInboxes});
 </script>
 
 <template>
     <div>
-        <Button
-            label="Get Inboxes"
-            size="small"
-            icon="pi pi-inbox"
-            severity="contrast"
-            text
-            raised
-            @click="handleClickGetInboxes"
-        />
+
 
         <Dialog
             v-model:visible="visible"
