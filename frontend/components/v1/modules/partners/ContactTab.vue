@@ -3,12 +3,14 @@ import {useFetchHelper} from "~/composables/useFetchHelper.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
 import {useContactStore} from "~/stores/modules/contact.js";
 import {usePartnerStore} from "~/stores/modules/partner.js";
+import ActionButtonsButton from "~/components/v1/ActionButtonsButton.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
 const route = useRoute();
 const router = useRouter();
 const token = useCookie('token');
+const toast = useToast();
 
 const mainStore = useMainStore();
 const store = useContactStore();
@@ -37,6 +39,10 @@ function goToCreate() {
     router.push(`/${store.frontRouteName}/create`)
 }
 
+function goToEdit() {
+    router.push(`/${store.frontRouteName}/${mainDataTableRef.value.selection.id}`)
+}
+
 async function handleGetDataTableData(event) {
     await $fetch(fetchHelper.getDataTableUrl(`${baseURL}/${partnerStore.apiRouteName}/${form.value.values.item.id}/${store.apiRouteName}`, event), {
         method: 'GET',
@@ -55,8 +61,41 @@ async function handleGetDataTableData(event) {
 }
 
 onMounted(() => {
-    dataTableData.value = { ...form.value.values.additional.contacts_data_table };
+    dataTableData.value = JSON.parse(JSON.stringify(form.value.values.additional.contacts_data_table));
     mainStore.getPage(route.path);
+});
+
+const actions = computed(() => {
+    return [
+        {
+            label: 'Actions',
+            items: [
+                {
+                    label: 'Add',
+                    icon: 'pi pi-plus',
+                    command: goToCreate
+                },
+                {
+                    label: 'Edit',
+                    icon: 'pi pi-pencil',
+                    disabled: !mainDataTableRef?.value?.selection,
+                    command: goToEdit
+                },
+                {
+                    label: 'Delete',
+                    icon: 'pi pi-trash',
+                    disabled: !mainDataTableRef?.value?.selection,
+                    command: () => {
+                        if (mainDataTableRef.value.selection) {
+                            mainDataTableRef.value.confirmDeleteDialogRef.visible = true;
+                        } else {
+                            toast.add({ severity: 'warn', summary: 'No Selection', detail: 'Please select an item to delete.', life: 3000 });
+                        }
+                    }
+                }
+            ]
+        }
+    ]
 });
 </script>
 
@@ -71,23 +110,9 @@ onMounted(() => {
             @refresh="handleGetDataTableData"
         >
             <template #buttons>
-                <Button
-                    label="Add"
-                    size="small"
-                    icon="pi pi-plus"
-                    severity="secondary"
-                    text
-                    @click="goToCreate"
-                />
-                <Button
-                    label="Edit"
-                    size="small"
+                <ActionButtonsButton
                     class="mr-2"
-                    icon="pi pi-pencil"
-                    severity="secondary"
-                    text
-                    :disabled="!mainDataTableRef?.selection"
-                    @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
+                    :actions="actions"
                 />
             </template>
         </MainDataTable>

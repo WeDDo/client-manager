@@ -7,6 +7,7 @@ import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
 import {emailInboxSettingSchema} from "~/schemas/emailInboxSettingSchema.js";
+import ActionButtonsButton from "~/components/v1/ActionButtonsButton.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -55,7 +56,6 @@ if (!error.value) {
     fetchHelper.handleUseFetchError(error);
 }
 
-
 async function handleUpdate() {
     if (!await formHelper.validateForm(formHelper.errors)) {
         return;
@@ -81,6 +81,21 @@ async function handleUpdate() {
         },
     })
 }
+
+const actions = computed(() => {
+    return [
+        {
+            label: 'Actions',
+            items: [
+                {
+                    label: 'Save',
+                    icon: 'pi pi-save',
+                    command: handleUpdate
+                },
+            ]
+        }
+    ]
+});
 </script>
 
 <template>
@@ -91,16 +106,10 @@ async function handleUpdate() {
                 <div>
                     Email setting edit
                 </div>
-                <div>
-                    <Button
-                        label="Save"
-                        size="small"
-                        icon="pi pi-save"
+                <div class="flex justify-content-center">
+                    <ActionButtonsButton
                         class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        @click="handleUpdate"
+                        :actions="actions"
                     />
                     <Button
                         icon="pi pi-times"

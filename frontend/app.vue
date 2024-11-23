@@ -6,7 +6,7 @@
             position="top-center"
             class="w-11 sm:w-auto"
         />
-        <ConfirmDialog/>
+        <ConfirmDialog />
     </div>
 </template>
 
@@ -49,5 +49,6 @@ html, body {
     padding: 0;
     height: 100%;
     width: 100%;
+    min-width: 350px;
 }
 </style>

@@ -7,6 +7,7 @@ import {useEmailSettingStore} from "~/stores/modules/emailSetting.js";
 import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import {emailSettingSchema} from "~/schemas/emailSettingSchema.js";
+import ActionButtonsButton from "~/components/v1/ActionButtonsButton.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -103,7 +104,7 @@ async function checkConnection() {
         },
         onResponse({response}) {
             if (response.ok) {
-                checkConnectionResult.value = null;
+                checkConnectionResult.value = 'connected';
                 toast.add({severity: 'success', summary: 'Connection successfully established!', life: 2000});
             } else {
                 checkConnectionResult.value = 'error';
@@ -114,12 +115,28 @@ async function checkConnection() {
     })
 }
 
-function getCheckConnectionButtonSeverity() {
-    if(checkConnectionResult.value === 'error') return 'danger';
-    if(checkConnectionResult.value === 'loading') return 'secondary';
+function getCheckConnectionButtonStyle() {
+    if(checkConnectionResult.value === 'error') return {color: 'var(--red-500)'};
+    if(checkConnectionResult.value === 'connected') return {color: 'var(--green-500)'};
+    if(checkConnectionResult.value === 'loading') return undefined;
 
     return undefined;
 }
+
+const actions = computed(() => {
+    return [
+        {
+            label: 'Actions',
+            items: [
+                {
+                    label: 'Save',
+                    icon: 'pi pi-save',
+                    command: handleUpdate
+                },
+            ]
+        }
+    ]
+});
 </script>
 
 <template>
@@ -130,26 +147,22 @@ function getCheckConnectionButtonSeverity() {
                 <div>
                     {{ store.singleName }} edit
                 </div>
-                <div>
+                <div class="flex justify-content-center">
                     <Button
-                        label="Check"
+                        v-tooltip.bottom="'Check connection'"
                         size="small"
                         icon="pi pi-wifi"
                         class="mr-2"
                         text
                         raised
-                        :severity="getCheckConnectionButtonSeverity()"
+                        severity="secondary"
+                        :style="getCheckConnectionButtonStyle()"
+                        :loading="loadingStore.actionLoading"
                         @click="checkConnection"
                     />
-                    <Button
-                        label="Save"
-                        size="small"
-                        icon="pi pi-save"
+                    <ActionButtonsButton
                         class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        @click="handleUpdate"
+                        :actions="actions"
                     />
                     <Button
                         icon="pi pi-times"

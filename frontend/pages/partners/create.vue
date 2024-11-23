@@ -4,6 +4,7 @@ import BasicTabs from "~/components/v1/BasicTabs.vue";
 import MainForm from "~/components/v1/modules/partners/MainForm.vue";
 import {usePartnerStore} from "~/stores/modules/partner.js";
 import {partnerSchema} from "~/schemas/partnerSchema.js";
+import ActionButtonsButton from "~/components/v1/ActionButtonsButton.vue";
 
 const {public: {baseURL}} = useRuntimeConfig();
 
@@ -64,6 +65,21 @@ async function handleCreate() {
         },
     })
 }
+
+const actions = computed(() => {
+    return [
+        {
+            label: 'Actions',
+            items: [
+                {
+                    label: 'Save',
+                    icon: 'pi pi-save',
+                    command: handleCreate
+                },
+            ]
+        }
+    ]
+});
 </script>
 
 <template>
@@ -74,16 +90,10 @@ async function handleCreate() {
                 <div>
                     {{ store.singleName }} add
                 </div>
-                <div>
-                    <Button
-                        label="Save"
-                        size="small"
-                        icon="pi pi-save"
+                <div class="flex justify-content-center">
+                    <ActionButtonsButton
                         class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        @click="handleCreate"
+                        :actions="actions"
                     />
                     <Button
                         icon="pi pi-times"

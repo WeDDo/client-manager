@@ -3,6 +3,7 @@ import MainMenuBar from "~/components/v1/MainMenuBar.vue";
 import { useEmailMessageStore } from "~/stores/modules/emailMessage.js";
 import MainDataTable from "~/components/v1/MainDataTable.vue";
 import {useEmailInboxSettingStore} from "~/stores/modules/emailInboxSetting.js";
+import ActionButtonsButton from "~/components/v1/ActionButtonsButton.vue";
 
 const { public: { baseURL } } = useRuntimeConfig();
 
@@ -104,6 +105,37 @@ async function handleGetDataTableData(event) {
         },
     });
 }
+
+const actions = computed(() => {
+    return [
+        {
+            label: 'Actions',
+            items: [
+                {
+                    label: 'View',
+                    icon: 'pi pi-eye',
+                    disabled: !mainDataTableRef?.value?.selection,
+                    command: () => router.push(`/${store.frontRouteName}/${mainDataTableRef.value.selection.id}`)
+                },
+                {
+                    label: 'Change inbox',
+                    icon: 'pi pi-inbox',
+                    command: changeFolder
+                },
+                {
+                    label: 'Get emails',
+                    icon: 'pi pi-envelope',
+                    command: changeFolder
+                },
+                {
+                    label: 'Inbox settings',
+                    icon: 'pi pi-sliders-h',
+                    command: () => router.push(`/${emailInboxSettingStore.frontRouteName}`)
+                },
+            ]
+        }
+    ]
+});
 </script>
 
 <template>
@@ -114,61 +146,65 @@ async function handleGetDataTableData(event) {
                 <div>
                     {{ store.multiName }} ({{ store.selectedFolder }})
                 </div>
-                <div>
-                    <Button
-                        label="Change Inbox"
-                        size="small"
-                        icon="pi pi-envelope"
+                <div class="flex justify-content-center">
+<!--                    <Button-->
+<!--                        label="Change Inbox"-->
+<!--                        size="small"-->
+<!--                        icon="pi pi-envelope"-->
+<!--                        class="mr-2"-->
+<!--                        severity="contrast"-->
+<!--                        text-->
+<!--                        raised-->
+<!--                        @click="changeFolder"-->
+<!--                    />-->
+<!--                    <Button-->
+<!--                        label="Get emails"-->
+<!--                        size="small"-->
+<!--                        icon="pi pi-inbox"-->
+<!--                        class="mr-2"-->
+<!--                        severity="contrast"-->
+<!--                        text-->
+<!--                        raised-->
+<!--                        :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"-->
+<!--                        :loading="loadingStore.actionLoading"-->
+<!--                        @click="handleGetEmailsUsingImap"-->
+<!--                    />-->
+<!--                    <Button-->
+<!--                        label="Inbox settings"-->
+<!--                        size="small"-->
+<!--                        icon="pi pi-sliders-h"-->
+<!--                        class="mr-2"-->
+<!--                        severity="contrast"-->
+<!--                        text-->
+<!--                        raised-->
+<!--                        :disabled="loadingStore.actionLoading"-->
+<!--                        @click="() => router.push(`/${emailInboxSettingStore.frontRouteName}`)"-->
+<!--                    />-->
+                    <ActionButtonsButton
                         class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        @click="changeFolder"
+                        :actions="actions"
                     />
-                    <Button
-                        label="Get emails"
-                        size="small"
-                        icon="pi pi-inbox"
-                        class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        :disabled="dataTableData?.additional_data?.email_inbox_settings?.length === 0"
-                        :loading="loadingStore.actionLoading"
-                        @click="handleGetEmailsUsingImap"
-                    />
-                    <Button
-                        label="Inbox settings"
-                        size="small"
-                        icon="pi pi-sliders-h"
-                        class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        :disabled="loadingStore.actionLoading"
-                        @click="() => router.push(`/${emailInboxSettingStore.frontRouteName}`)"
-                    />
-                    <Button
-                        label="Edit"
-                        size="small"
-                        icon="pi pi-pencil"
-                        class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        :disabled="!mainDataTableRef?.selection"
-                        @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"
-                    />
-                    <Button
-                        size="small"
-                        icon="pi pi-trash"
-                        class="mr-2"
-                        severity="contrast"
-                        text
-                        raised
-                        :disabled="!mainDataTableRef?.selection"
-                        @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"
-                    />
+<!--                    <Button-->
+<!--                        label="Edit"-->
+<!--                        size="small"-->
+<!--                        icon="pi pi-pencil"-->
+<!--                        class="mr-2"-->
+<!--                        severity="contrast"-->
+<!--                        text-->
+<!--                        raised-->
+<!--                        :disabled="!mainDataTableRef?.selection"-->
+<!--                        @click="() => router.push(`/${store.frontRouteName}/${mainDataTableRef.selection.id}`)"-->
+<!--                    />-->
+<!--                    <Button-->
+<!--                        size="small"-->
+<!--                        icon="pi pi-trash"-->
+<!--                        class="mr-2"-->
+<!--                        severity="contrast"-->
+<!--                        text-->
+<!--                        raised-->
+<!--                        :disabled="!mainDataTableRef?.selection"-->
+<!--                        @click="mainDataTableRef.confirmDeleteDialogRef.visible = true"-->
+<!--                    />-->
                     <Button
                         icon="pi pi-times"
                         size="small"
