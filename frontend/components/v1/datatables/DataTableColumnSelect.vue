@@ -112,7 +112,7 @@ async function resetColumns() {
                     </template>
                 </PickList>
 
-                <div class="flex gap-2">
+                <div class="flex gap-2 mt-2">
                     <Button
                         label="Reset"
                         size="small"
@@ -126,7 +126,7 @@ async function resetColumns() {
                         label="Save"
                         size="small"
                         icon="pi pi-save"
-                        class="w-full mt-2"
+                        class="w-full"
                         severity="primary"
                         @click="updateColumns"
                     />
