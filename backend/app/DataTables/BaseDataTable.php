@@ -81,10 +81,10 @@ abstract class BaseDataTable
             $selectedColumns = json_decode($dataTable->selected_columns, true);
         } else {
             // Generate default selectable columns
-            foreach ($this->getColumnItemClosures() as $key => $closure) {
+            foreach ($this->getColumns() as $key => $value) {
                 $selectedColumns[0][] = [
-                    'id' => $key,
-                    'name' => $key,
+                    'id' => $value['name'],
+                    'name' => $value['name'],
                 ];
             }
 
